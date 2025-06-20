@@ -13,10 +13,10 @@ from nltk.stem import WordNetLemmatizer
 import random
 import json
 import os
-from serpapi import GoogleSearch
+
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your_secret_key_here'
+app.config['SECRET_KEY'] = '026e523d0d581335786094c9c6df43a4dbfa11781f9906482e2c2c8946fcb185'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -213,7 +213,7 @@ def next_question():
                     bot_response = "Sorry, I couldn't find a mental health–related answer to your question."
             except Exception as e:
                 print('Fallback error:', e)
-                bot_response = f"Sorry, I couldn't search at the moment. ({str(e)})"
+                bot_response = f"Sorry, I couldn't search at the moment. Please check your internet connection or try again later."
         return jsonify({"response": bot_response, "finished": False})
 
 @app.route('/daily_tasks')

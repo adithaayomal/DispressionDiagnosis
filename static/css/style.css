@@ -471,8 +471,8 @@ body {
 .typing-indicator {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
-    margin: 10px 0;
+    justify-content: center;
+    margin: 10px auto;
     padding: 12px 16px;
     border-radius: 18px;
     background: #fff;
@@ -482,16 +482,11 @@ body {
     min-height: 28px;
     box-shadow: 0 1px 4px rgba(226,189,167,0.10);
     border: 2px solid #E2BDA7;
-    align-self: flex-start;
-    position: relative;
-    animation: typing-pulse 1.6s infinite alternate;
-    transition: background 0.2s, box-shadow 0.2s;
-}
-
-@keyframes typing-pulse {
-    0% { background: #fff; box-shadow: 0 1px 4px rgba(226,189,167,0.10); }
-    50% { background: #f7f3f0; box-shadow: 0 2px 8px rgba(226,189,167,0.18); }
-    100% { background: #fff; box-shadow: 0 1px 4px rgba(226,189,167,0.10); }
+    align-self: center;
+    font-size: 15px;
+    line-height: 1.4;
+    text-align: left;
+    box-sizing: border-box;
 }
 
 .typing-indicator .typing-dot {
