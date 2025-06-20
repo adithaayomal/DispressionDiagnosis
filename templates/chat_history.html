@@ -1,0 +1,41 @@
+<!-- Chat History Page -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat History</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <span class="navbar-title">Mental Health Assistant</span>
+        <div class="navbar-left">
+            <div class="navbar-center">
+                <a href="/" class="navbar-link">Assistant</a>
+                <a href="/daily_tasks" class="navbar-link">Daily Tasks</a>
+                <a href="/chat_history" class="navbar-link active">Chat History</a>
+            </div>
+        </div>
+        <div class="navbar-right">
+            <span class="navbar-user">Welcome, {{ current_user.username }}</span>
+            <a href="/logout" class="navbar-link">Logout</a>
+        </div>
+    </nav>
+    <div class="main-content">
+        <div class="chat-container">
+            <div class="chat-header">
+                <h2>Your Chat History</h2>
+            </div>
+            <div class="chat-messages" id="chat-messages">
+                {% for msg in messages %}
+                    <div class="message {{ 'user-message' if msg.sender == 'user' else 'bot-message' }}">
+                        <span>{{ msg.message|safe }}</span>
+                        <div style="font-size:11px;color:#aaa;margin-top:4px;">{{ msg.timestamp.strftime('%Y-%m-%d %H:%M') }}</div>
+                    </div>
+                {% else %}
+                    <div class="message bot-message">No chat history yet.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
