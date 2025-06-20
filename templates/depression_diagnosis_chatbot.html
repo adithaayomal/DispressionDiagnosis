@@ -25,8 +25,7 @@
             </div>
 
             <div class="chat-messages" id="chat-messages">
-                <div class="message bot-message">Hello! I'll ask you a few questions to assess your mental health.</div>
-                <div class="message bot-message">Do you feel sad or empty most of the day?</div>
+                <!-- Initial bot messages removed; now loaded from backend/chat history -->
             </div>
 
             <!-- Typing animation (hidden by default) -->
@@ -50,8 +49,8 @@
     <script>
         const chatMessages = document.getElementById('chat-messages');
         const userInput = document.getElementById('user-input');
-        const typingIndicator = document.getElementById('typing-indicator');
 
+        // Render a message bubble
         function addMessage(message, isUser) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
@@ -60,13 +59,25 @@
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
+        // Load chat history on page load
+        async function loadChatHistory() {
+            const res = await fetch('/chat_history_api');
+            if (!res.ok) return;
+            const data = await res.json();
+            chatMessages.innerHTML = '';
+            if (data.messages && data.messages.length > 0) {
+                data.messages.forEach(msg => {
+                    addMessage(msg.message, msg.sender === 'user');
+                });
+            } 
+        }
+        loadChatHistory();
+
         function sendMessage() {
             const message = userInput.value.trim();
             if (!message) return;
-
             addMessage(message, true);
             showTypingIndicator();
-
             fetch('/next_question', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -80,14 +91,12 @@
                 }
                 if (data.finished) {
                     // Optionally, handle end of assessment (e.g., redirect or show result)
-                    // window.location.href = '/result'; // If you have a result page
                 }
             })
             .catch(() => {
                 hideTypingIndicator();
                 addMessage('Sorry, something went wrong. Please try again.', false);
             });
-
             userInput.value = '';
         }
 
@@ -96,7 +105,6 @@
             if (typing) typing.style.display = 'flex';
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
-
         function hideTypingIndicator() {
             const typing = document.getElementById('typing-indicator');
             if (typing) typing.style.display = 'none';
