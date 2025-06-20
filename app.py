@@ -285,6 +285,13 @@ def chat_history_api():
         ]
     })
 
+@app.route('/clear_chat', methods=['POST'])
+@login_required
+def clear_chat():
+    ChatMessage.query.filter_by(user_id=current_user.id).delete()
+    db.session.commit()
+    return '', 204
+
 def calculate_score(responses):
     score = 0
     yes_responses = []
