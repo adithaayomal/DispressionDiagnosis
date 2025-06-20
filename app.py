@@ -13,10 +13,14 @@ from nltk.stem import WordNetLemmatizer
 import random
 import json
 import os
+import requests
+
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your_secret_key_here'
+app.config['SECRET_KEY'] = '92a3905d6f57f0ced895bb6a9fbc1f45ab5f740785d66f8b56bdb0a5af79127b'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['SESSION_COOKIE_SECURE'] = False
 
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
@@ -157,28 +161,65 @@ def next_question():
     responses = session.get('responses', {})
 
     valid_answers = ['yes', 'y', 'yeah', 'true', 'no', 'n', 'nope', 'false']
-    if user_answer.lower() not in valid_answers:
-        return jsonify({
-            "response": "Invalid answer. Please type 'yes' or 'no' to answer questions.",
-            "finished": False
-        })
-
-    # Save the user's answer
-    responses[f'question_{current_question}'] = user_answer
-    session['responses'] = responses
-
-    # Move to next question
-    next_question_idx = current_question + 1
-    session['current_question'] = next_question_idx
-
-    if next_question_idx < len(QUESTIONS):
-        next_q = QUESTIONS[next_question_idx]
-        return jsonify({"response": next_q, "finished": False})
+    if current_question < len(QUESTIONS):
+        if user_answer.lower() not in valid_answers:
+            return jsonify({
+                "response": "Invalid answer. Please type 'yes' or 'no' to answer questions.",
+                "finished": False
+            })
+        # Save the user's answer
+        responses[f'question_{current_question}'] = user_answer
+        session['responses'] = responses
+        # Move to next question
+        next_question_idx = current_question + 1
+        session['current_question'] = next_question_idx
+        if next_question_idx < len(QUESTIONS):
+            next_q = QUESTIONS[next_question_idx]
+            return jsonify({"response": next_q, "finished": False})
+        else:
+            # Assessment finished, calculate result
+            score, yes_responses = calculate_score(session['responses'])
+            diagnosis = get_diagnosis((score, yes_responses), session['responses'])
+            session['assessment_finished'] = True
+            # Send assessment result and follow-up as separate messages
+            return jsonify({
+                "response": [f"Assessment complete!\n\n{diagnosis}", "You can ask me anything else about mental health or just chat."],
+                "finished": True
+            })
     else:
-        # Assessment finished, calculate result
-        score, yes_responses = calculate_score(session['responses'])
-        diagnosis = get_diagnosis((score, yes_responses), session['responses'])
-        return jsonify({"response": f"Assessment complete!\n\n{diagnosis}", "finished": True})
+        # After assessment, allow free chat
+        user_message = user_answer
+        bot_response = None
+        try:
+            bot_response = get_response(user_message)
+        except Exception as e:
+            print('Error in get_response:', e)
+            return jsonify({'response': f'Internal error: {str(e)}', 'finished': False}), 500
+        if "I'm not sure how to respond" in bot_response:
+            # Use Wikipedia API as fallback
+            try:
+                search_url = f"https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch={requests.utils.quote(user_message)}&utf8=&format=json"
+                r = requests.get(search_url, timeout=5)
+                data = r.json()
+                if data.get('query', {}).get('search'):
+                    first_result = data['query']['search'][0]
+                    page_title = first_result['title']
+                    snippet = first_result['snippet']
+                    # Get the page summary
+                    summary_url = f"https://en.wikipedia.org/api/rest_v1/page/summary/{requests.utils.quote(page_title)}"
+                    summary_r = requests.get(summary_url, timeout=5)
+                    summary_data = summary_r.json()
+                    extract = summary_data.get('extract')
+                    if extract:
+                        bot_response = f"Here's what I found on Wikipedia about '{page_title}': {extract}"
+                    else:
+                        bot_response = f"Here's what I found on Wikipedia about '{page_title}': {snippet}"
+                else:
+                    bot_response = "Sorry, I couldn't find a mental health–related answer to your question on Wikipedia."
+            except Exception as e:
+                print('Wikipedia fallback error:', e)
+                bot_response = f"Sorry, I couldn't search Wikipedia at the moment. ({str(e)})"
+        return jsonify({"response": bot_response, "finished": False})
 
 def calculate_score(responses):
     score = 0
