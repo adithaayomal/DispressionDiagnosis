@@ -1,7 +1,6 @@
-flask
-flask_sqlalchemy
-werkzeug
-datetime
-flask_login
+Flask
+Flask-SQLAlchemy
+Flask-Login
+Werkzeug
 scikit-learn
 nltk
