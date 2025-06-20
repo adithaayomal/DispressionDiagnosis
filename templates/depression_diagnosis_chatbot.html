@@ -91,7 +91,11 @@
                     addMessage(data.response, false);
                 }
                 if (data.finished) {
-                    // Optionally, handle end of assessment (e.g., redirect or show result)
+                    if (data.show_daily_task_prompt) {
+                        if (confirm("Assessment complete! Do you want to do your daily task now?")) {
+                            window.location.href = "/daily_tasks";
+                        }
+                    }
                 }
             })
             .catch(() => {
