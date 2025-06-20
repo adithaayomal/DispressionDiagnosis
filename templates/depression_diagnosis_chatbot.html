@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Depression Screening Chatbot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2>Mental Health Assistant</h2>
+        </div>
+
+        <div class="chat-messages" id="chat-messages">
+            <div class="message bot-message">Hello! I'll ask you a few questions to assess your mental health.</div>
+            <div class="message bot-message">Do you feel sad or empty most of the day?</div>
+        </div>
+
+        <div class="input-container">
+            <input type="text" class="text-input" id="user-input" 
+                   placeholder="Type yes/no or your message..." 
+                   onkeypress="if(event.keyCode === 13) sendMessage()">
+            <button class="send-button" onclick="sendMessage()">Send</button>
+        </div>
+
+        <div class="hint">Type 'yes' or 'no' to answer questions</div>
+    </div>
+
+    <script>
+        const chatMessages = document.getElementById('chat-messages');
+        const userInput = document.getElementById('user-input');
+
+        function addMessage(message, isUser) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+            messageDiv.textContent = message;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function sendMessage() {
+            const message = userInput.value.trim();
+            if (!message) return;
+
+            addMessage(message, true);
+
+            // Send answer to /next_question instead of /get_response
+            fetch('/next_question', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: message })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.response) {
+                    addMessage(data.response, false);
+                }
+                if (data.finished) {
+                    // Optionally, handle end of assessment (e.g., redirect or show result)
+                    // window.location.href = '/result'; // If you have a result page
+                }
+            });
+
+            userInput.value = '';
+        }
+    </script>
+</body>
+</html>
