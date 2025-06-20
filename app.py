@@ -157,6 +157,13 @@ def next_question():
     current_question = session.get('current_question', 0)
     responses = session.get('responses', {})
 
+    valid_answers = ['yes', 'y', 'yeah', 'true', 'no', 'n', 'nope', 'false']
+    if user_answer.lower() not in valid_answers:
+        return jsonify({
+            "response": "Invalid answer. Please type 'yes' or 'no' to answer questions.",
+            "finished": False
+        })
+
     # Save the user's answer
     responses[f'question_{current_question}'] = user_answer
     session['responses'] = responses
