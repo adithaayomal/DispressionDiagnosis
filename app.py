@@ -13,7 +13,7 @@ from nltk.stem import WordNetLemmatizer
 import random
 import json
 import os
-
+#hello
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key_here'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
