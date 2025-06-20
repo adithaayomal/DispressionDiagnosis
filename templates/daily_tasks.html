@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mental Health Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <span class="navbar-title">Mental Health Assistant</span>
+        <div class="navbar-left">
+            <div class="navbar-center">
+                <a href="/" class="navbar-link">Assistant</a>
+                <a href="/daily_tasks" class="navbar-link active">Daily Tasks</a>
+            </div>
+        </div>
+        <div class="navbar-right">
+            <span class="navbar-user">Welcome, {{ current_user.username }}</span>
+            <a href="/logout" class="navbar-link">Logout</a>
+        </div>
+    </nav>
+    <div class="tasks-container">
+        <h2>Daily Mental Health Tasks</h2>
+        <ul class="tasks-list">
+            {% for task in tasks %}
+                <li class="task-item">{{ task }}</li>
+            {% endfor %}
+        </ul>
+        <a href="/" class="back-link">&larr; Back to Assistant</a>
+    </div>
+</body>
+</html>

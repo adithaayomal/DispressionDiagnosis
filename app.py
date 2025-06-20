@@ -13,14 +13,12 @@ from nltk.stem import WordNetLemmatizer
 import random
 import json
 import os
-import requests
+from serpapi import GoogleSearch
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '92a3905d6f57f0ced895bb6a9fbc1f45ab5f740785d66f8b56bdb0a5af79127b'
+app.config['SECRET_KEY'] = 'your_secret_key_here'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
-app.config['SESSION_COOKIE_SECURE'] = False
 
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
@@ -181,11 +179,7 @@ def next_question():
             score, yes_responses = calculate_score(session['responses'])
             diagnosis = get_diagnosis((score, yes_responses), session['responses'])
             session['assessment_finished'] = True
-            # Send assessment result and follow-up as separate messages
-            return jsonify({
-                "response": [f"Assessment complete!\n\n{diagnosis}", "You can ask me anything else about mental health or just chat."],
-                "finished": True
-            })
+            return jsonify({"response": f"Assessment complete!\n\n{diagnosis}\n\nYou can now chat with the bot and ask any question.", "finished": True})
     else:
         # After assessment, allow free chat
         user_message = user_answer
@@ -197,6 +191,7 @@ def next_question():
             return jsonify({'response': f'Internal error: {str(e)}', 'finished': False}), 500
         if "I'm not sure how to respond" in bot_response:
             # Use Wikipedia API as fallback
+            import requests
             try:
                 search_url = f"https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch={requests.utils.quote(user_message)}&utf8=&format=json"
                 r = requests.get(search_url, timeout=5)
@@ -211,15 +206,27 @@ def next_question():
                     summary_data = summary_r.json()
                     extract = summary_data.get('extract')
                     if extract:
-                        bot_response = f"Here's what I found on Wikipedia about '{page_title}': {extract}"
+                        bot_response = f"{extract}"
                     else:
-                        bot_response = f"Here's what I found on Wikipedia about '{page_title}': {snippet}"
+                        bot_response = f"{snippet}"
                 else:
-                    bot_response = "Sorry, I couldn't find a mental health–related answer to your question on Wikipedia."
+                    bot_response = "Sorry, I couldn't find a mental health–related answer to your question."
             except Exception as e:
-                print('Wikipedia fallback error:', e)
-                bot_response = f"Sorry, I couldn't search Wikipedia at the moment. ({str(e)})"
+                print('Fallback error:', e)
+                bot_response = f"Sorry, I couldn't search at the moment. ({str(e)})"
         return jsonify({"response": bot_response, "finished": False})
+
+@app.route('/daily_tasks')
+@login_required
+def daily_tasks():
+    tasks = [
+        "Take a 5-minute mindful breathing break",
+        "Write down 3 things you're grateful for",
+        "Go for a short walk outdoors",
+        "Reach out to a friend or family member",
+        "Reflect on a positive moment from today"
+    ]
+    return render_template('daily_tasks.html', tasks=tasks)
 
 def calculate_score(responses):
     score = 0
