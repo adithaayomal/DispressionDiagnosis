@@ -103,6 +103,7 @@ def login():
 @login_required
 def logout():
     logout_user()
+    session.pop('_flashes', None)  # Clear any previous flash messages
     flash('Successfully logged out!', 'success')
     return redirect(url_for('login'))
 
