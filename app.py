@@ -198,8 +198,13 @@ def next_question():
             chat_msg = ChatMessage(user_id=current_user.id, sender='bot', message=bot_msg)
             db.session.add(chat_msg)
             db.session.commit()
-            # Add a flag to trigger the daily task dialog on the frontend
-            return jsonify({"response": bot_msg, "finished": True, "show_daily_task_prompt": True})
+            # Only show daily task prompt if user answered 'yes' to at least one question
+            show_daily_task_prompt = score > 0
+            return jsonify({
+                "response": bot_msg,
+                "finished": True,
+                "show_daily_task_prompt": show_daily_task_prompt
+            })
     else:
         # After assessment, allow free chat
         user_message = user_answer
