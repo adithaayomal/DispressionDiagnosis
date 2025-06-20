@@ -307,37 +307,50 @@ def get_diagnosis(score, user_responses):
 
     # Map questions to categories
     depression_qs = [0, 1, 2, 3]  # sadness, loss of interest, sleep, energy
-    anxiety_qs = [4]               # concentration
-    stress_qs = [5]                # self-harm/suicide
+    anxiety_qs = [4]              # concentration
+    stress_qs = [2, 3, 5]         # sleep, fatigue, self-harm (stress indicator)
 
-    depression_score = sum([answers[i].lower() in ['yes', 'y', 'yeah', 'true'] for i in depression_qs if i < len(answers)])
-    anxiety_score = sum([answers[i].lower() in ['yes', 'y', 'yeah', 'true'] for i in anxiety_qs if i < len(answers)])
-    stress_score = sum([answers[i].lower() in ['yes', 'y', 'yeah', 'true'] for i in stress_qs if i < len(answers)])
+    # Score calculation
+    def count_positive(indices):
+        return sum(
+            answers[i].lower() in ['yes', 'y', 'yeah', 'true']
+            for i in indices if i < len(answers)
+        )
 
-    feedback = "Thank you for sharing your responses. "
+    depression_score = count_positive(depression_qs)
+    anxiety_score = count_positive(anxiety_qs)
+    stress_score = count_positive(stress_qs)
+
+    feedback = "Thank you for completing the assessment. "
     suggestions = []
 
     if depression_score >= 3:
         suggestions.append(
-            "It seems you may be experiencing some emotional challenges that can affect your mood and daily life. "
-            "Consider reaching out to a counselor or someone you trust to talk about how you're feeling."
+            "You may be experiencing symptoms of depression, such as sadness, low energy, and loss of interest."
+            " Talking to a mental health professional could help you understand and manage these feelings."
         )
     if anxiety_score >= 1:
         suggestions.append(
-            "Some of your answers suggest you might be feeling worried or having trouble concentrating. "
-            "Practicing relaxation techniques or speaking with a mental health professional could be helpful."
+            "You reported difficulties with concentration, which may indicate anxiety."
+            " Mindfulness practices or speaking with a counselor may be beneficial."
         )
-    if stress_score >= 1:
+    if stress_score >= 2:
         suggestions.append(
-            "Your responses indicate you might be under significant stress. "
-            "Remember, support is available and talking to someone can make a difference."
-        )
-    if not suggestions:
-        suggestions.append(
-            "Keep taking care of your mental health and remember that support is always available if you need it."
+            "Your responses suggest you might be under significant stress."
+            " Managing sleep, energy levels, and emotional strain is important. Consider lifestyle adjustments or seeking guidance."
         )
 
+    if not suggestions:
+        suggestions.append("Your answers do not indicate strong signs of depression, anxiety, or stress. Stay mindful and take care of your mental well-being.")
+
     feedback += " ".join(suggestions)
+
+    # Add emergency support for self-harm thoughts
+    if answers[5].lower() in ['yes', 'y', 'yeah', 'true']:
+        feedback += (
+            "\n\nIf you're having thoughts of self-harm, please reach out for immediate support."
+            " You can contact a crisis line, speak with someone you trust, or reach out to mental health professionals."
+        )
 
     # Add resources if any score is high
     if depression_score >= 3 or anxiety_score >= 1 or stress_score >= 1:
