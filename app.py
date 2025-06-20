@@ -161,11 +161,22 @@ def next_question():
     valid_answers = ['yes', 'y', 'yeah', 'true', 'no', 'n', 'nope', 'false']
     if current_question < len(QUESTIONS):
         if user_answer.lower() not in valid_answers:
+            # Save invalid user message
+            chat_msg = ChatMessage(user_id=current_user.id, sender='user', message=user_answer)
+            db.session.add(chat_msg)
+            db.session.commit()
+            bot_msg = "Invalid answer. Please type 'yes' or 'no' to answer questions."
+            chat_msg = ChatMessage(user_id=current_user.id, sender='bot', message=bot_msg)
+            db.session.add(chat_msg)
+            db.session.commit()
             return jsonify({
-                "response": "Invalid answer. Please type 'yes' or 'no' to answer questions.",
+                "response": bot_msg,
                 "finished": False
             })
         # Save the user's answer
+        chat_msg = ChatMessage(user_id=current_user.id, sender='user', message=user_answer)
+        db.session.add(chat_msg)
+        db.session.commit()
         responses[f'question_{current_question}'] = user_answer
         session['responses'] = responses
         # Move to next question
@@ -173,22 +184,37 @@ def next_question():
         session['current_question'] = next_question_idx
         if next_question_idx < len(QUESTIONS):
             next_q = QUESTIONS[next_question_idx]
+            chat_msg = ChatMessage(user_id=current_user.id, sender='bot', message=next_q)
+            db.session.add(chat_msg)
+            db.session.commit()
             return jsonify({"response": next_q, "finished": False})
         else:
             # Assessment finished, calculate result
             score, yes_responses = calculate_score(session['responses'])
             diagnosis = get_diagnosis((score, yes_responses), session['responses'])
             session['assessment_finished'] = True
-            return jsonify({"response": f"Assessment complete!\n\n{diagnosis}\n\nYou can now chat with the bot and ask any question.", "finished": True})
+            bot_msg = f"Assessment complete!\n\n{diagnosis}\n\nYou can now chat with the bot and ask any question."
+            chat_msg = ChatMessage(user_id=current_user.id, sender='bot', message=bot_msg)
+            db.session.add(chat_msg)
+            db.session.commit()
+            return jsonify({"response": bot_msg, "finished": True})
     else:
         # After assessment, allow free chat
         user_message = user_answer
         bot_response = None
+        # Save user message
+        chat_msg = ChatMessage(user_id=current_user.id, sender='user', message=user_message)
+        db.session.add(chat_msg)
+        db.session.commit()
         try:
             bot_response = get_response(user_message)
         except Exception as e:
             print('Error in get_response:', e)
-            return jsonify({'response': f'Internal error: {str(e)}', 'finished': False}), 500
+            bot_msg = f'Internal error: {str(e)}'
+            chat_msg = ChatMessage(user_id=current_user.id, sender='bot', message=bot_msg)
+            db.session.add(chat_msg)
+            db.session.commit()
+            return jsonify({'response': bot_msg, 'finished': False}), 500
         if "I'm not sure how to respond" in bot_response:
             # Use Wikipedia API as fallback
             import requests
@@ -213,7 +239,11 @@ def next_question():
                     bot_response = "Sorry, I couldn't find a mental health–related answer to your question."
             except Exception as e:
                 print('Fallback error:', e)
-                bot_response = f"Sorry, I couldn't search at the moment. Please check your internet connection or try again later."
+                bot_response = f"Sorry, I couldn't search at the moment. ({str(e)})"
+        # Save bot response
+        chat_msg = ChatMessage(user_id=current_user.id, sender='bot', message=bot_response)
+        db.session.add(chat_msg)
+        db.session.commit()
         return jsonify({"response": bot_response, "finished": False})
 
 @app.route('/daily_tasks')
@@ -227,6 +257,33 @@ def daily_tasks():
         "Reflect on a positive moment from today"
     ]
     return render_template('daily_tasks.html', tasks=tasks)
+
+@app.route('/chat_history')
+@login_required
+def chat_history():
+    messages = ChatMessage.query.filter_by(user_id=current_user.id).order_by(ChatMessage.timestamp.asc()).all()
+    return render_template('chat_history.html', messages=messages)
+
+@app.route('/chat_history_api')
+@login_required
+def chat_history_api():
+    messages = ChatMessage.query.filter_by(user_id=current_user.id).order_by(ChatMessage.timestamp.asc()).all()
+    # If no chat history, insert the two initial bot messages
+    if not messages:
+        initial_msgs = [
+            "Hello! I'll ask you a few questions to assess your mental health.",
+            "Do you feel sad or empty most of the day?"
+        ]
+        for msg in initial_msgs:
+            chat_msg = ChatMessage(user_id=current_user.id, sender='bot', message=msg)
+            db.session.add(chat_msg)
+        db.session.commit()
+        messages = ChatMessage.query.filter_by(user_id=current_user.id).order_by(ChatMessage.timestamp.asc()).all()
+    return jsonify({
+        'messages': [
+            {'sender': m.sender, 'message': m.message, 'timestamp': m.timestamp.strftime('%Y-%m-%d %H:%M')} for m in messages
+        ]
+    })
 
 def calculate_score(responses):
     score = 0
@@ -354,6 +411,16 @@ def chatbot_response():
     message = request.json['message']
     res = get_response(message)
     return jsonify({"response": res})
+
+# Chat message model
+class ChatMessage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    sender = db.Column(db.String(10), nullable=False)  # 'user' or 'bot'
+    message = db.Column(db.Text, nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    user = db.relationship('User', backref=db.backref('chat_messages', lazy=True))
 
 if __name__ == '__main__':
     with app.app_context():
