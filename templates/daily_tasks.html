@@ -20,6 +20,7 @@
             padding: 2.5rem 2.5rem 2rem 2.5rem;
             text-align: center;
             align-items: flex-start;
+            position: relative;
         }
         .tasks-container h2 {
             color: #E2BDA7;
@@ -218,16 +219,73 @@
             border-radius: 24px;
         }
         .fixed-complete-btn {
-            position: fixed;
+            position: absolute;
             left: 50%;
-            bottom: 150px; /* Not flush with the very bottom, visually suitable */
+            bottom: 40px;
             transform: translateX(-50%);
-            z-index: 100;
+            z-index: 10;
             width: 320px;
             max-width: 90vw;
             box-shadow: 0 2px 8px rgba(76,175,80,0.13);
-            /* Add a little border-radius for comfort */
             border-radius: 18px;
+        }
+        .ambient-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            margin-top: 1.5rem;
+            position: relative;
+        }
+        .ambient-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #f07264;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.5px;
+        }
+        .ambient-desc {
+            font-size: 1.08rem;
+            color: #444;
+            margin-bottom: 1.2rem;
+            text-align: center;
+        }
+        .ambient-btns {
+            display: flex;
+            gap: 1.2rem;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            width: 100%;
+        }
+        .ambient-btn {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: #AEE1F9;
+            border: none;
+            box-shadow: 0 2px 8px rgba(174,225,249,0.13);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: background 0.2s;
+        }
+        .ambient-btn:hover {
+            background: #E2BDA7;
+        }
+        #ambient-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        audio#ambient-audio {
+            display: none;
         }
     </style>
 </head>
@@ -440,11 +498,138 @@
                             // Remove Mindful Click section and h2
                             mindfulDiv.remove();
                             h2.remove();
-                            // Optionally, show a message or next task here
-                            const taskResult = document.getElementById('task-result');
-                            if (taskResult) {
-                                taskResult.textContent = 'wait for the next task tomorrow!';
-                                taskResult.style.color = '#388E3C';
+                            // Show Day 3 task
+                            const mainContent = document.querySelector('.main-tasks-content');
+                            if (mainContent) {
+                                // Remove any previous ambient section or h2
+                                const oldAmbient = mainContent.querySelectorAll('.ambient-section');
+                                oldAmbient.forEach(el => el.remove());
+                                const oldH2 = mainContent.querySelector('h2');
+                                if (oldH2) oldH2.remove();
+                                // Add the title
+                                const h2 = document.createElement('h2');
+                                h2.textContent = 'Your Daily Task';
+                                h2.style.color = '#E2BDA7';
+                                h2.style.marginBottom = '1.5rem';
+                                h2.style.fontSize = '2rem';
+                                h2.style.fontWeight = '700';
+                                h2.style.letterSpacing = '1px';
+                                mainContent.prepend(h2);
+                                // Ambient Sound Experience content
+                                const ambientDiv = document.createElement('div');
+                                ambientDiv.className = 'ambient-section';
+                                ambientDiv.innerHTML = `
+                                    <div class="ambient-title">Ambient Sound Experience</div>
+                                    <div class="ambient-desc">Choose an environment. The background and sound will change. Relax and enjoy the ambiance for a few minutes.</div>
+                                    <div class="ambient-btns" style="display:flex;justify-content:center;gap:1.2rem;margin-bottom:1.5rem;width:100%;">
+                                        <button class="ambient-btn" data-env="rain"><span style='font-size:2rem;'>🌧️</span><span style='font-size:0.95rem;'>Rain</span></button>
+                                        <button class="ambient-btn" data-env="ocean"><span style='font-size:2rem;'>🌊</span><span style='font-size:0.95rem;'>Ocean</span></button>
+                                        <button class="ambient-btn" data-env="forest"><span style='font-size:2rem;'>🌲</span><span style='font-size:0.95rem;'>Forest</span></button>
+                                        <button class="ambient-btn" data-env="wind"><span style='font-size:2rem;'>💨</span><span style='font-size:0.95rem;'>Wind</span></button>
+                                    </div>
+                                    <div id="ambient-particles"></div>
+                                    <audio id="ambient-audio" loop></audio>
+                                `;
+                                h2.insertAdjacentElement('afterend', ambientDiv);
+                                // Insert the complete button as a sibling to ambientDiv, so it is absolutely positioned at the bottom
+                                const completeAmbientBtnEl = document.createElement('button');
+                                completeAmbientBtnEl.id = 'complete-ambient-btn';
+                                completeAmbientBtnEl.className = 'next-btn fixed-complete-btn';
+                                completeAmbientBtnEl.textContent = 'I completed the task';
+                                completeAmbientBtnEl.style.background = '#4CAF50';
+                                completeAmbientBtnEl.style.color = '#fff';
+                                ambientDiv.insertAdjacentElement('afterend', completeAmbientBtnEl);
+                                // JS: handle ambient button clicks
+                                const audio = ambientDiv.querySelector('#ambient-audio');
+                                const particlesDiv = ambientDiv.querySelector('#ambient-particles');
+                                const envs = {
+                                    rain: {
+                                        bg: 'linear-gradient(120deg,#AEE1F9 60%,#E2BDA7 100%)',
+                                        audio: '/static/music/rain.wav',
+                                        icon: '🌧️',
+                                        particle: 'raindrop'
+                                    },
+                                    ocean: {
+                                        bg: 'linear-gradient(120deg,#B3E5FC 60%,#E2BDA7 100%)',
+                                        audio: '/static/music/ocean.wav',
+                                        icon: '🌊',
+                                        particle: 'bubble'
+                                    },
+                                    forest: {
+                                        bg: 'linear-gradient(120deg,#C8E6C9 60%,#E2BDA7 100%)',
+                                        audio: '/static/music/forest.wav',
+                                        icon: '🌲',
+                                        particle: 'leaf'
+                                    },
+                                    wind: {
+                                        bg: 'linear-gradient(120deg,#D1C4E9 60%,#E2BDA7 100%)',
+                                        audio: '/static/music/wind.wav',
+                                        icon: '💨',
+                                        particle: 'wind'
+                                    }
+                                };
+                                let particleInterval;
+                                ambientDiv.querySelectorAll('.ambient-btn').forEach(btn => {
+                                    btn.onclick = function() {
+                                        const env = btn.getAttribute('data-env');
+                                        // Play audio
+                                        audio.src = envs[env].audio;
+                                        audio.play();
+                                        // Remove old particles
+                                        particlesDiv.innerHTML = '';
+                                        clearInterval(particleInterval);
+                                        // Add floating particles
+                                        particleInterval = setInterval(() => {
+                                            const p = document.createElement('span');
+                                            p.style.position = 'absolute';
+                                            p.style.left = Math.random()*90+5+'%';
+                                            p.style.top = '-30px';
+                                            p.style.fontSize = (Math.random()*1.2+1.2)+'rem';
+                                            p.style.opacity = 0.7;
+                                            p.textContent = envs[env].icon;
+                                            particlesDiv.appendChild(p);
+                                            // Animate
+                                            const duration = Math.random()*2+2.5;
+                                            p.animate([
+                                                { transform: 'translateY(0)', opacity: 0.7 },
+                                                { transform: 'translateY(600px)', opacity: 0.1 }
+                                            ], { duration: duration*1000, easing: 'linear' });
+                                            setTimeout(()=>p.remove(), duration*1000);
+                                        }, 500);
+                                    };
+                                });
+                                // Complete button for Day 3
+                                const completeAmbientBtn = document.getElementById('complete-ambient-btn');
+                                if (completeAmbientBtn) {
+                                    completeAmbientBtn.onclick = function() {
+                                        // Mark Day 3 as green (completed)
+                                        const weekDays = document.querySelectorAll('.week-day-vertical .day-circle');
+                                        if (weekDays.length > 2) {
+                                            const day3 = weekDays[2];
+                                            day3.innerHTML = tickSVG;
+                                            day3.style.background = '#4CAF50';
+                                            day3.style.borderColor = '#388E3C';
+                                            day3.style.display = 'flex';
+                                            day3.style.alignItems = 'center';
+                                            day3.style.justifyContent = 'center';
+                                            day3.style.padding = '0';
+                                        }
+                                        const day3Label = document.querySelectorAll('.week-day-vertical .day-label')[2];
+                                        if (day3Label) {
+                                            day3Label.style.color = '#388E3C';
+                                            day3Label.style.fontWeight = '700';
+                                        }
+                                        // Remove ambient section and h2
+                                        ambientDiv.remove();
+                                        h2.remove();
+                                        // Optionally, show a message or next task here
+                                        const taskResult = document.getElementById('task-result');
+                                        if (taskResult) {
+                                            taskResult.textContent = 'wait for the next task tomorrow!';
+                                            taskResult.style.color = '#388E3C';
+                                        }
+                                    };
+                                }
                             }
                         };
                     }
