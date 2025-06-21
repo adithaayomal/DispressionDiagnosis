@@ -11,7 +11,8 @@
             background-size: cover;
         }
         .tasks-container {
-            max-width: 500px;
+            width: 500px;
+            height: 700px;
             margin-left: 200px;
             background: rgba(255,255,255,0.93);
             border-radius: 32px;
@@ -115,7 +116,6 @@
         .next-btn:hover {
             background: linear-gradient(90deg, #E2BDA7 10%, #f07264 100%);
             color: #f07264;
-            transform: translateY(-2px) scale(1.04);
         }
         .task-result {
             margin-top: 1.2rem;
@@ -189,6 +189,46 @@
             flex-direction: column;
             align-items: center;
         }
+        .mindful-click-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            margin-top: 1.5rem;
+        }
+        .mindful-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #4A90E2;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.5px;
+        }
+        .mindful-desc {
+            font-size: 1.08rem;
+            color: #444;
+            margin-bottom: 1.2rem;
+            text-align: center;
+        }
+        #mindful-click-game {
+            width: 260px;
+            height: 260px;
+            position: relative;
+            margin: 0 auto;
+            background: rgba(74,144,226,0.08);
+            border-radius: 24px;
+        }
+        .fixed-complete-btn {
+            position: fixed;
+            left: 50%;
+            bottom: 150px; /* Not flush with the very bottom, visually suitable */
+            transform: translateX(-50%);
+            z-index: 100;
+            width: 320px;
+            max-width: 90vw;
+            box-shadow: 0 2px 8px rgba(76,175,80,0.13);
+            /* Add a little border-radius for comfort */
+            border-radius: 18px;
+        }
     </style>
 </head>
 <body>
@@ -210,7 +250,7 @@
             <div class="week-days-vertical" style="align-items: flex-start; gap: 2.1rem;">
                 <div class="week-title">Complete the tasks for 7 days and you <br>should come back to the Assistant.</div>
                 <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">1</span><span class="day-label"><b>Day 1</b><br> Breathe with the Circle </span></div>
-                <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">2</span><span class="day-label"><b>Day 2</b><br> Breathe with the Circle </span></div>
+                <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">2</span><span class="day-label"><b>Day 2</b><br> mindful-click-game </span></div>
                 <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">3</span><span class="day-label"><b>Day 3</b><br> Breathe with the Circle </span></div>
                 <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">4</span><span class="day-label"><b>Day 4</b><br> Breathe with the Circle </span></div>
                 <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">5</span><span class="day-label"><b>Day 5</b><br> Breathe with the Circle </span></div>
@@ -220,7 +260,7 @@
         </aside>
         <div class="tasks-container">
             <h2>Your Daily Task</h2>
-            <h3 id="task-subtitle" style="color:#f07264; font-size:1.18rem; font-weight:600; margin-bottom:1.2rem; letter-spacing:0.5px;">Take a 5-minute mindful breathing break</h3>
+            
             <main class="main-tasks-content">
                 <div class="breathing-section" style="background:none;box-shadow:none;padding:0;">
                     <div class="breathing-title">Breathe with the Circle</div>
@@ -230,7 +270,7 @@
                         <div id="breathing-instruction" class="breathing-instruction">Inhale</div>
                     </div>
                 </div>
-                <button id="complete-task-btn" class="next-btn" style="margin-top:2rem; background:#4CAF50; color:#fff;">I completed the task</button>
+                <button id="complete-task-btn" class="next-btn fixed-complete-btn" style="background:#4CAF50; color:#fff;">I completed the task</button>
                 <div class="next-section" style="display:none;"></div>
                 <div id="task-result" class="task-result"></div>
             </main>
@@ -318,7 +358,17 @@
         const completeBtn = document.getElementById('complete-task-btn');
         if (completeBtn) {
             completeBtn.onclick = function() {
-                // Find Day 1 circle (first .day-circle in .week-day-vertical)
+                // Remove/hide breathing section and button
+                const breathingSection = document.querySelector('.breathing-section');
+                if (breathingSection) breathingSection.remove();
+                completeBtn.remove();
+                // Remove title if present
+                const h2 = document.querySelector('.tasks-container h2');
+                if (h2) h2.remove();
+                // Remove subtitle if present
+                const subtitle = document.getElementById('task-subtitle');
+                if (subtitle) subtitle.remove();
+                // Mark Day 1 as green (completed)
                 const weekDays = document.querySelectorAll('.week-day-vertical .day-circle');
                 if (weekDays.length > 0) {
                     const day1 = weekDays[0];
@@ -330,15 +380,137 @@
                     day1.style.justifyContent = 'center';
                     day1.style.padding = '0';
                 }
-                // Make Day 1 title and subtitle green
                 const day1Label = document.querySelectorAll('.week-day-vertical .day-label')[0];
                 if (day1Label) {
                     day1Label.style.color = '#388E3C';
                     day1Label.style.fontWeight = '700';
                 }
+                // Load Mindful Click task
+                const mainContent = document.querySelector('.main-tasks-content');
+                if (mainContent) {
+                    // Remove any previous Mindful Click section or h2 in mainContent
+                    const oldMindful = mainContent.querySelectorAll('.mindful-click-section');
+                    oldMindful.forEach(el => el.remove());
+                    const oldH2 = mainContent.querySelector('h2');
+                    if (oldH2) oldH2.remove();
+                    // Add the title
+                    const h2 = document.createElement('h2');
+                    h2.textContent = 'Your Daily Task';
+                    h2.className = '';
+                    h2.style.color = '#E2BDA7';
+                    h2.style.marginBottom = '1.5rem';
+                    h2.style.fontSize = '2rem';
+                    h2.style.fontWeight = '700';
+                    h2.style.letterSpacing = '1px';
+                    // Insert at the top of mainContent
+                    mainContent.prepend(h2);
+                    // Mindful Click content
+                    const mindfulDiv = document.createElement('div');
+                    mindfulDiv.className = 'mindful-click-section';
+                    mindfulDiv.innerHTML = `
+                        <div class="mindful-title" style="font-size:1.35rem;font-weight:700;color:#f07264;margin-bottom:0.5rem;letter-spacing:0.5px;">Mindful Click</div>
+                        <div class="mindful-desc" style="font-size:1.08rem;color:#444;margin-bottom:1.2rem;text-align:center;">A floating shape will move gently across the screen. Click it slowly and gently—no rushing. Each click will bring a calming animation. Try to stay present and relaxed.</div>
+                        <div id="mindful-click-game" style="width:260px;height:260px;position:relative;margin:0 auto;background:rgba(74,144,226,0.08);border-radius:24px;"></div>
+                        <button id="complete-mindful-btn" class="next-btn fixed-complete-btn" style="background:#4CAF50; color:#fff;">I completed the task</button>
+                    `;
+                    // Insert after h2
+                    h2.insertAdjacentElement('afterend', mindfulDiv);
+                    startMindfulClickGame();
+                    // Add event for new complete button
+                    const completeMindfulBtn = document.getElementById('complete-mindful-btn');
+                    if (completeMindfulBtn) {
+                        completeMindfulBtn.onclick = function() {
+                            // Mark Day 2 as green (completed)
+                            const weekDays = document.querySelectorAll('.week-day-vertical .day-circle');
+                            if (weekDays.length > 1) {
+                                const day2 = weekDays[1];
+                                day2.innerHTML = tickSVG;
+                                day2.style.background = '#4CAF50';
+                                day2.style.borderColor = '#388E3C';
+                                day2.style.display = 'flex';
+                                day2.style.alignItems = 'center';
+                                day2.style.justifyContent = 'center';
+                                day2.style.padding = '0';
+                            }
+                            const day2Label = document.querySelectorAll('.week-day-vertical .day-label')[1];
+                            if (day2Label) {
+                                day2Label.style.color = '#388E3C';
+                                day2Label.style.fontWeight = '700';
+                            }
+                            // Remove Mindful Click section and h2
+                            mindfulDiv.remove();
+                            h2.remove();
+                            // Optionally, show a message or next task here
+                            const taskResult = document.getElementById('task-result');
+                            if (taskResult) {
+                                taskResult.textContent = 'wait for the next task tomorrow!';
+                                taskResult.style.color = '#388E3C';
+                            }
+                        };
+                    }
+                }
             };
         }
     });
+
+    function startMindfulClickGame() {
+        const gameArea = document.getElementById('mindful-click-game');
+        if (!gameArea) return;
+        // Remove any previous shape
+        gameArea.innerHTML = '';
+        // Create the floating shape (circle)
+        const shape = document.createElement('div');
+        shape.style.width = '54px';
+        shape.style.height = '54px';
+        shape.style.borderRadius = '50%';
+        shape.style.background = 'linear-gradient(135deg,#AEE1F9 60%,#E2BDA7 100%)';
+        shape.style.position = 'absolute';
+        shape.style.boxShadow = '0 4px 24px 0 rgba(74,144,226,0.13)';
+        shape.style.cursor = 'pointer';
+        shape.style.transition = 'opacity 0.6s cubic-bezier(.4,0,.2,1), transform 0.6s cubic-bezier(.4,0,.2,1)';
+        // Random start position
+        let pos = randomPosition();
+        shape.style.left = pos.x + 'px';
+        shape.style.top = pos.y + 'px';
+        // Animate floating
+        let angle = Math.random() * 2 * Math.PI;
+        let radius = 60 + Math.random() * 40;
+        let t = 0;
+        let animId;
+        function float() {
+            t += 0.012;
+            const cx = 100 + Math.cos(angle + t) * radius;
+            const cy = 100 + Math.sin(angle + t/1.5) * radius;
+            shape.style.left = cx + 'px';
+            shape.style.top = cy + 'px';
+            animId = requestAnimationFrame(float);
+        }
+        float();
+        // Click handler
+        shape.onclick = function() {
+            cancelAnimationFrame(animId);
+            // Calming animation: fade + scale + soft glow
+            shape.style.boxShadow = '0 0 32px 12px #AEE1F9, 0 0 0 0 #fff';
+            shape.style.opacity = '0';
+            shape.style.transform = 'scale(1.3)';
+            // Optional: play soft chime
+            // setTimeout(() => { /* play sound here if desired */ }, 100);
+            setTimeout(() => {
+                // Remove and spawn new shape
+                shape.remove();
+                startMindfulClickGame();
+            }, 600);
+        };
+        gameArea.appendChild(shape);
+    }
+    function randomPosition() {
+        // Keep shape within bounds (game area 260x260, shape 54x54)
+        const max = 206; // 260-54
+        return {
+            x: Math.floor(Math.random() * max),
+            y: Math.floor(Math.random() * max)
+        };
+    }
     </script>
 </body>
 </html>
