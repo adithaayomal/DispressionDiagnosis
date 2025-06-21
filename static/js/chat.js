@@ -58,3 +58,9 @@ function hideTypingIndicator() {
 document.addEventListener('DOMContentLoaded', () => {
     sendMessage('start'); // This will trigger the initial greeting
 });
+
+fetch('/mandala_coloring_therapy')
+    .then(res => res.text())
+    .then(html => {
+        mainContent.innerHTML = html;
+    });

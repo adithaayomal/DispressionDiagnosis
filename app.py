@@ -450,6 +450,11 @@ class ChatMessage(db.Model):
 
     user = db.relationship('User', backref=db.backref('chat_messages', lazy=True))
 
+@app.route('/mandala_coloring_therapy')
+@login_required
+def mandala_coloring_therapy():
+    return render_template('mandala_coloring_therapy.html')
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()

@@ -786,31 +786,14 @@
         completeYogaBtn.style.marginTop = '';
         yogaDiv.appendChild(completeYogaBtn);
         completeYogaBtn.onclick = function() {
-            // Mark Day 4 as green (completed)
-            const weekDays = document.querySelectorAll('.week-day-vertical .day-circle');
-            if (weekDays.length > 3) {
-                const day4 = weekDays[3];
-                day4.innerHTML = tickSVG;
-                day4.style.background = '#4CAF50';
-                day4.style.borderColor = '#388E3C';
-                day4.style.display = 'flex';
-                day4.style.alignItems = 'center';
-                day4.style.justifyContent = 'center';
-                day4.style.padding = '0';
-            }
-            const day4Label = document.querySelectorAll('.week-day-vertical .day-label')[3];
-            if (day4Label) {
-                day4Label.style.color = '#388E3C';
-                day4Label.style.fontWeight = '700';
-            }
-            yogaDiv.remove();
-            h2.remove();
-            // Show wait message for next task
-            const taskResult = document.getElementById('task-result');
-            if (taskResult) {
-                taskResult.textContent = 'wait for the next task tomorrow!';
-                taskResult.style.color = '#388E3C';
-            }
+            // Remove/hide yoga section and button
+            const yogaSection = document.querySelector('.yoga-section');
+            if (yogaSection) yogaSection.remove();
+            completeYogaBtn.remove();
+            // Optionally update progress UI here
+
+            // Show Mandala Coloring Therapy as the next task
+            showMandalaTask();
         };
         // Insert into main content
         h2.insertAdjacentElement('afterend', yogaDiv);
@@ -1239,6 +1222,21 @@
         });
     }
     // --- End Day 5 ---
+    function showMandalaTask() {
+        const mainContent = document.querySelector('.main-tasks-content');
+        if (!mainContent) return;
+        // Remove previous task content
+        mainContent.innerHTML = '';
+        // Optionally, add a loading indicator here
+        fetch('/static/mandala_coloring_therapy.html')
+            .then(res => res.text())
+            .then(html => {
+                mainContent.innerHTML = html;
+            });
+    }
+
+    // Example: Call showMandalaTask() when a button is clicked
+    // <button onclick="showMandalaTask()" class="next-btn">Start Mandala Coloring Therapy</button>
     </script>
 </body>
 </html>
