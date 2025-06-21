@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request, render_template, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime 
+from datetime import datetime
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.feature_extraction.text import CountVectorizer
@@ -103,7 +103,6 @@ def login():
 @login_required
 def logout():
     logout_user()
-    session.pop('_flashes', None)  # Clear any previous flash messages
     flash('Successfully logged out!', 'success')
     return redirect(url_for('login'))
 
@@ -115,105 +114,6 @@ QUESTIONS = [
     "Do you feel tired or have little energy?",
     "Do you have difficulty concentrating?",
     "Do you have thoughts of self-harm or suicide?"
-]
-
-DEPRESSION_TASKS = [
-    "Make your bed and tidy your immediate space",
-    "Take a 5-10 minute walk outside",
-    "Write down 1-2 things you are grateful for",
-    "Practice 5 minutes of deep breathing or mindfulness meditation",
-    "Call or message a supportive friend or family member",
-    "Spend 10 minutes doing a hobby or enjoyable activity",
-    "Prepare and eat a healthy meal mindfully",
-    "Set a small achievable goal for the day (e.g., study a lesson) and complete it",
-    "Try gentle stretching or yoga for 10 minutes",
-    "Write a short journal entry about your feelings",
-    "Practice progressive muscle relaxation for 5-10 minutes",
-    "Plan a simple social activity or virtual meet-up",
-    "Spend time outdoors in nature (park, garden)",
-    "Reflect on one positive experience from the week",
-    "Declutter one small space (drawer, shelf)",
-    "Listen to uplifting music or a podcast",
-    "Try a guided meditation or relaxation app for 5-10 minutes",
-    "Write a letter or message to express feelings (even if unsent)",
-    "Practice mindful eating during one meal",
-    "Do a small creative activity (drawing, crafts, journaling)",
-    "Take a longer walk or gentle exercise (15-20 minutes)",
-    "Reach out to a support group or online community",
-    "Try a new healthy recipe or meal",
-    "Reflect on your strengths or qualities",
-    "Practice “holding space” — allow yourself to feel emotions without judgment",
-    "Break a larger task into small steps and complete one step",
-    "Take a relaxing bath or do something comforting",
-    "Plan your goals for the upcoming week",
-    "Spend quality time with a loved one",
-    "Review your mood journal or notes from the month"
-]
-
-ANXIETY_TASKS = [
-    "Start your day with 5 minutes of mindful breathing",
-    "Write down your worries and set a 15-minute “worry time” later",
-    "Take a 10-minute walk focusing on your surroundings",
-    "Practice progressive muscle relaxation for 10 minutes",
-    "Avoid caffeine or reduce intake for the day",
-    "Try a 15-minute yoga or gentle stretching session",
-    "Use a guided meditation app for 5-10 minutes",
-    "Make a prioritized to-do list and tackle one small task",
-    "Practice mindful eating during one meal",
-    "Reach out to a trusted friend or family member",
-    "Listen to calming music or nature sounds for 10 minutes",
-    "Write down three things you can control today",
-    "Do a grounding exercise (e.g., 5-4-3-2-1 sensory technique)",
-    "Take a break from screens and social media for an hour",
-    "Practice gentle yoga",
-    "Try aromatherapy with calming scents (lavender, chamomile)",
-    "Engage in a creative activity (drawing, journaling)",
-    "Practice deep breathing exercises during breaks",
-    "Take a nature walk focusing on sensory details",
-    "Write a positive affirmation and repeat it throughout the day",
-    "Try a new relaxation technique (e.g., body scan meditation)",
-    "Limit multitasking; focus on one thing at a time",
-    "Reach out to a support group or therapist",
-    "Practice “holding space” for your emotions without judgment",
-    "Plan a fun or rewarding activity for the weekend",
-    "Take a warm bath or shower to relax muscles",
-    "Write down three things you accomplished this week",
-    "Practice mindful walking or movement for 10 minutes",
-    "Avoid procrastination by breaking tasks into small steps",
-    "Reflect on progress and set gentle goals for next month"
-]
-
-STRESS_TASKS = [
-    "Identify one controllable stressor and brainstorm a small change",
-    "Take 10 minutes to practice deep breathing exercises",
-    "Write a to-do list prioritizing important tasks",
-    "Take a short walk or do light stretching",
-    "Practice saying “no” to one non-essential request",
-    "Spend 15 minutes doing something you enjoy",
-    "Practice mindfulness meditation for 5-10 minutes",
-    "Delegate one task to someone else",
-    "Avoid multitasking; focus on one task at a time",
-    "Take a break from screens and social media for an hour",
-    "Connect face-to-face with a supportive person",
-    "Practice progressive muscle relaxation",
-    "Reflect on your accomplishments this week",
-    "Plan your week ahead with realistic goals",
-    "Try a yoga or gentle movement class",
-    "Practice mindful eating during one meal",
-    "Write down three things you are grateful for",
-    "Take a relaxing bath or shower",
-    "Practice a grounding exercise (5-4-3-2-1 technique)",	
-    "Limit caffeine and sugar intake for the day",
-    "Spend time outdoors in nature",
-    "Listen to calming music or nature sounds",
-    "Break a large project into small steps",
-    "Practice “holding space” for your emotions",
-    "Take a nap or rest when feeling overwhelmed",
-    "Connect with a friend or family member",
-    "Reflect on positive moments from the day",
-    "Plan a fun or relaxing weekend activity",
-    "Practice gentle stretching or yoga",
-    "Review your stress management techniques and adjust as needed"
 ]
 
 @app.route('/')
@@ -293,41 +193,24 @@ def next_question():
             score, yes_responses = calculate_score(session['responses'])
             diagnosis = get_diagnosis((score, yes_responses), session['responses'])
             session['assessment_finished'] = True
-
-            # Use the same indices as get_diagnosis for consistency
-            answers = list(session['responses'].values())
-            depression_qs = [0, 1, 2, 3, 4, 5]
-            anxiety_qs = [2, 3, 4]
-            stress_qs = [0, 2, 3, 4]
-
-            def count_positive(indices):
-                return sum(
-                    answers[i].lower() in ['yes', 'y', 'yeah', 'true']
-                    for i in indices if i < len(answers)
-                )
-            depression_score = count_positive(depression_qs)
-            anxiety_score = count_positive(anxiety_qs)
-            stress_score = count_positive(stress_qs)
-
-            # Assign category: depression > anxiety > stress
-            user_category = None
-            if depression_score >= 3:
-                user_category = 'depression'
-            elif anxiety_score >= 1:
-                user_category = 'anxiety'
-            elif stress_score >= 2:
-                user_category = 'stress'
-            session['user_category'] = user_category
-
-            bot_msg = f"Assessment complete!\n\n{diagnosis}\n\nYou can now chat with the bot and ask any question."
-            chat_msg = ChatMessage(user_id=current_user.id, sender='bot', message=bot_msg)
-            db.session.add(chat_msg)
+            # Send assessment complete message
+            msg1 = f"Assessment complete!\n\n{diagnosis}"
+            # Send daily tasks message with clickable link
+            msg2 = (
+                'You have daily tasks to complete.<br>'
+                '<a href="/daily_tasks" style="color:#2563eb;text-decoration:underline;font-weight:500;">Click here to view your daily tasks</a>.'
+            )
+            # Send chat open message
+            msg3 = "You can now chat with the bot and ask any question."
+            for m in [msg1, msg2, msg3]:
+                chat_msg = ChatMessage(user_id=current_user.id, sender='bot', message=m)
+                db.session.add(chat_msg)
             db.session.commit()
-            show_daily_task_prompt = score > 0
+            # Return all 3 messages as a list for separate rendering
             return jsonify({
-                "response": bot_msg,
-                "finished": True,
-                "show_daily_task_prompt": show_daily_task_prompt
+                "responses": [msg1, msg2, msg3],
+                "response_type": "multiple",
+                "finished": True
             })
     else:
         # After assessment, allow free chat
@@ -380,16 +263,21 @@ def next_question():
 @app.route('/daily_tasks')
 @login_required
 def daily_tasks():
-    user_category = session.get('user_category')
-    if user_category == 'depression':
-        tasks = DEPRESSION_TASKS
-    elif user_category == 'anxiety':
-        tasks = ANXIETY_TASKS
-    elif user_category == 'stress':
-        tasks = STRESS_TASKS
-    else:
-        tasks = []
-    return render_template('daily_tasks.html', tasks=tasks, category=user_category)
+    tasks = [
+        "Take a 5-minute mindful breathing break",
+        "Write down 3 things you're grateful for",
+        "Go for a short walk outdoors",
+        "Reach out to a friend or family member",
+        "Reflect on a positive moment from today",
+        (
+            '<b>Breathe with the Circle</b><br>'
+            'Type: Interactive web animation.<br>'
+            'How it Works: A circle expands and contracts, prompting users to inhale/exhale with it.<br>'
+            'Where: <a href="https://www.calm.com/breathe" target="_blank" style="color:#2563eb;text-decoration:underline;">calm.com/breathe</a> or YouTube breathing loops.<br>'
+            'Goal: Slow down heart rate and focus the mind.'
+        )
+    ]
+    return render_template('daily_tasks.html', tasks=tasks)
 
 @app.route('/chat_history')
 @login_required
@@ -439,51 +327,38 @@ def get_diagnosis(score, user_responses):
     answers = list(user_responses.values())
 
     # Map questions to categories
-    depression_qs = [0, 1, 2, 3, 4, 5]  # sadness, loss of interest, sleep, energy
-    anxiety_qs = [2, 3, 4]              # sleep, energy, concentration
-    stress_qs = [0, 2, 3, 4]            # sadness, sleep, energy, concentration
+    depression_qs = [0, 1, 2, 3]  # sadness, loss of interest, sleep, energy
+    anxiety_qs = [4]               # concentration
+    stress_qs = [5]                # self-harm/suicide
 
-    # Score calculation
-    def count_positive(indices):
-        return sum(
-            answers[i].lower() in ['yes', 'y', 'yeah', 'true']
-            for i in indices if i < len(answers)
-        )
+    depression_score = sum([answers[i].lower() in ['yes', 'y', 'yeah', 'true'] for i in depression_qs if i < len(answers)])
+    anxiety_score = sum([answers[i].lower() in ['yes', 'y', 'yeah', 'true'] for i in anxiety_qs if i < len(answers)])
+    stress_score = sum([answers[i].lower() in ['yes', 'y', 'yeah', 'true'] for i in stress_qs if i < len(answers)])
 
-    depression_score = count_positive(depression_qs)
-    anxiety_score = count_positive(anxiety_qs)
-    stress_score = count_positive(stress_qs)
-
-    feedback = "Thank you for completing the assessment. "
+    feedback = "Thank you for sharing your responses. "
     suggestions = []
 
     if depression_score >= 3:
         suggestions.append(
-            "You may be experiencing symptoms of depression, such as sadness, low energy, and loss of interest."
-            " Talking to a mental health professional could help you understand and manage these feelings."
+            "It seems you may be experiencing some emotional challenges that can affect your mood and daily life. "
+            "Consider reaching out to a counselor or someone you trust to talk about how you're feeling."
         )
     if anxiety_score >= 1:
         suggestions.append(
-            "You reported difficulties with concentration, which may indicate anxiety."
-            " Mindfulness practices or speaking with a counselor may be beneficial."
+            "Some of your answers suggest you might be feeling worried or having trouble concentrating. "
+            "Practicing relaxation techniques or speaking with a mental health professional could be helpful."
         )
-    if stress_score >= 2:
+    if stress_score >= 1:
         suggestions.append(
-            "Your responses suggest you might be under significant stress."
-            " Managing sleep, energy levels, and emotional strain is important. Consider lifestyle adjustments or seeking guidance."
+            "Your responses indicate you might be under significant stress. "
+            "Remember, support is available and talking to someone can make a difference."
         )
-
     if not suggestions:
-        suggestions.append("Your answers do not indicate strong signs of depression, anxiety, or stress. Stay mindful and take care of your mental well-being.")
+        suggestions.append(
+            "Keep taking care of your mental health and remember that support is always available if you need it."
+        )
 
     feedback += " ".join(suggestions)
-
-    # Add emergency support for self-harm thoughts
-    if answers[5].lower() in ['yes', 'y', 'yeah', 'true']:
-        feedback += (
-            "\n\nIf you're having thoughts of self-harm, please reach out for immediate support."
-            " You can contact a crisis line, speak with someone you trust, or reach out to mental health professionals."
-        )
 
     # Add resources if any score is high
     if depression_score >= 3 or anxiety_score >= 1 or stress_score >= 1:

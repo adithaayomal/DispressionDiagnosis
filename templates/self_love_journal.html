@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Self-Love Journal</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #d6ecef;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .date-fields {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .date-fields input {
+      width: 80px;
+      padding: 5px;
+      margin: 0 10px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .box {
+      background: #f9f9f9;
+      padding: 15px;
+      border-radius: 10px;
+    }
+
+    .box h3 {
+      margin-top: 0;
+    }
+
+    .box textarea, .box input[type="text"] {
+      width: 100%;
+      padding: 5px;
+      margin-top: 5px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .mood {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .mood span {
+      font-size: 24px;
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    .dear-self {
+      margin-top: 20px;
+    }
+
+    .self-care-list label {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .self-care-list input[type="checkbox"] {
+      margin-left: 10px;
+    }
+
+    @media (max-width: 700px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>SELF-LOVE JOURNAL</h1>
+
+    <div class="date-fields">
+      <label>Date: <input type="text" placeholder="DD"></label>
+      <label>Month: <input type="text" placeholder="MM"></label>
+      <label>Year: <input type="text" placeholder="YYYY"></label>
+    </div>
+
+    <div class="grid">
+      <div class="box">
+        <h3>Things that made Me Happy Today:</h3>
+        <input type="text" placeholder="1.">
+        <input type="text" placeholder="2.">
+        <input type="text" placeholder="3.">
+        <input type="text" placeholder="4.">
+        <input type="text" placeholder="5.">
+      </div>
+
+      <div class="box">
+        <h3>Priorities:</h3>
+        <input type="text" placeholder="•">
+        <input type="text" placeholder="•">
+        <input type="text" placeholder="•">
+        <input type="text" placeholder="•">
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="box self-care-list">
+        <h3>Self-Care List</h3>
+        <label><input type="text" placeholder="•"> <input type="checkbox"></label>
+        <label><input type="text" placeholder="•"> <input type="checkbox"></label>
+        <label><input type="text" placeholder="•"> <input type="checkbox"></label>
+        <label><input type="text" placeholder="•"> <input type="checkbox"></label>
+        <label><input type="text" placeholder="•"> <input type="checkbox"></label>
+        <label><input type="text" placeholder="•"> <input type="checkbox"></label>
+        <label><input type="text" placeholder="•"> <input type="checkbox"></label>
+      </div>
+
+      <div class="box">
+        <h3>My Mood Today:</h3>
+        <div class="mood">
+          <span>😞</span>
+          <span>😟</span>
+          <span>😐</span>
+          <span>😊</span>
+          <span>😁</span>
+        </div>
+
+        <div class="dear-self">
+          <h3>Dear Self:</h3>
+          <textarea rows="6" placeholder="Write something to yourself..."></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
