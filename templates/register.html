@@ -3,6 +3,75 @@
 <head>
     <title>Register - Mental Health Assistant</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .register-container {
+            background: #fff;
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 2.5rem 2rem 2rem 2rem;
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.18);
+        }
+        .register-header h2 {
+            text-align: center;
+            color: #E2BDA7;
+            margin-bottom: 1.5rem;
+            letter-spacing: 1px;
+        }
+        .register-button {
+            width: 100%;
+            padding: 0.85rem 0;
+            background: #E2BDA7;
+            color: #222;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.08rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(226, 189, 167, 0.08);
+            cursor: pointer;
+            transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+            margin-top: 0.5rem;
+        }
+        .register-button:hover, .register-button:focus {
+            background: #d1a98a;
+            color: #222;
+        }
+        .login-link {
+            color: #555;
+            font-size: 0.97rem;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .login-link a {
+            color: #E2BDA7;
+            font-weight: 500;
+        }
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+        .form-group label {
+            color: #222;
+            font-weight: 500;
+        }
+        .form-group input[type="email"],
+        .form-group input[type="password"],
+        .form-group input[type="text"] {
+            background: #f7faff;
+            border: 1px solid #b2bec3;
+            border-radius: 7px;
+            padding: 0.7rem;
+            font-size: 1rem;
+            transition: border 0.2s;
+        }
+        .form-group input[type="email"]:focus,
+        .form-group input[type="password"]:focus,
+        .form-group input[type="text"]:focus {
+            border: 1.5px solid #E2BDA7;
+            outline: none;
+        }
+        .alert-success { display: none; }
+    </style>
 </head>
 <body>
     <div class="register-container">
@@ -12,7 +81,9 @@
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% if category != 'success' %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endif %}
                 {% endfor %}
             {% endif %}
         {% endwith %}

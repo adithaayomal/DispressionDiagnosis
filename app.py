@@ -193,11 +193,25 @@ def next_question():
             score, yes_responses = calculate_score(session['responses'])
             diagnosis = get_diagnosis((score, yes_responses), session['responses'])
             session['assessment_finished'] = True
-            bot_msg = f"Assessment complete!\n\n{diagnosis}\n\nYou can now chat with the bot and ask any question."
-            chat_msg = ChatMessage(user_id=current_user.id, sender='bot', message=bot_msg)
-            db.session.add(chat_msg)
+            # Send assessment complete message
+            msg1 = f"Assessment complete!\n\n{diagnosis}"
+            # Send daily tasks message with clickable link
+            msg2 = (
+                'You have daily tasks to complete.<br>'
+                '<a href="/daily_tasks" style="color:#2563eb;text-decoration:underline;font-weight:500;">Click here to view your daily tasks</a>.'
+            )
+            # Send chat open message
+            msg3 = "You can now chat with the bot and ask any question."
+            for m in [msg1, msg2, msg3]:
+                chat_msg = ChatMessage(user_id=current_user.id, sender='bot', message=m)
+                db.session.add(chat_msg)
             db.session.commit()
-            return jsonify({"response": bot_msg, "finished": True})
+            # Return all 3 messages as a list for separate rendering
+            return jsonify({
+                "responses": [msg1, msg2, msg3],
+                "response_type": "multiple",
+                "finished": True
+            })
     else:
         # After assessment, allow free chat
         user_message = user_answer

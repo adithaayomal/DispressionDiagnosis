@@ -55,7 +55,11 @@
         function addMessage(message, isUser) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
-            messageDiv.textContent = message;
+            if (isUser) {
+                messageDiv.textContent = message;
+            } else {
+                messageDiv.innerHTML = message; // allow HTML for bot (for links)
+            }
             chatMessages.appendChild(messageDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
@@ -87,7 +91,9 @@
             .then(response => response.json())
             .then(data => {
                 hideTypingIndicator();
-                if (data.response) {
+                if (data.responses && Array.isArray(data.responses)) {
+                    data.responses.forEach(msg => addMessage(msg, false));
+                } else if (data.response) {
                     addMessage(data.response, false);
                 }
                 if (data.finished) {
