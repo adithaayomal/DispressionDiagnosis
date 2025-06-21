@@ -268,7 +268,14 @@ def daily_tasks():
         "Write down 3 things you're grateful for",
         "Go for a short walk outdoors",
         "Reach out to a friend or family member",
-        "Reflect on a positive moment from today"
+        "Reflect on a positive moment from today",
+        (
+            '<b>Breathe with the Circle</b><br>'
+            'Type: Interactive web animation.<br>'
+            'How it Works: A circle expands and contracts, prompting users to inhale/exhale with it.<br>'
+            'Where: <a href="https://www.calm.com/breathe" target="_blank" style="color:#2563eb;text-decoration:underline;">calm.com/breathe</a> or YouTube breathing loops.<br>'
+            'Goal: Slow down heart rate and focus the mind.'
+        )
     ]
     return render_template('daily_tasks.html', tasks=tasks)
 
