@@ -21,12 +21,15 @@
         </div>
     </nav>
     <div class="tasks-container">
-        <h2>Daily Mental Health Tasks</h2>
-        <ul class="tasks-list">
+        <h2>Daily Tasks for {{ category|capitalize if category else 'Your Well-being' }}</h2>
+        <ul>
             {% for task in tasks %}
-                <li class="task-item">{{ task }}</li>
+                <li>{{ task }}</li>
             {% endfor %}
         </ul>
+        {% if not tasks %}
+            <p>No specific tasks assigned. Please complete the assessment first.</p>
+        {% endif %}
         <a href="/" class="back-link">&larr; Back to Assistant</a>
     </div>
 </body>
