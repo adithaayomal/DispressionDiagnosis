@@ -622,12 +622,8 @@
                                         // Remove ambient section and h2
                                         ambientDiv.remove();
                                         h2.remove();
-                                        // Optionally, show a message or next task here
-                                        const taskResult = document.getElementById('task-result');
-                                        if (taskResult) {
-                                            taskResult.textContent = 'wait for the next task tomorrow!';
-                                            taskResult.style.color = '#388E3C';
-                                        }
+                                        // Show Day 4 yoga task
+                                        showDay4YogaTask();
                                     };
                                 }
                             }
@@ -696,6 +692,553 @@
             y: Math.floor(Math.random() * max)
         };
     }
+    // --- Day 4: Yoga Video – Gentle Movement for Calm ---
+    function showDay4YogaTask() {
+        const mainContent = document.querySelector('.main-tasks-content');
+        if (!mainContent) return;
+        // Remove any previous yoga section or h2 in mainContent
+        const oldYoga = mainContent.querySelectorAll('.yoga-section');
+        oldYoga.forEach(el => el.remove());
+        const oldH2 = mainContent.querySelector('h2');
+        if (oldH2) oldH2.remove();
+        // Remove any existing Day 4 completion button (defensive)
+        const oldDay4Btns = mainContent.querySelectorAll('.day4-complete-btn, .day4-complete-btn-duplicate, .next-btn');
+        oldDay4Btns.forEach(el => {
+            // Only remove if it's not inside the new yogaDiv to be created below
+            if (!el.closest('.yoga-section')) el.remove();
+        });
+        // Add the title
+        const h2 = document.createElement('h2');
+        h2.textContent = 'Your Daily Task';
+        h2.className = '';
+        h2.style.color = '#E2BDA7';
+        h2.style.marginBottom = '1.5rem';
+        h2.style.fontSize = '2rem';
+        h2.style.fontWeight = '700';
+        h2.style.letterSpacing = '1px';
+        mainContent.prepend(h2);
+        // Yoga section
+        const yogaDiv = document.createElement('div');
+        yogaDiv.className = 'yoga-section';
+        yogaDiv.style.display = 'flex';
+        yogaDiv.style.flexDirection = 'column';
+        yogaDiv.style.alignItems = 'center';
+        yogaDiv.style.background = 'none';
+        yogaDiv.style.borderRadius = '0';
+        yogaDiv.style.boxShadow = 'none';
+        yogaDiv.style.padding = '0';
+        yogaDiv.style.maxWidth = '420px';
+        yogaDiv.style.marginLeft = 'auto';
+        yogaDiv.style.marginRight = 'auto';
+        yogaDiv.style.marginTop = '2.5rem';
+        // Title
+        const yogaTitle = document.createElement('div');
+        yogaTitle.className = 'yoga-title';
+        yogaTitle.textContent = 'Yoga Video – Gentle Movement for Calm';
+        yogaTitle.style.color = '#f07264';
+        yogaTitle.style.fontSize = '1.35rem';
+        yogaTitle.style.fontWeight = '700';
+        yogaTitle.style.marginBottom = '0.5rem';
+        yogaTitle.style.letterSpacing = '0.5px';
+        yogaDiv.appendChild(yogaTitle);
+        // Description
+        const yogaDesc = document.createElement('div');
+        yogaDesc.className = 'yoga-desc';
+        yogaDesc.innerHTML = `Take a few minutes to reconnect with your body and breath. This short 5–10 minute yoga routine is designed to help you release tension, improve focus, and relax your mind.<br><br>Find a quiet space, sit or lie comfortably, and let the gentle movements guide you toward calm.`;
+        yogaDesc.style.color = '#333';
+        yogaDesc.style.fontSize = '1.08rem';
+        yogaDesc.style.marginBottom = '1.2rem';
+        yogaDesc.style.textAlign = 'center';
+        yogaDiv.appendChild(yogaDesc);
+        // Video player
+        const videoContainer = document.createElement('div');
+        videoContainer.style.display = 'flex';
+        videoContainer.style.flexDirection = 'column';
+        videoContainer.style.alignItems = 'center';
+        videoContainer.style.marginBottom = '1.2rem';
+        const yogaVideo = document.createElement('video');
+        yogaVideo.setAttribute('controls', '');
+        yogaVideo.setAttribute('width', '320');
+        yogaVideo.setAttribute('height', '180');
+        yogaVideo.style.borderRadius = '12px';
+        yogaVideo.style.boxShadow = '0 2px 12px rgba(31,38,135,0.10)';
+        yogaVideo.style.background = '#000';
+        yogaVideo.innerHTML = `<source src="/static/video/yoga.mp4" type="video/mp4">Your browser does not support the video tag.`;
+        videoContainer.appendChild(yogaVideo);
+        // Play button
+        const playBtn = document.createElement('button');
+        playBtn.textContent = '🎥 Click to Begin';
+        playBtn.className = 'next-btn';
+        playBtn.style.marginTop = '0.7rem';
+        playBtn.onclick = function() {
+            yogaVideo.play();
+            playBtn.style.display = 'none';
+        };
+        videoContainer.appendChild(playBtn);
+        yogaDiv.appendChild(videoContainer);
+        // Complete button (only one, with unique class for Day 4)
+        const completeYogaBtn = document.createElement('button');
+        completeYogaBtn.textContent = 'I completed the task';
+        completeYogaBtn.className = 'next-btn day4-complete-btn fixed-complete-btn';
+        completeYogaBtn.style.background = '#4CAF50';
+        completeYogaBtn.style.color = '#fff';
+        // Remove marginTop so it matches previous button position
+        completeYogaBtn.style.marginTop = '';
+        yogaDiv.appendChild(completeYogaBtn);
+        completeYogaBtn.onclick = function() {
+            // Mark Day 4 as green (completed)
+            const weekDays = document.querySelectorAll('.week-day-vertical .day-circle');
+            if (weekDays.length > 3) {
+                const day4 = weekDays[3];
+                day4.innerHTML = tickSVG;
+                day4.style.background = '#4CAF50';
+                day4.style.borderColor = '#388E3C';
+                day4.style.display = 'flex';
+                day4.style.alignItems = 'center';
+                day4.style.justifyContent = 'center';
+                day4.style.padding = '0';
+            }
+            const day4Label = document.querySelectorAll('.week-day-vertical .day-label')[3];
+            if (day4Label) {
+                day4Label.style.color = '#388E3C';
+                day4Label.style.fontWeight = '700';
+            }
+            yogaDiv.remove();
+            h2.remove();
+            // Show wait message for next task
+            const taskResult = document.getElementById('task-result');
+            if (taskResult) {
+                taskResult.textContent = 'wait for the next task tomorrow!';
+                taskResult.style.color = '#388E3C';
+            }
+        };
+        // Insert into main content
+        h2.insertAdjacentElement('afterend', yogaDiv);
+    }
+    // --- End Day 4 ---
+    // --- Day 5: Breathe with the Circle ---
+    function showDay5BreathingTask() {
+        const mainContent = document.querySelector('.main-tasks-content');
+        if (!mainContent) return;
+        // Remove any previous breathing section or h2 in mainContent
+        const oldBreathing = mainContent.querySelectorAll('.breathing-section');
+        oldBreathing.forEach(el => el.remove());
+        const oldH2 = mainContent.querySelector('h2');
+        if (oldH2) oldH2.remove();
+        // Add the title
+        const h2 = document.createElement('h2');
+        h2.textContent = 'Your Daily Task';
+        h2.className = '';
+        h2.style.color = '#E2BDA7';
+        h2.style.marginBottom = '1.5rem';
+        h2.style.fontSize = '2rem';
+        h2.style.fontWeight = '700';
+        h2.style.letterSpacing = '1px';
+        mainContent.prepend(h2);
+        // Breathing section
+        const breathingDiv = document.createElement('div');
+        breathingDiv.className = 'breathing-section';
+        breathingDiv.style.background = 'none';
+        breathingDiv.style.boxShadow = 'none';
+        breathingDiv.style.padding = '0';
+        breathingDiv.style.borderRadius = '0';
+        breathingDiv.style.margin = '0 auto';
+        breathingDiv.style.maxWidth = '400px';
+        breathingDiv.style.display = 'flex';
+        breathingDiv.style.flexDirection = 'column';
+        breathingDiv.style.alignItems = 'center';
+        // Title
+        const breathingTitle = document.createElement('div');
+        breathingTitle.className = 'breathing-title';
+        breathingTitle.textContent = 'Breathe with the Circle';
+        breathingTitle.style.color = '#f07264';
+        breathingTitle.style.fontSize = '1.35rem';
+        breathingTitle.style.fontWeight = '700';
+        breathingTitle.style.marginBottom = '0.5rem';
+        breathingTitle.style.letterSpacing = '0.5px';
+        breathingDiv.appendChild(breathingTitle);
+        // Description
+        const breathingDesc = document.createElement('div');
+        breathingDesc.className = 'breathing-desc';
+        breathingDesc.textContent = 'Follow the animation below. Inhale as the circle expands, hold, exhale as it contracts, hold. Try to sync your breath for a few cycles to relax and focus.';
+        breathingDesc.style.fontSize = '1.08rem';
+        breathingDesc.style.color = '#444';
+        breathingDesc.style.marginBottom = '1.2rem';
+        breathingDesc.style.textAlign = 'center';
+        breathingDiv.appendChild(breathingDesc);
+        // Game
+        const breathingGame = document.createElement('div');
+        breathingGame.id = 'breathing-game';
+        breathingGame.className = 'breathing-game';
+        breathingGame.innerHTML = '<canvas id="breathing-circle" width="260" height="260"></canvas><div id="breathing-instruction" class="breathing-instruction">Inhale</div>';
+        breathingDiv.appendChild(breathingGame);
+        // Complete button
+        const completeBtn = document.createElement('button');
+        completeBtn.id = 'complete-task-btn';
+        completeBtn.className = 'next-btn';
+        completeBtn.style.background = '#4CAF50';
+        completeBtn.style.color = '#fff';
+        completeBtn.textContent = 'I completed the task';
+        breathingDiv.appendChild(completeBtn);
+        completeBtn.onclick = function() {
+            // Mark Day 5 as green (completed)
+            const weekDays = document.querySelectorAll('.week-day-vertical .day-circle');
+            if (weekDays.length > 4) {
+                const day5 = weekDays[4];
+                day5.innerHTML = tickSVG;
+                day5.style.background = '#4CAF50';
+                day5.style.borderColor = '#388E3C';
+                day5.style.display = 'flex';
+                day5.style.alignItems = 'center';
+                day5.style.justifyContent = 'center';
+                day5.style.padding = '0';
+            }
+            const day5Label = document.querySelectorAll('.week-day-vertical .day-label')[4];
+            if (day5Label) {
+                day5Label.style.color = '#388E3C';
+                day5Label.style.fontWeight = '700';
+            }
+            breathingDiv.remove();
+            h2.remove();
+            // Optionally, show a message or next task here
+            const taskResult = document.getElementById('task-result');
+            if (taskResult) {
+                taskResult.textContent = 'wait for';
+                taskResult.style.color = '#388E3C';
+            }
+        };
+        // Insert into main content
+        h2.insertAdjacentElement('afterend', breathingDiv);
+        // Re-initialize breathing animation
+        setTimeout(() => {
+            const canvas = document.getElementById('breathing-circle');
+            const ctx = canvas.getContext('2d');
+            const instruction = document.getElementById('breathing-instruction');
+            let phase = 0;
+            let t = 0;
+            const phases = [
+                { label: 'Inhale', color: '#E2BDA7', duration: 4000, shadow: '#f07264' },
+                { label: 'Hold', color: '#f7c6b7', duration: 2000, shadow: '#f07264' },
+                { label: 'Exhale', color: '#f07264', duration: 4000, shadow: '#f07264' },
+                { label: 'Hold', color: '#f7c6b7', duration: 2000, shadow: '#f07264' }
+            ];
+            let start = null;
+            function animateBreath(ts) {
+                if (!start) start = ts;
+                let elapsed = ts - start;
+                let p = phases[phase];
+                let progress = Math.min(elapsed / p.duration, 1);
+                let radius;
+                if (phase === 0) radius = 60 + 60 * (progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 2) / 2);
+                else if (phase === 1) radius = 120;
+                else if (phase === 2) radius = 120 - 60 * (progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 2) / 2);
+                else radius = 60;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(130, 130, radius + 12, 0, 2 * Math.PI);
+                ctx.globalAlpha = 0.18;
+                ctx.fillStyle = p.shadow;
+                ctx.filter = 'blur(10px)';
+                ctx.fill();
+                ctx.restore();
+                ctx.beginPath();
+                ctx.arc(130, 130, radius, 0, 2 * Math.PI);
+                ctx.fillStyle = p.color;
+                ctx.globalAlpha = 0.82;
+                ctx.filter = 'none';
+                ctx.fill();
+                ctx.globalAlpha = 1.0;
+                ctx.lineWidth = 5;
+                ctx.strokeStyle = '#f07264';
+                ctx.shadowColor = p.shadow;
+                ctx.shadowBlur = 16;
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+                for (let i = 0; i < 8; i++) {
+                    let angle = (i / 8) * 2 * Math.PI;
+                    let dotR = radius + 18 + 6 * Math.sin(ts/400 + i);
+                    ctx.beginPath();
+                    ctx.arc(130 + dotR * Math.cos(angle), 130 + dotR * Math.sin(angle), 4, 0, 2 * Math.PI);
+                    ctx.fillStyle = '#fff';
+                    ctx.globalAlpha = 0.7;
+                    ctx.fill();
+                }
+                ctx.globalAlpha = 1.0;
+                instruction.textContent = p.label;
+                instruction.style.color = '#f07264';
+                if (elapsed < p.duration) {
+                    requestAnimationFrame(animateBreath);
+                } else {
+                    phase = (phase + 1) % phases.length;
+                    start = null;
+                    requestAnimationFrame(animateBreath);
+                }
+            }
+            requestAnimationFrame(animateBreath);
+        }, 100);
+    }
+    // --- End Day 5 ---
+    // --- Day 5: Burst the Bubbles ---
+    function showDay5BubbleTask() {
+        const mainContent = document.querySelector('.main-tasks-content');
+        if (!mainContent) return;
+        // Remove any previous bubble section or h2 in mainContent
+        const oldBubble = mainContent.querySelectorAll('.bubble-section');
+        oldBubble.forEach(el => el.remove());
+        const oldH2 = mainContent.querySelector('h2');
+        if (oldH2) oldH2.remove();
+        // Add the title
+        const h2 = document.createElement('h2');
+        h2.textContent = 'Your Daily Task';
+        h2.className = '';
+        h2.style.color = '#E2BDA7';
+        h2.style.marginBottom = '1.5rem';
+        h2.style.fontSize = '2rem';
+        h2.style.fontWeight = '700';
+        h2.style.letterSpacing = '1px';
+        mainContent.prepend(h2);
+        // Bubble section
+        const bubbleDiv = document.createElement('div');
+        bubbleDiv.className = 'bubble-section';
+        bubbleDiv.style.display = 'flex';
+        bubbleDiv.style.flexDirection = 'column';
+        bubbleDiv.style.alignItems = 'center';
+        bubbleDiv.style.background = 'none';
+        bubbleDiv.style.borderRadius = '0';
+        bubbleDiv.style.boxShadow = 'none';
+        bubbleDiv.style.padding = '0';
+        bubbleDiv.style.maxWidth = '420px';
+        bubbleDiv.style.marginLeft = 'auto';
+        bubbleDiv.style.marginRight = 'auto';
+        bubbleDiv.style.marginTop = '2.5rem';
+        // Title
+        const bubbleTitle = document.createElement('div');
+        bubbleTitle.className = 'bubble-title';
+        bubbleTitle.textContent = 'Burst the Bubbles – Interactive Focus Game';
+        bubbleTitle.style.color = '#f07264';
+        bubbleTitle.style.fontSize = '1.35rem';
+        bubbleTitle.style.fontWeight = '700';
+        bubbleTitle.style.marginBottom = '0.5rem';
+        bubbleTitle.style.letterSpacing = '0.5px';
+        bubbleDiv.appendChild(bubbleTitle);
+        // Description
+        const bubbleDesc = document.createElement('div');
+        bubbleDesc.className = 'bubble-desc';
+        bubbleDesc.innerHTML = `The screen is filled with soft, floating bubbles. Use the arm to gently pop each bubble. No rush—just focus and enjoy.<br><br><b>How to Play:</b><br>🕹️ Move the arm with your mouse, touch, or arrow keys.<br>🎯 Pop all the bubbles by touching them with the tip of the arm.<br>💡 Each burst is calm and rewarding. No time pressure.`;
+        bubbleDesc.style.color = '#333';
+        bubbleDesc.style.fontSize = '1.08rem';
+        bubbleDesc.style.marginBottom = '1.2rem';
+        bubbleDesc.style.textAlign = 'center';
+        bubbleDiv.appendChild(bubbleDesc);
+        // Game canvas
+        const gameContainer = document.createElement('div');
+        gameContainer.style.display = 'flex';
+        gameContainer.style.flexDirection = 'column';
+        gameContainer.style.alignItems = 'center';
+        gameContainer.style.marginBottom = '1.2rem';
+        gameContainer.style.position = 'relative';
+        const canvas = document.createElement('canvas');
+        canvas.id = 'bubble-canvas';
+        canvas.width = 340;
+        canvas.height = 340;
+        canvas.style.background = 'linear-gradient(120deg,#E2BDA7 60%,#fff 100%)';
+        canvas.style.borderRadius = '24px';
+        canvas.style.boxShadow = '0 2px 12px rgba(31,38,135,0.10)';
+        canvas.style.margin = '0 auto';
+        gameContainer.appendChild(canvas);
+        bubbleDiv.appendChild(gameContainer);
+        // Completion message
+        const finishMsg = document.createElement('div');
+        finishMsg.className = 'bubble-finish-msg';
+        finishMsg.style.display = 'none';
+        finishMsg.style.fontSize = '1.15rem';
+        finishMsg.style.color = '#388E3C';
+        finishMsg.style.fontWeight = '600';
+        finishMsg.style.marginTop = '1.5rem';
+        finishMsg.textContent = "Well done. You've cleared the screen. Breathe and enjoy the calm.";
+        bubbleDiv.appendChild(finishMsg);
+        // Complete button (hidden until all bubbles are burst)
+        const completeBubbleBtn = document.createElement('button');
+        completeBubbleBtn.textContent = 'I completed the task';
+        completeBubbleBtn.className = 'next-btn fixed-complete-btn day5-complete-btn';
+        completeBubbleBtn.style.background = '#4CAF50';
+        completeBubbleBtn.style.color = '#fff';
+        completeBubbleBtn.style.display = 'none';
+        bubbleDiv.appendChild(completeBubbleBtn);
+        completeBubbleBtn.onclick = function() {
+            // Mark Day 5 as green (completed)
+            const weekDays = document.querySelectorAll('.week-day-vertical .day-circle');
+            if (weekDays.length > 4) {
+                const day5 = weekDays[4];
+                day5.innerHTML = tickSVG;
+                day5.style.background = '#4CAF50';
+                day5.style.borderColor = '#388E3C';
+                day5.style.display = 'flex';
+                day5.style.alignItems = 'center';
+                day5.style.justifyContent = 'center';
+                day5.style.padding = '0';
+            }
+            const day5Label = document.querySelectorAll('.week-day-vertical .day-label')[4];
+            if (day5Label) {
+                day5Label.style.color = '#388E3C';
+                day5Label.style.fontWeight = '700';
+            }
+            bubbleDiv.remove();
+            h2.remove();
+            // Show wait message for next task
+            const taskResult = document.getElementById('task-result');
+            if (taskResult) {
+                taskResult.textContent = 'wait for the next task tomorrow!';
+                taskResult.style.color = '#388E3C';
+            }
+        };
+        // Insert into main content
+        h2.insertAdjacentElement('afterend', bubbleDiv);
+        // --- Bubble Game Logic ---
+        const ctx = canvas.getContext('2d');
+        // Bubble and arm parameters
+        const BUBBLE_COUNT = 7;
+        const bubbles = [];
+        const ARM_LENGTH = 90;
+        let armAngle = Math.PI/4;
+        let armBase = {x: canvas.width/2, y: canvas.height-40};
+        let dragging = false;
+        let lastTouch = null;
+        // Sound
+        let popAudio = null;
+        try {
+            popAudio = new Audio('/static/music/pop.mp3');
+        } catch(e) {}
+        // Bubble generator
+        for (let i = 0; i < BUBBLE_COUNT; i++) {
+            const angle = Math.random() * 2 * Math.PI;
+            const radius = 26 + Math.random()*10;
+            const dist = 80 + Math.random()*100;
+            const cx = canvas.width/2 + Math.cos(angle)*dist;
+            const cy = canvas.height/2 + Math.sin(angle)*dist*0.7;
+            const dx = (Math.random()-0.5)*0.7;
+            const dy = (Math.random()-0.5)*0.7;
+            bubbles.push({x: cx, y: cy, r: radius, dx, dy, burst: false, popAnim: 0});
+        }
+        // Draw everything
+        function draw() {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            // Draw bubbles
+            for (const b of bubbles) {
+                if (b.burst && b.popAnim >= 1) continue;
+                ctx.save();
+                ctx.globalAlpha = b.burst ? 1-b.popAnim : 0.85;
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, b.r*(1+b.popAnim*0.7), 0, 2*Math.PI);
+                ctx.fillStyle = b.burst ? '#E2BDA7' : 'rgba(174,225,249,0.85)';
+                ctx.shadowColor = '#AEE1F9';
+                ctx.shadowBlur = 16;
+                ctx.fill();
+                ctx.restore();
+                // Bubble highlight
+                if (!b.burst) {
+                    ctx.save();
+                    ctx.globalAlpha = 0.25;
+                    ctx.beginPath();
+                    ctx.arc(b.x-b.r/3, b.y-b.r/3, b.r/2.5, 0, 2*Math.PI);
+                    ctx.fillStyle = '#fff';
+                    ctx.fill();
+                    ctx.restore();
+                }
+            }
+            // Draw arm
+            ctx.save();
+            ctx.strokeStyle = '#4A90E2';
+            ctx.lineWidth = 7;
+            ctx.lineCap = 'round';
+            ctx.shadowColor = '#AEE1F9';
+            ctx.shadowBlur = 8;
+            ctx.beginPath();
+            ctx.moveTo(armBase.x, armBase.y);
+            const tip = {x: armBase.x + ARM_LENGTH*Math.cos(armAngle), y: armBase.y + ARM_LENGTH*Math.sin(armAngle)};
+            ctx.lineTo(tip.x, tip.y);
+            ctx.stroke();
+            ctx.restore();
+            // Draw arm tip
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(tip.x, tip.y, 13, 0, 2*Math.PI);
+            ctx.fillStyle = '#4A90E2';
+            ctx.shadowColor = '#AEE1F9';
+            ctx.shadowBlur = 8;
+            ctx.globalAlpha = 0.85;
+            ctx.fill();
+            ctx.restore();
+        }
+        // Animate
+        function animate() {
+            // Move bubbles
+            for (const b of bubbles) {
+                if (!b.burst) {
+                    b.x += b.dx;
+                    b.y += b.dy;
+                    // Bounce off walls
+                    if (b.x-b.r < 0 || b.x+b.r > canvas.width) b.dx *= -1;
+                    if (b.y-b.r < 0 || b.y+b.r > canvas.height) b.dy *= -1;
+                } else if (b.popAnim < 1) {
+                    b.popAnim += 0.07;
+                }
+            }
+            draw();
+            // Check collision
+            for (const b of bubbles) {
+                if (!b.burst) {
+                    const tip = {x: armBase.x + ARM_LENGTH*Math.cos(armAngle), y: armBase.y + ARM_LENGTH*Math.sin(armAngle)};
+                    const dist = Math.hypot(b.x-tip.x, b.y-tip.y);
+                    if (dist < b.r+13) {
+                        b.burst = true;
+                        if (popAudio) { try { popAudio.currentTime = 0; popAudio.play(); } catch(e){} }
+                    }
+                }
+            }
+            // If all bubbles burst, show finish message and button
+            if (bubbles.every(b=>b.burst && b.popAnim>=1)) {
+                finishMsg.style.display = '';
+                completeBubbleBtn.style.display = '';
+            }
+            requestAnimationFrame(animate);
+        }
+        animate();
+        // Controls
+        function setArmAngleFromPointer(x, y) {
+            const dx = x - armBase.x;
+            const dy = y - armBase.y;
+            armAngle = Math.atan2(dy, dx);
+        }
+        canvas.addEventListener('mousedown', e => { dragging = true; setArmAngleFromPointer(e.offsetX, e.offsetY); });
+        canvas.addEventListener('mousemove', e => { if (dragging) setArmAngleFromPointer(e.offsetX, e.offsetY); });
+        canvas.addEventListener('mouseup', ()=>{ dragging = false; });
+        canvas.addEventListener('mouseleave', ()=>{ dragging = false; });
+        canvas.addEventListener('touchstart', e => {
+            dragging = true;
+            const rect = canvas.getBoundingClientRect();
+            const t = e.touches[0];
+            setArmAngleFromPointer(t.clientX-rect.left, t.clientY-rect.top);
+            lastTouch = t.identifier;
+        });
+        canvas.addEventListener('touchmove', e => {
+            if (!dragging) return;
+            const rect = canvas.getBoundingClientRect();
+            for (let i=0; i<e.touches.length; i++) {
+                if (e.touches[i].identifier === lastTouch) {
+                    setArmAngleFromPointer(e.touches[i].clientX-rect.left, e.touches[i].clientY-rect.top);
+                }
+            }
+        });
+        canvas.addEventListener('touchend', ()=>{ dragging = false; });
+        // Keyboard controls
+        document.addEventListener('keydown', e => {
+            if (e.key === 'ArrowLeft') armAngle -= 0.13;
+            if (e.key === 'ArrowRight') armAngle += 0.13;
+        });
+    }
+    // --- End Day 5 ---
     </script>
 </body>
 </html>
