@@ -277,7 +277,7 @@ def daily_tasks():
             'Goal: Slow down heart rate and focus the mind.'
         )
     ]
-    return render_template('daily_tasks.html', tasks=tasks)
+    return render_template('daily_tasks_stress.html', tasks=tasks)
 
 @app.route('/chat_history')
 @login_required
