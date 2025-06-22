@@ -383,11 +383,43 @@ def calculate_score(responses):
             yes_responses.append(question)
     return score, yes_responses
 
+def get_category_override(answers):
+    # answers: list of user answers in order
+    yes = lambda i: i < len(answers) and answers[i].lower() in ['yes', 'y', 'yeah', 'true']
+    # Depression: Q1, Q2, Q6 (0,1,5)
+    if yes(0) and yes(1) and yes(5):
+        return 'depression'
+    # Stress: Q3 and Q4 (2,3)
+    if yes(2) and yes(3):
+        return 'stress'
+    # Anxiety: Q3 and Q5 (2,4) or Q5 only (4)
+    if (yes(2) and yes(4)) or (yes(4) and not yes(2)):
+        return 'anxiety'
+    return None
+
 def get_diagnosis(score, user_responses):
     score_value, yes_questions = score
     answers = list(user_responses.values())
 
-    # Map questions to categories
+    # --- Override logic ---
+    category = get_category_override(answers)
+    if category == 'depression':
+        return (
+            "Your answers indicate you may be experiencing symptoms of depression. "
+            "Consider reaching out to a counselor or someone you trust to talk about how you're feeling.\n\n"
+            "Resources:\n- National Crisis Helpline: 988\n- University Counseling Services\n- Student Mental Health Support Groups"
+        )
+    if category == 'stress':
+        return (
+            "Your answers indicate you may be experiencing significant stress. "
+            "Remember, support is available and talking to someone can make a difference."
+        )
+    if category == 'anxiety':
+        return (
+            "Your answers suggest you may be experiencing anxiety. "
+            "Practicing relaxation techniques or speaking with a mental health professional could be helpful."
+        )
+    # --- Fallback to original logic ---
     depression_qs = [0, 1, 5]  
     anxiety_qs = [2, 4]               
     stress_qs = [2, 3, 4]                
@@ -403,19 +435,16 @@ def get_diagnosis(score, user_responses):
         suggestions.append(
             "It seems you may be experiencing some emotional challenges that can affect your mood and daily life. "
             "Consider reaching out to a counselor or someone you trust to talk about how you're feeling."
-            
         )
     if anxiety_score == 2:
         suggestions.append(
             "Some of your answers suggest you might be feeling worried or having trouble concentrating. "
             "Practicing relaxation techniques or speaking with a mental health professional could be helpful."
-            
         )
     if stress_score == 3:
         suggestions.append(
             "Your responses indicate you might be under significant stress. "
             "Remember, support is available and talking to someone can make a difference."
-            
         )
     if not suggestions:
         suggestions.append(
