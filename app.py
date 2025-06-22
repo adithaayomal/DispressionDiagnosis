@@ -116,6 +116,12 @@ QUESTIONS = [
     "Do you have thoughts of self-harm or suicide?"
 ]
 
+# Route for Self-Love Journal page
+@app.route('/self')
+@login_required
+def self_journal():
+    return render_template('self.html')
+
 @app.route('/')
 @login_required
 def index():

@@ -308,7 +308,7 @@
         <aside class="week-progress-vertical" style="margin-top: 3rem; margin-left: 7rem; align-items: flex-start;">
             <div class="week-days-vertical" style="align-items: flex-start; gap: 2.1rem;">
                 <div class="week-title">Complete the tasks for 7 days and you <br>should come back to the Assistant.</div>
-                <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">1</span><span class="day-label"><b>Day 1</b><br> Breathe with the Circle </span></div>
+                <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">1</span><span class="day-label"><b>Day 1</b><br> Self-Love Journal </span></div>
                 <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">2</span><span class="day-label"><b>Day 2</b><br> mindful-click-game </span></div>
                 <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">3</span><span class="day-label"><b>Day 3</b><br> Ambient Sound Experience </span></div>
                 <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">4</span><span class="day-label"><b>Day 4</b><br> Gentle Movement for Calm </span></div>
@@ -321,13 +321,10 @@
             <h2>Your Daily Task</h2>
             
             <main class="main-tasks-content">
-                <div class="breathing-section" style="background:none;box-shadow:none;padding:0;">
-                    <div class="breathing-title">Breathe with the Circle</div>
-                    <div class="breathing-desc">Follow the animation below. Inhale as the circle expands, hold, exhale as it contracts, hold. Try to sync your breath for a few cycles to relax and focus.</div>
-                    <div id="breathing-game" class="breathing-game">
-                        <canvas id="breathing-circle" width="260" height="260"></canvas>
-                        <div id="breathing-instruction" class="breathing-instruction">Inhale</div>
-                    </div>
+                <div class="selflove-section" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:340px;">
+                    <div class="selflove-title" style="font-size:1.35rem;font-weight:700;color:#f07264;margin-bottom:0.5rem;margin-top :7   rem;">Self-Love Journal</div>
+                    <div class="selflove-desc" style="font-size:1.08rem;color:#444;margin-bottom:5rem;text-align:center;max-width:340px;">Take a quiet moment to reflect on who you are, not what you’ve done. Write freely — no right or wrong answers.</div>
+                    <a href="/self" style="display:flex;align-items:center;justify-content:center;width:220px;min-width:220px;max-width:220px;height:220px;min-height:220px;max-height:220px;aspect-ratio:1/1;border-radius:50%;background:linear-gradient(135deg,#7fb3d3,#a8d5ba);color:#fff;font-size:1.25rem;font-weight:700;text-decoration:none;box-shadow:0 4px 24px 0 rgba(74,144,226,0.13);margin-bottom:2.2rem;transition:background 0.2s,transform 0.1s;text-align:center;">Your Journal</a>
                 </div>
                 <button id="complete-task-btn" class="next-btn fixed-complete-btn" style="background:#4CAF50; color:#fff;">I completed the task</button>
                 <div class="next-section" style="display:none;"></div>
@@ -550,80 +547,82 @@ function showDay7PuzzleTask() {
     renderPuzzle();
 }
 // --- End Day 7 ---
-    // Animated Breathing Circle Game
+    // Animated Breathing Circle Game (only run if canvas exists)
     const canvas = document.getElementById('breathing-circle');
-    const ctx = canvas.getContext('2d');
-    const instruction = document.getElementById('breathing-instruction');
-    let phase = 0; // 0: inhale, 1: hold, 2: exhale, 3: hold
-    let t = 0;
-    const phases = [
-        { label: 'Inhale', color: '#E2BDA7', duration: 4000, shadow: '#f07264' },
-        { label: 'Hold', color: '#f7c6b7', duration: 2000, shadow: '#f07264' },
-        { label: 'Exhale', color: '#f07264', duration: 4000, shadow: '#f07264' },
-        { label: 'Hold', color: '#f7c6b7', duration: 2000, shadow: '#f07264' }
-    ];
-    let start = null;
-    function animateBreath(ts) {
-        if (!start) start = ts;
-        let elapsed = ts - start;
-        let p = phases[phase];
-        let progress = Math.min(elapsed / p.duration, 1);
-        // Circle radius: 60 (min) to 120 (max)
-        let radius;
-        if (phase === 0) radius = 60 + 60 * easeInOut(progress); // Inhale
-        else if (phase === 1) radius = 120; // Hold (full)
-        else if (phase === 2) radius = 120 - 60 * easeInOut(progress); // Exhale
-        else radius = 60; // Hold (empty)
-        // Animate background glow
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(130, 130, radius + 12, 0, 2 * Math.PI);
-        ctx.globalAlpha = 0.18;
-        ctx.fillStyle = p.shadow;
-        ctx.filter = 'blur(10px)';
-        ctx.fill();
-        ctx.restore();
-        // Main circle
-        ctx.beginPath();
-        ctx.arc(130, 130, radius, 0, 2 * Math.PI);
-        ctx.fillStyle = p.color;
-        ctx.globalAlpha = 0.82;
-        ctx.filter = 'none';
-        ctx.fill();
-        ctx.globalAlpha = 1.0;
-        ctx.lineWidth = 5;
-        ctx.strokeStyle = '#f07264';
-        ctx.shadowColor = p.shadow;
-        ctx.shadowBlur = 16;
-        ctx.stroke();
-        ctx.shadowBlur = 0;
-        // Breathing dots
-        for (let i = 0; i < 8; i++) {
-            let angle = (i / 8) * 2 * Math.PI;
-            let dotR = radius + 18 + 6 * Math.sin(ts/400 + i);
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+        const instruction = document.getElementById('breathing-instruction');
+        let phase = 0; // 0: inhale, 1: hold, 2: exhale, 3: hold
+        let t = 0;
+        const phases = [
+            { label: 'Inhale', color: '#E2BDA7', duration: 4000, shadow: '#f07264' },
+            { label: 'Hold', color: '#f7c6b7', duration: 2000, shadow: '#f07264' },
+            { label: 'Exhale', color: '#f07264', duration: 4000, shadow: '#f07264' },
+            { label: 'Hold', color: '#f7c6b7', duration: 2000, shadow: '#f07264' }
+        ];
+        let start = null;
+        function animateBreath(ts) {
+            if (!start) start = ts;
+            let elapsed = ts - start;
+            let p = phases[phase];
+            let progress = Math.min(elapsed / p.duration, 1);
+            // Circle radius: 60 (min) to 120 (max)
+            let radius;
+            if (phase === 0) radius = 60 + 60 * easeInOut(progress); // Inhale
+            else if (phase === 1) radius = 120; // Hold (full)
+            else if (phase === 2) radius = 120 - 60 * easeInOut(progress); // Exhale
+            else radius = 60; // Hold (empty)
+            // Animate background glow
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.save();
             ctx.beginPath();
-            ctx.arc(130 + dotR * Math.cos(angle), 130 + dotR * Math.sin(angle), 4, 0, 2 * Math.PI);
-            ctx.fillStyle = '#fff';
-            ctx.globalAlpha = 0.7;
+            ctx.arc(130, 130, radius + 12, 0, 2 * Math.PI);
+            ctx.globalAlpha = 0.18;
+            ctx.fillStyle = p.shadow;
+            ctx.filter = 'blur(10px)';
             ctx.fill();
+            ctx.restore();
+            // Main circle
+            ctx.beginPath();
+            ctx.arc(130, 130, radius, 0, 2 * Math.PI);
+            ctx.fillStyle = p.color;
+            ctx.globalAlpha = 0.82;
+            ctx.filter = 'none';
+            ctx.fill();
+            ctx.globalAlpha = 1.0;
+            ctx.lineWidth = 5;
+            ctx.strokeStyle = '#f07264';
+            ctx.shadowColor = p.shadow;
+            ctx.shadowBlur = 16;
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+            // Breathing dots
+            for (let i = 0; i < 8; i++) {
+                let angle = (i / 8) * 2 * Math.PI;
+                let dotR = radius + 18 + 6 * Math.sin(ts/400 + i);
+                ctx.beginPath();
+                ctx.arc(130 + dotR * Math.cos(angle), 130 + dotR * Math.sin(angle), 4, 0, 2 * Math.PI);
+                ctx.fillStyle = '#fff';
+                ctx.globalAlpha = 0.7;
+                ctx.fill();
+            }
+            ctx.globalAlpha = 1.0;
+            instruction.textContent = p.label;
+            instruction.style.color = '#f07264';
+            if (elapsed < p.duration) {
+                requestAnimationFrame(animateBreath);
+            } else {
+                phase = (phase + 1) % phases.length;
+                start = null;
+                requestAnimationFrame(animateBreath);
+            }
         }
-        ctx.globalAlpha = 1.0;
-        instruction.textContent = p.label;
-        instruction.style.color = '#f07264';
-        if (elapsed < p.duration) {
-            requestAnimationFrame(animateBreath);
-        } else {
-            phase = (phase + 1) % phases.length;
-            start = null;
+        function easeInOut(x) {
+            return x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
+        }
+        if (canvas && ctx && instruction) {
             requestAnimationFrame(animateBreath);
         }
-    }
-    function easeInOut(x) {
-        return x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
-    }
-    if (canvas && ctx && instruction) {
-        requestAnimationFrame(animateBreath);
     }
     // Add tick SVG for completed day
     const tickSVG = '<svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="11" cy="11" r="11" fill="#4CAF50"/><path d="M6 12.5L10 16L16 8" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -631,9 +630,9 @@ function showDay7PuzzleTask() {
         const completeBtn = document.getElementById('complete-task-btn');
         if (completeBtn) {
             completeBtn.onclick = function() {
-                // Remove/hide breathing section and button
-                const breathingSection = document.querySelector('.breathing-section');
-                if (breathingSection) breathingSection.remove();
+                // Remove/hide self-love section and button
+                const selfloveSection = document.querySelector('.selflove-section');
+                if (selfloveSection) selfloveSection.remove();
                 completeBtn.remove();
                 // Remove title if present
                 const h2 = document.querySelector('.tasks-container h2');
