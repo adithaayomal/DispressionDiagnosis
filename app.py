@@ -122,6 +122,12 @@ QUESTIONS = [
 def self_journal():
     return render_template('self.html')
 
+# Route for mandala page
+@app.route('/mandela_coloring')
+@login_required
+def mandala_coloring():
+    return render_template('mandala_coloring_therapy.html')
+
 @app.route('/')
 @login_required
 def index():

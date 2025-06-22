@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gratitude Practice</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated background particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.3; }
+            50% { transform: translateY(-20px) rotate(180deg); opacity: 0.8; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, #f8f9ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+
+        .gratitude-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            padding: 40px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            animation: slideInUp 1s ease-out 0.3s both;
+            transition: all 0.3s ease;
+        }
+
+        .gratitude-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .input-group {
+            margin-bottom: 30px;
+        }
+
+        .input-label {
+            display: block;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            opacity: 0;
+            animation: fadeIn 0.6s ease-out 0.8s both;
+        }
+
+        .gratitude-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 16px 20px;
+            font-size: 1rem;
+            color: white;
+            transition: all 0.3s ease;
+            resize: vertical;
+            min-height: 120px;
+            font-family: inherit;
+        }
+
+        .gratitude-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .gratitude-input:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+            transform: scale(1.02);
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ffa500 100%);
+            border: none;
+            border-radius: 50px;
+            padding: 16px 32px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
+            opacity: 0;
+            animation: fadeIn 0.6s ease-out 1s both;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255, 107, 107, 0.4);
+        }
+
+        .add-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .gratitude-list {
+            margin-top: 40px;
+            opacity: 0;
+            animation: fadeIn 0.6s ease-out 1.2s both;
+        }
+
+        .gratitude-item {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border-left: 4px solid #ff6b6b;
+            transition: all 0.3s ease;
+            animation: slideInRight 0.5s ease-out;
+        }
+
+        .gratitude-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(10px);
+        }
+
+        .gratitude-text {
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .gratitude-meta {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .delete-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 8px;
+            padding: 6px 12px;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background: rgba(255, 107, 107, 0.3);
+            color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+            font-style: italic;
+            padding: 40px 20px;
+        }
+
+        .stats {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 30px;
+            text-align: center;
+            animation: slideInUp 0.5s ease-out 1.4s both;
+        }
+
+        .stats-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #ff6b6b;
+        }
+
+        .stats-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .title { font-size: 2.5rem; }
+            .gratitude-card { padding: 30px 20px; }
+            .container { padding: 20px 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles"></div>
+    
+    <div class="container">
+        <div class="header">
+            <h1 class="title">✨ Gratitude Journal</h1>
+            <p class="subtitle">Cultivate appreciation for life's beautiful moments</p>
+        </div>
+
+        <div class="gratitude-card">
+            <div class="input-group">
+                <label class="input-label" for="gratitudeInput">What are you grateful for today?</label>
+                <textarea 
+                    id="gratitudeInput" 
+                    class="gratitude-input" 
+                    placeholder="I'm grateful for the warm cup of coffee that started my morning, the smile from a stranger, the opportunity to learn something new..."
+                    rows="4"
+                ></textarea>
+            </div>
+            
+            <button class="add-btn" onclick="addGratitude()">
+                <span>✨ Add to Journal</span>
+            </button>
+
+            <div class="stats">
+                <div class="stats-number" id="gratitudeCount">0</div>
+                <div class="stats-label">grateful moments captured</div>
+            </div>
+        </div>
+
+        <div class="gratitude-list" id="gratitudeList">
+            <div class="empty-state">
+                Your gratitude journey begins with a single entry...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Create floating particles
+        function createParticles() {
+            const particles = document.querySelector('.particles');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                particles.appendChild(particle);
+            }
+        }
+
+        let gratitudeEntries = [];
+
+        function addGratitude() {
+            const input = document.getElementById('gratitudeInput');
+            const text = input.value.trim();
+            
+            if (text === '') {
+                input.focus();
+                input.style.borderColor = 'rgba(255, 107, 107, 0.6)';
+                setTimeout(() => {
+                    input.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                }, 1000);
+                return;
+            }
+
+            const entry = {
+                id: Date.now(),
+                text: text,
+                date: new Date().toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                }),
+                time: new Date().toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                })
+            };
+
+            gratitudeEntries.unshift(entry);
+            input.value = '';
+            renderGratitudeList();
+            updateStats();
+
+            // Add a little celebration effect
+            const btn = document.querySelector('.add-btn');
+            btn.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                btn.style.transform = 'translateY(-3px)';
+            }, 150);
+        }
+
+        function deleteGratitude(id) {
+            gratitudeEntries = gratitudeEntries.filter(entry => entry.id !== id);
+            renderGratitudeList();
+            updateStats();
+        }
+
+        function renderGratitudeList() {
+            const list = document.getElementById('gratitudeList');
+            
+            if (gratitudeEntries.length === 0) {
+                list.innerHTML = '<div class="empty-state">Your gratitude journey begins with a single entry...</div>';
+                return;
+            }
+
+            list.innerHTML = gratitudeEntries.map(entry => `
+                <div class="gratitude-item">
+                    <div class="gratitude-text">${entry.text}</div>
+                    <div class="gratitude-meta">
+                        <span>${entry.date} at ${entry.time}</span>
+                        <button class="delete-btn" onclick="deleteGratitude(${entry.id})">Remove</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateStats() {
+            document.getElementById('gratitudeCount').textContent = gratitudeEntries.length;
+        }
+
+        // Allow Enter+Shift to add gratitude
+        document.getElementById('gratitudeInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && e.shiftKey) {
+                e.preventDefault();
+                addGratitude();
+            }
+        });
+
+        // Initialize particles
+        createParticles();
+    </script>
+</body>
+</html>
