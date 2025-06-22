@@ -327,9 +327,9 @@ def get_diagnosis(score, user_responses):
     answers = list(user_responses.values())
 
     # Map questions to categories
-    depression_qs = [0, 1, 2, 3]  # sadness, loss of interest, sleep, energy
-    anxiety_qs = [4]               # concentration
-    stress_qs = [5]                # self-harm/suicide
+    depression_qs = [0, 1, 5]  
+    anxiety_qs = [2, 4]               
+    stress_qs = [2, 3, 4]                
 
     depression_score = sum([answers[i].lower() in ['yes', 'y', 'yeah', 'true'] for i in depression_qs if i < len(answers)])
     anxiety_score = sum([answers[i].lower() in ['yes', 'y', 'yeah', 'true'] for i in anxiety_qs if i < len(answers)])
@@ -343,12 +343,12 @@ def get_diagnosis(score, user_responses):
             "It seems you may be experiencing some emotional challenges that can affect your mood and daily life. "
             "Consider reaching out to a counselor or someone you trust to talk about how you're feeling."
         )
-    if anxiety_score >= 1:
+    if anxiety_score == 2:
         suggestions.append(
             "Some of your answers suggest you might be feeling worried or having trouble concentrating. "
             "Practicing relaxation techniques or speaking with a mental health professional could be helpful."
         )
-    if stress_score >= 1:
+    if stress_score == 3:
         suggestions.append(
             "Your responses indicate you might be under significant stress. "
             "Remember, support is available and talking to someone can make a difference."
@@ -361,7 +361,7 @@ def get_diagnosis(score, user_responses):
     feedback += " ".join(suggestions)
 
     # Add resources if any score is high
-    if depression_score >= 3 or anxiety_score >= 1 or stress_score >= 1:
+    if depression_score >= 3:
         feedback += (
             "\n\nHere are some resources that might be helpful:\n"
             "- National Crisis Helpline: 988\n"
