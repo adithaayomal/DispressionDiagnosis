@@ -157,6 +157,11 @@ def daily_tasks_stress():
 def spinner():
     return render_template('spinner.html')
 
+@app.route('/grounding')
+@login_required
+def grounding():
+    return render_template('gratitude_practice.html')
+
 @app.route('/')
 @login_required
 def index():

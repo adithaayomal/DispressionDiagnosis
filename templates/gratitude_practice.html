@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gratitude Practice</title>
+    <title>5-4-3-2-1 Grounding Technique</title>
     <style>
         * {
             margin: 0;
@@ -12,399 +12,654 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #6b73ff 0%, #9b59b6 50%, #3498db 100%);
             min-height: 100vh;
-            overflow-x: hidden;
+            padding: 20px;
             position: relative;
+            overflow-x: hidden;
         }
 
-        /* Animated background particles */
-        .particles {
-            position: fixed;
+        .floating-circles {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            overflow: hidden;
             pointer-events: none;
-            z-index: 1;
+            z-index: 0;
         }
 
-        .particle {
+        .circle {
             position: absolute;
-            width: 4px;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.3);
             border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
             animation: float 6s ease-in-out infinite;
         }
 
+        .circle:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .circle:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 60%;
+            right: 15%;
+            animation-delay: 1s;
+        }
+
+        .circle:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            bottom: 30%;
+            left: 20%;
+            animation-delay: 2s;
+        }
+
         @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.3; }
-            50% { transform: translateY(-20px) rotate(180deg); opacity: 0.8; }
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
         }
 
         .container {
-            position: relative;
-            z-index: 10;
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
-            padding: 40px 20px;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(15px);
+            position: relative;
+            z-index: 1;
         }
 
         .header {
             text-align: center;
             margin-bottom: 40px;
-            animation: fadeInUp 1s ease-out;
         }
 
         .title {
-            font-size: 3.5rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #fff 0%, #f8f9ff 100%);
+            font-size: 2.8rem;
+            background: linear-gradient(135deg, #6b73ff, #9b59b6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 10px;
-            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            font-weight: 300;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
         }
 
         .subtitle {
             font-size: 1.2rem;
-            color: rgba(255, 255, 255, 0.8);
-            font-weight: 300;
-            letter-spacing: 0.5px;
+            color: #555;
+            font-style: italic;
+            margin-bottom: 20px;
         }
 
-        .gratitude-card {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 24px;
-            padding: 40px;
-            width: 100%;
-            max-width: 600px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            animation: slideInUp 1s ease-out 0.3s both;
-            transition: all 0.3s ease;
+        .instructions {
+            background: linear-gradient(135deg, #f8f9ff, #e8ecff);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border-left: 5px solid #6b73ff;
         }
 
-        .gratitude-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+        .instructions h3 {
+            color: #6b73ff;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
         }
 
-        .input-group {
+        .instructions p {
+            color: #666;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+
+        .progress-container {
             margin-bottom: 30px;
         }
 
-        .input-label {
-            display: block;
-            color: rgba(255, 255, 255, 0.9);
-            font-weight: 600;
-            font-size: 1.1rem;
-            margin-bottom: 12px;
-            opacity: 0;
-            animation: fadeIn 0.6s ease-out 0.8s both;
-        }
-
-        .gratitude-input {
+        .progress-bar {
             width: 100%;
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 16px;
-            padding: 16px 20px;
+            height: 8px;
+            background: rgba(107, 115, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #6b73ff, #9b59b6);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: #6b73ff;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .senses-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .sense-section {
+            background: rgba(248, 249, 255, 0.8);
+            padding: 30px;
+            border-radius: 20px;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+            position: relative;
+            transition: all 0.4s ease;
+            opacity: 0.5;
+            transform: scale(0.98);
+        }
+
+        .sense-section.active {
+            opacity: 1;
+            transform: scale(1);
+            border-color: #6b73ff;
+            box-shadow: 0 10px 30px rgba(107, 115, 255, 0.2);
+        }
+
+        .sense-section.completed {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            border-color: #28a745;
+        }
+
+        .sense-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .sense-icon {
+            font-size: 2.5rem;
+            margin-right: 15px;
+            filter: grayscale(100%);
+            transition: filter 0.3s ease;
+        }
+
+        .sense-section.active .sense-icon,
+        .sense-section.completed .sense-icon {
+            filter: grayscale(0%);
+        }
+
+        .sense-title {
+            font-size: 1.6rem;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .sense-description {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            line-height: 1.5;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .input-item {
+            position: relative;
+        }
+
+        .input-item input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e6ff;
+            border-radius: 12px;
             font-size: 1rem;
-            color: white;
+            color: #333;
+            background: rgba(255, 255, 255, 0.9);
             transition: all 0.3s ease;
-            resize: vertical;
-            min-height: 120px;
-            font-family: inherit;
         }
 
-        .gratitude-input::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        .gratitude-input:focus {
+        .input-item input:focus {
             outline: none;
-            border-color: rgba(255, 255, 255, 0.6);
-            background: rgba(255, 255, 255, 0.15);
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
-            transform: scale(1.02);
+            border-color: #6b73ff;
+            box-shadow: 0 0 15px rgba(107, 115, 255, 0.3);
+            transform: translateY(-2px);
         }
 
-        .add-btn {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ffa500 100%);
+        .input-item input::placeholder {
+            color: #999;
+            opacity: 0.7;
+        }
+
+        .input-item input.filled {
+            background: linear-gradient(135deg, #e8f5e8, #d4edda);
+            border-color: #28a745;
+        }
+
+        .next-button {
+            display: block;
+            width: 200px;
+            margin: 20px auto 0;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #6b73ff, #9b59b6);
+            color: white;
             border: none;
-            border-radius: 50px;
-            padding: 16px 32px;
+            border-radius: 25px;
             font-size: 1.1rem;
             font-weight: 600;
-            color: white;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
-            opacity: 0;
-            animation: fadeIn 0.6s ease-out 1s both;
+            box-shadow: 0 5px 15px rgba(107, 115, 255, 0.3);
+            opacity: 0.5;
+            pointer-events: none;
         }
 
-        .add-btn:hover {
+        .next-button.enabled {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .next-button:hover.enabled {
             transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(255, 107, 107, 0.4);
+            box-shadow: 0 10px 25px rgba(107, 115, 255, 0.4);
         }
 
-        .add-btn:active {
-            transform: translateY(-1px);
-        }
-
-        .gratitude-list {
-            margin-top: 40px;
-            opacity: 0;
-            animation: fadeIn 0.6s ease-out 1.2s both;
-        }
-
-        .gratitude-item {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 16px;
-            border-left: 4px solid #ff6b6b;
-            transition: all 0.3s ease;
-            animation: slideInRight 0.5s ease-out;
-        }
-
-        .gratitude-item:hover {
-            background: rgba(255, 255, 255, 0.15);
-            transform: translateX(10px);
-        }
-
-        .gratitude-text {
-            color: rgba(255, 255, 255, 0.95);
-            font-size: 1rem;
-            line-height: 1.6;
-            margin-bottom: 8px;
-        }
-
-        .gratitude-meta {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.85rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .delete-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            border-radius: 8px;
-            padding: 6px 12px;
-            color: rgba(255, 255, 255, 0.7);
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: all 0.3s ease;
-        }
-
-        .delete-btn:hover {
-            background: rgba(255, 107, 107, 0.3);
-            color: white;
-        }
-
-        .empty-state {
+        .completion-message {
             text-align: center;
-            color: rgba(255, 255, 255, 0.6);
-            font-style: italic;
-            padding: 40px 20px;
-        }
-
-        .stats {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 16px;
-            padding: 20px;
+            padding: 40px;
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            border-radius: 20px;
             margin-top: 30px;
-            text-align: center;
-            animation: slideInUp 0.5s ease-out 1.4s both;
+            display: none;
+            animation: fadeInUp 0.6s ease;
         }
 
-        .stats-number {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #ff6b6b;
+        .completion-message.show {
+            display: block;
         }
 
-        .stats-label {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.9rem;
-            margin-top: 5px;
+        .completion-message h3 {
+            color: #155724;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        .completion-message p {
+            color: #155724;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .reset-button {
+            margin-top: 20px;
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #17a2b8, #20c997);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .reset-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(23, 162, 184, 0.4);
         }
 
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes slideInUp {
-            from { opacity: 0; transform: translateY(50px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes slideInRight {
-            from { opacity: 0; transform: translateX(-30px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @media (max-width: 768px) {
-            .title { font-size: 2.5rem; }
-            .gratitude-card { padding: 30px 20px; }
-            .container { padding: 20px 15px; }
+            .container {
+                margin: 10px;
+                padding: 25px;
+            }
+
+            .title {
+                font-size: 2.2rem;
+            }
+
+            .input-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .sense-icon {
+                font-size: 2rem;
+            }
+
+            .sense-title {
+                font-size: 1.4rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="particles"></div>
+    <div class="floating-circles">
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+    </div>
     
     <div class="container">
         <div class="header">
-            <h1 class="title">✨ Gratitude Journal</h1>
-            <p class="subtitle">Cultivate appreciation for life's beautiful moments</p>
-        </div>
-
-        <div class="gratitude-card">
-            <div class="input-group">
-                <label class="input-label" for="gratitudeInput">What are you grateful for today?</label>
-                <textarea 
-                    id="gratitudeInput" 
-                    class="gratitude-input" 
-                    placeholder="I'm grateful for the warm cup of coffee that started my morning, the smile from a stranger, the opportunity to learn something new..."
-                    rows="4"
-                ></textarea>
-            </div>
+            <h1 class="title">5-4-3-2-1 GROUNDING</h1>
+            <p class="subtitle">A mindful technique to center yourself in the present moment</p>
             
-            <button class="add-btn" onclick="addGratitude()">
-                <span>✨ Add to Journal</span>
-            </button>
-
-            <div class="stats">
-                <div class="stats-number" id="gratitudeCount">0</div>
-                <div class="stats-label">grateful moments captured</div>
+            <div class="instructions">
+                <h3>How it Works:</h3>
+                <p>This grounding technique helps calm anxiety and refocus your mind by engaging all five senses. Take your time with each step and breathe deeply as you complete each section.</p>
             </div>
         </div>
 
-        <div class="gratitude-list" id="gratitudeList">
-            <div class="empty-state">
-                Your gratitude journey begins with a single entry...
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
             </div>
+            <div class="progress-text" id="progressText">Step 1 of 5: What can you see?</div>
+        </div>
+
+        <div class="senses-grid">
+            <!-- SIGHT (5 things) -->
+            <div class="sense-section active" data-step="1">
+                <div class="sense-header">
+                    <div class="sense-icon">👁️</div>
+                    <div class="sense-title">5 Things You Can SEE</div>
+                </div>
+                <div class="sense-description">Look around you and identify 5 objects you can see. Really focus on their details - colors, shapes, textures.</div>
+                <div class="input-grid">
+                    <div class="input-item">
+                        <input type="text" placeholder="1. Something you can see..." data-index="0">
+                    </div>
+                    <div class="input-item">
+                        <input type="text" placeholder="2. Another object..." data-index="1">
+                    </div>
+                    <div class="input-item">
+                        <input type="text" placeholder="3. Something with color..." data-index="2">
+                    </div>
+                    <div class="input-item">
+                        <input type="text" placeholder="4. Something with texture..." data-index="3">
+                    </div>
+                    <div class="input-item">
+                        <input type="text" placeholder="5. Something interesting..." data-index="4">
+                    </div>
+                </div>
+                <button class="next-button" onclick="nextStep()">Continue to Sounds →</button>
+            </div>
+
+            <!-- HEARING (4 things) -->
+            <div class="sense-section" data-step="2">
+                <div class="sense-header">
+                    <div class="sense-icon">👂</div>
+                    <div class="sense-title">4 Things You Can HEAR</div>
+                </div>
+                <div class="sense-description">Close your eyes and listen carefully. What sounds can you identify around you?</div>
+                <div class="input-grid">
+                    <div class="input-item">
+                        <input type="text" placeholder="1. A sound nearby..." data-index="0">
+                    </div>
+                    <div class="input-item">
+                        <input type="text" placeholder="2. A sound in the distance..." data-index="1">
+                    </div>
+                    <div class="input-item">
+                        <input type="text" placeholder="3. A subtle sound..." data-index="2">
+                    </div>
+                    <div class="input-item">
+                        <input type="text" placeholder="4. Your own breathing..." data-index="3">
+                    </div>
+                </div>
+                <button class="next-button" onclick="nextStep()">Continue to Touch →</button>
+            </div>
+
+            <!-- TOUCH (3 things) -->
+            <div class="sense-section" data-step="3">
+                <div class="sense-header">
+                    <div class="sense-icon">✋</div>
+                    <div class="sense-title">3 Things You Can TOUCH</div>
+                </div>
+                <div class="sense-description">Reach out and touch 3 different objects. Notice their temperature, texture, and weight.</div>
+                <div class="input-grid">
+                    <div class="input-item">
+                        <input type="text" placeholder="1. Something smooth or rough..." data-index="0">
+                    </div>
+                    <div class="input-item">
+                        <input type="text" placeholder="2. Something warm or cool..." data-index="1">
+                    </div>
+                    <div class="input-item">
+                        <input type="text" placeholder="3. Something soft or firm..." data-index="2">
+                    </div>
+                </div>
+                <button class="next-button" onclick="nextStep()">Continue to Smell →</button>
+            </div>
+
+            <!-- SMELL (2 things) -->
+            <div class="sense-section" data-step="4">
+                <div class="sense-header">
+                    <div class="sense-icon">👃</div>
+                    <div class="sense-title">2 Things You Can SMELL</div>
+                </div>
+                <div class="sense-description">Take a deep breath through your nose. What scents can you detect in your environment?</div>
+                <div class="input-grid">
+                    <div class="input-item">
+                        <input type="text" placeholder="1. A scent in the air..." data-index="0">
+                    </div>
+                    <div class="input-item">
+                        <input type="text" placeholder="2. Another smell you notice..." data-index="1">
+                    </div>
+                </div>
+                <button class="next-button" onclick="nextStep()">Continue to Taste →</button>
+            </div>
+
+            <!-- TASTE (1 thing) -->
+            <div class="sense-section" data-step="5">
+                <div class="sense-header">
+                    <div class="sense-icon">👅</div>
+                    <div class="sense-title">1 Thing You Can TASTE</div>
+                </div>
+                <div class="sense-description">Focus on any taste in your mouth, or take a sip of water. What do you taste?</div>
+                <div class="input-grid">
+                    <div class="input-item">
+                        <input type="text" placeholder="1. A taste you notice..." data-index="0">
+                    </div>
+                </div>
+                <button class="next-button" onclick="completeExercise()">Complete Exercise ✓</button>
+            </div>
+        </div>
+
+        <div class="completion-message" id="completionMessage">
+            <h3>🌟 Well Done! 🌟</h3>
+            <p>You've successfully completed the 5-4-3-2-1 grounding technique. Take a moment to notice how you feel now compared to when you started. Your mind should feel more centered and present.</p>
+            <p>Remember, you can use this technique anytime you feel anxious, overwhelmed, or disconnected from the present moment.</p>
+            <button class="reset-button" onclick="resetExercise()">Start Over</button>
         </div>
     </div>
 
     <script>
-        // Create floating particles
-        function createParticles() {
-            const particles = document.querySelector('.particles');
-            for (let i = 0; i < 30; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.top = Math.random() * 100 + '%';
-                particle.style.animationDelay = Math.random() * 6 + 's';
-                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
-                particles.appendChild(particle);
+        let currentStep = 1;
+        const totalSteps = 5;
+        const stepRequirements = [5, 4, 3, 2, 1]; // Number of inputs required for each step
+
+        function updateProgress() {
+            const percentage = ((currentStep - 1) / totalSteps) * 100;
+            document.getElementById('progressFill').style.width = percentage + '%';
+            
+            const stepTitles = [
+                'Step 1 of 5: What can you see?',
+                'Step 2 of 5: What can you hear?',
+                'Step 3 of 5: What can you touch?',
+                'Step 4 of 5: What can you smell?',
+                'Step 5 of 5: What can you taste?'
+            ];
+            
+            if (currentStep <= totalSteps) {
+                document.getElementById('progressText').textContent = stepTitles[currentStep - 1];
             }
         }
 
-        let gratitudeEntries = [];
+        function checkStepCompletion(stepNumber) {
+            const section = document.querySelector(`[data-step="${stepNumber}"]`);
+            const inputs = section.querySelectorAll('input[type="text"]');
+            const requiredInputs = stepRequirements[stepNumber - 1];
+            let filledInputs = 0;
 
-        function addGratitude() {
-            const input = document.getElementById('gratitudeInput');
-            const text = input.value.trim();
-            
-            if (text === '') {
-                input.focus();
-                input.style.borderColor = 'rgba(255, 107, 107, 0.6)';
-                setTimeout(() => {
-                    input.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-                }, 1000);
+            inputs.forEach(input => {
+                if (input.value.trim() !== '') {
+                    filledInputs++;
+                    input.classList.add('filled');
+                } else {
+                    input.classList.remove('filled');
+                }
+            });
+
+            const nextButton = section.querySelector('.next-button');
+            if (filledInputs >= requiredInputs) {
+                nextButton.classList.add('enabled');
+                return true;
+            } else {
+                nextButton.classList.remove('enabled');
+                return false;
+            }
+        }
+
+        function nextStep() {
+            if (!checkStepCompletion(currentStep)) {
                 return;
             }
 
-            const entry = {
-                id: Date.now(),
-                text: text,
-                date: new Date().toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric'
-                }),
-                time: new Date().toLocaleTimeString('en-US', {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                })
-            };
+            // Mark current step as completed
+            const currentSection = document.querySelector(`[data-step="${currentStep}"]`);
+            currentSection.classList.remove('active');
+            currentSection.classList.add('completed');
 
-            gratitudeEntries.unshift(entry);
-            input.value = '';
-            renderGratitudeList();
-            updateStats();
-
-            // Add a little celebration effect
-            const btn = document.querySelector('.add-btn');
-            btn.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                btn.style.transform = 'translateY(-3px)';
-            }, 150);
-        }
-
-        function deleteGratitude(id) {
-            gratitudeEntries = gratitudeEntries.filter(entry => entry.id !== id);
-            renderGratitudeList();
-            updateStats();
-        }
-
-        function renderGratitudeList() {
-            const list = document.getElementById('gratitudeList');
+            // Move to next step
+            currentStep++;
             
-            if (gratitudeEntries.length === 0) {
-                list.innerHTML = '<div class="empty-state">Your gratitude journey begins with a single entry...</div>';
+            if (currentStep <= totalSteps) {
+                const nextSection = document.querySelector(`[data-step="${currentStep}"]`);
+                nextSection.classList.add('active');
+                
+                // Smooth scroll to next section
+                nextSection.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+                
+                updateProgress();
+            }
+        }
+
+        function completeExercise() {
+            if (!checkStepCompletion(currentStep)) {
                 return;
             }
 
-            list.innerHTML = gratitudeEntries.map(entry => `
-                <div class="gratitude-item">
-                    <div class="gratitude-text">${entry.text}</div>
-                    <div class="gratitude-meta">
-                        <span>${entry.date} at ${entry.time}</span>
-                        <button class="delete-btn" onclick="deleteGratitude(${entry.id})">Remove</button>
-                    </div>
-                </div>
-            `).join('');
+            // Mark final step as completed
+            const currentSection = document.querySelector(`[data-step="${currentStep}"]`);
+            currentSection.classList.remove('active');
+            currentSection.classList.add('completed');
+
+            // Update progress to 100%
+            document.getElementById('progressFill').style.width = '100%';
+            document.getElementById('progressText').textContent = 'Grounding exercise completed!';
+
+            // Show completion message
+            document.getElementById('completionMessage').classList.add('show');
+            document.getElementById('completionMessage').scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
         }
 
-        function updateStats() {
-            document.getElementById('gratitudeCount').textContent = gratitudeEntries.length;
+        function resetExercise() {
+            currentStep = 1;
+            
+            // Reset all sections
+            document.querySelectorAll('.sense-section').forEach(section => {
+                section.classList.remove('active', 'completed');
+            });
+            
+            // Activate first section
+            document.querySelector('[data-step="1"]').classList.add('active');
+            
+            // Clear all inputs
+            document.querySelectorAll('input[type="text"]').forEach(input => {
+                input.value = '';
+                input.classList.remove('filled');
+            });
+            
+            // Reset all buttons
+            document.querySelectorAll('.next-button').forEach(button => {
+                button.classList.remove('enabled');
+            });
+            
+            // Hide completion message
+            document.getElementById('completionMessage').classList.remove('show');
+            
+            // Reset progress
+            updateProgress();
+            
+            // Scroll to top
+            document.querySelector('.container').scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start' 
+            });
         }
 
-        // Allow Enter+Shift to add gratitude
-        document.getElementById('gratitudeInput').addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && e.shiftKey) {
-                e.preventDefault();
-                addGratitude();
-            }
+        // Add event listeners to all inputs
+        document.querySelectorAll('input[type="text"]').forEach(input => {
+            input.addEventListener('input', function() {
+                const section = this.closest('.sense-section');
+                const stepNumber = parseInt(section.getAttribute('data-step'));
+                checkStepCompletion(stepNumber);
+            });
+
+            // Add focus effects
+            input.addEventListener('focus', function() {
+                this.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.style.transform = 'scale(1)';
+            });
         });
 
-        // Initialize particles
-        createParticles();
+        // Initialize
+        updateProgress();
+        checkStepCompletion(1);
+
+        // Add breathing reminder
+        setInterval(() => {
+            const activeSection = document.querySelector('.sense-section.active');
+            if (activeSection) {
+                const icon = activeSection.querySelector('.sense-icon');
+                icon.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    icon.style.transform = 'scale(1)';
+                }, 200);
+            }
+        }, 3000);
     </script>
 </body>
 </html>
