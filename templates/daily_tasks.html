@@ -255,6 +255,7 @@
             gap: 1.2rem;
             justify-content: center;
             margin-bottom: 1.5rem;
+            margin-top: 10rem;
             width: 100%;
         }
         .ambient-btn {
@@ -309,11 +310,11 @@
                 <div class="week-title">Complete the tasks for 7 days and you <br>should come back to the Assistant.</div>
                 <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">1</span><span class="day-label"><b>Day 1</b><br> Breathe with the Circle </span></div>
                 <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">2</span><span class="day-label"><b>Day 2</b><br> mindful-click-game </span></div>
-                <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">3</span><span class="day-label"><b>Day 3</b><br> Breathe with the Circle </span></div>
-                <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">4</span><span class="day-label"><b>Day 4</b><br> Breathe with the Circle </span></div>
-                <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">5</span><span class="day-label"><b>Day 5</b><br> Breathe with the Circle </span></div>
-                <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">6</span><span class="day-label"><b>Day 6</b><br> Breathe with the Circle </span></div>
-                <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">7</span><span class="day-label"><b>Day 7</b><br> Breathe with the Circle </span></div>
+                <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">3</span><span class="day-label"><b>Day 3</b><br> Ambient Sound Experience </span></div>
+                <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">4</span><span class="day-label"><b>Day 4</b><br> Gentle Movement for Calm </span></div>
+                <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">5</span><span class="day-label"><b>Day 5</b><br> Bubble Wrap Popping Game </span></div>
+                <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">6</span><span class="day-label"><b>Day 6</b><br> Memory Challenge </span></div>
+                <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">7</span><span class="day-label"><b>Day 7</b><br> Mind Unwind – Simple Puzzle Game </span></div>
             </div>
         </aside>
         <div class="tasks-container">
@@ -1001,11 +1002,13 @@ function showDay7PuzzleTask() {
 function showDay5BubbleWrapTask() {
     const tasksContainer = document.querySelector('.tasks-container');
     tasksContainer.innerHTML = '';
-    // Title
+
+    // 1. Title
     const h2 = document.createElement('h2');
     h2.textContent = 'Your Daily Task';
     tasksContainer.appendChild(h2);
-    // Subtitle styled like a title, but smaller
+
+    // 2. Subtitle
     const subtitle = document.createElement('div');
     subtitle.textContent = 'Bubble Wrap Popping Game';
     subtitle.style.fontSize = '1.35rem';
@@ -1014,24 +1017,17 @@ function showDay5BubbleWrapTask() {
     subtitle.style.marginBottom = '0.5rem';
     subtitle.style.letterSpacing = '0.5px';
     tasksContainer.appendChild(subtitle);
-    // Description
-    const desc = document.createElement('div');
-    desc.className = 'task-desc';
-    desc.innerHTML = `<p>Click on bubbles to pop them! Just like real bubble wrap!</p>`;
-    tasksContainer.appendChild(desc);
 
-    // Game container
+    // 3. Game
     const gameDiv = document.createElement('div');
     gameDiv.style.position = 'relative';
     gameDiv.style.width = '100%';
-    gameDiv.style.height = '480px';
+    gameDiv.style.height = 'auto';
     gameDiv.style.margin = '2rem 0';
     gameDiv.style.background = '#fff';
     gameDiv.style.borderRadius = '22px';
     gameDiv.style.boxShadow = '0 4px 24px 0 rgba(74,144,226,0.09)';
     tasksContainer.appendChild(gameDiv);
-
-    // Remove duplicate instructions and UI overlays
 
     // Custom cursor
     const cursor = document.createElement('div');
@@ -1155,13 +1151,10 @@ function showDay5BubbleWrapTask() {
         updateUI();
     }
 
-    // Update UI
+    // 4. Bubbles left text
     let bubblesLeftDiv = document.createElement('div');
-    bubblesLeftDiv.style.position = 'absolute';
-    bubblesLeftDiv.style.left = '50%';
-    bubblesLeftDiv.style.bottom = '18px';
-    bubblesLeftDiv.style.transform = 'translateX(-50%)';
-    // Remove card background, shadow, and border radius (plain text, no round card)
+    bubblesLeftDiv.style.position = 'static';
+    bubblesLeftDiv.style.margin = '1.2rem auto 0 auto';
     bubblesLeftDiv.style.background = 'none';
     bubblesLeftDiv.style.boxShadow = 'none';
     bubblesLeftDiv.style.borderRadius = '0';
@@ -1169,36 +1162,21 @@ function showDay5BubbleWrapTask() {
     bubblesLeftDiv.style.color = '#4A90E2';
     bubblesLeftDiv.style.fontSize = '1.18rem';
     bubblesLeftDiv.style.fontWeight = '600';
+    bubblesLeftDiv.style.textAlign = 'center';
     bubblesLeftDiv.textContent = 'Bubbles Left: 0';
-    gameDiv.appendChild(bubblesLeftDiv);
+    tasksContainer.appendChild(bubblesLeftDiv);
 
     function updateUI() {
         const remaining = totalBubbles - poppedCount;
         bubblesLeftDiv.textContent = `Bubbles Left: ${remaining}`;
     }
 
-    // Complete button (always visible, fixed at bottom like other tasks)
+    // 5. I completed the task button (match position to other buttons)
     const completeBtn = document.createElement('button');
     completeBtn.textContent = 'I completed the task';
     completeBtn.className = 'next-btn fixed-complete-btn';
-    // Only set color and background, let .fixed-complete-btn handle position/size
     completeBtn.style.background = '#4CAF50';
     completeBtn.style.color = '#fff';
-    completeBtn.style.fontSize = '';
-    completeBtn.style.fontWeight = '';
-    completeBtn.style.border = '';
-    completeBtn.style.borderRadius = '';
-    completeBtn.style.padding = '';
-    completeBtn.style.boxShadow = '';
-    completeBtn.style.display = 'block';
-    completeBtn.style.marginTop = '';
-    completeBtn.style.width = '';
-    completeBtn.style.maxWidth = '';
-    completeBtn.style.position = '';
-    completeBtn.style.left = '';
-    completeBtn.style.bottom = '';
-    completeBtn.style.transform = '';
-    completeBtn.style.zIndex = '';
     completeBtn.onclick = function() {
         // Mark Day 5 as green (completed)
         const weekDays = document.querySelectorAll('.week-day-vertical .day-circle');
@@ -1222,8 +1200,7 @@ function showDay5BubbleWrapTask() {
         // Show Day 6 task
         showDay6MemoryTask();
     };
-    // Place the button at the end of gameDiv so .fixed-complete-btn positions it at the bottom
-    gameDiv.appendChild(completeBtn);
+    tasksContainer.appendChild(completeBtn);
 
     // Mouse tracking for custom cursor
     gameDiv.addEventListener('mousemove', (e) => {
@@ -1576,7 +1553,7 @@ function showDay5BubbleWrapTask() {
         // Description
         const desc = document.createElement('div');
         desc.className = 'task-desc';
-        desc.innerHTML = `<p>Memorize the positions of the icons below. You have 1 minute to remember their locations. After that, the icons will be hidden and you will be asked to recall their positions!</p>`;
+        desc.innerHTML = `<p>Memorize the positions of the icons below. You have <b>15 seconds</b> to remember their locations. After that, the icons will be hidden and you will be asked to recall their positions!</p>`;
         tasksContainer.appendChild(desc);
 
         // 3x3 grid, scale icons up, use only 9 icons
@@ -1600,12 +1577,12 @@ function showDay5BubbleWrapTask() {
         // Board
         const board = document.createElement('div');
         board.style.display = 'grid';
-        board.style.gridTemplateColumns = 'repeat(3, 96px)';
-        board.style.gridTemplateRows = 'repeat(3, 96px)';
+        board.style.gridTemplateColumns = 'repeat(3, 78px)';
+        board.style.gridTemplateRows = 'repeat(3, 78px)';
         board.style.gap = '1.2rem';
         board.style.justifyContent = 'center';
         board.style.margin = '2rem auto 1.2rem auto';
-        board.style.maxWidth = '420px';
+        board.style.maxWidth = '300px';
         tasksContainer.appendChild(board);
 
         // Always show the complete button at the bottom (like other days)
@@ -1641,23 +1618,23 @@ function showDay5BubbleWrapTask() {
         };
         tasksContainer.appendChild(completeBtn);
 
-        // Create icon cards
+        // Create icon cards (hidden before start)
         let cardEls = [];
         for (let i = 0; i < 9; i++) {
             const card = document.createElement('div');
-            card.style.width = '96px';
-            card.style.height = '96px';
+            card.style.width = '78px';
+            card.style.height = '78px';
             card.style.background = '#f7e7e1';
-            card.style.borderRadius = '24px';
+            card.style.borderRadius = '18px';
             card.style.display = 'flex';
             card.style.alignItems = 'center';
             card.style.justifyContent = 'center';
-            card.style.fontSize = '3.2rem';
+            card.style.fontSize = '2.2rem';
             card.style.boxShadow = '0 2px 8px rgba(74,144,226,0.10)';
             card.style.cursor = 'pointer';
             card.style.transition = 'background 0.3s, color 0.3s';
             card.dataset.idx = i;
-            card.textContent = iconOrder[i];
+            card.textContent = '';
             board.appendChild(card);
             cardEls.push(card);
         }
@@ -1687,17 +1664,24 @@ function showDay5BubbleWrapTask() {
         tasksContainer.appendChild(startBtn);
 
         // Hide cards and timer until start
-        board.style.opacity = '0.5';
-        for (let i = 0; i < 9; i++) cardEls[i].style.pointerEvents = 'none';
+        board.style.opacity = '1';
+        for (let i = 0; i < 9; i++) {
+            cardEls[i].style.pointerEvents = 'none';
+            cardEls[i].textContent = '';
+        }
 
-        let timeLeft = 60;
+        let timeLeft = 15;
         let timerId = null;
 
         startBtn.onclick = function() {
             startBtn.disabled = true;
             startBtn.style.opacity = '0.6';
             board.style.opacity = '1';
-            for (let i = 0; i < 9; i++) cardEls[i].style.pointerEvents = '';
+            // Reveal icons
+            for (let i = 0; i < 9; i++) {
+                cardEls[i].textContent = iconOrder[i];
+                cardEls[i].style.pointerEvents = '';
+            }
             timerDiv.textContent = `Time left: ${timeLeft}s`;
             timerId = setInterval(() => {
                 timeLeft--;
@@ -1718,7 +1702,7 @@ function showDay5BubbleWrapTask() {
                 cardEls[i].style.background = '#E2BDA7';
                 cardEls[i].style.color = '#fff';
                 cardEls[i].style.fontWeight = '700';
-                cardEls[i].style.fontSize = '2rem';
+                cardEls[i].style.fontSize = '1.3rem';
                 cardEls[i].style.pointerEvents = '';
             }
             // Start recall phase after a short delay
@@ -1790,12 +1774,49 @@ function showDay5BubbleWrapTask() {
                 }
             } else {
                 // Game over, show score and show wait message only
-                while (tasksContainer.firstChild) tasksContainer.removeChild(tasksContainer.firstChild);
-                // Show Day 7 puzzle task immediately after Day 6 completion
-
-                setTimeout(function() {
-                    showDay7PuzzleTask();
-                }, 0);
+                // Instead of clearing the board, show the Retry button and score in place of the Start button, keeping the board visible
+                // Hide the Start button if present
+                if (startBtn) {
+                    startBtn.style.display = 'none';
+                }
+                // Remove any previous retry or score
+                let oldRetry = tasksContainer.querySelector('.memory-retry-btn');
+                if (oldRetry) oldRetry.remove();
+                let oldScore = tasksContainer.querySelector('.memory-score-div');
+                if (oldScore) oldScore.remove();
+                // Insert Retry button after Start button, using a unique variable name to avoid redeclaration
+                const memoryRetryBtn = document.createElement('button');
+                memoryRetryBtn.textContent = 'Retry';
+                memoryRetryBtn.className = 'memory-retry-btn';
+                memoryRetryBtn.style.background = '#f07264';
+                memoryRetryBtn.style.color = '#fff';
+                memoryRetryBtn.style.fontSize = '1rem';
+                memoryRetryBtn.style.fontWeight = '600';
+                memoryRetryBtn.style.border = 'none';
+                memoryRetryBtn.style.borderRadius = '12px';
+                memoryRetryBtn.style.padding = '0.4rem 1.2rem';
+                memoryRetryBtn.style.marginBottom = '0.7rem';
+                memoryRetryBtn.style.cursor = 'pointer';
+                memoryRetryBtn.style.transition = 'background 0.2s';
+                memoryRetryBtn.style.boxShadow = '0 2px 8px rgba(240,114,100,0.10)';
+                // Insert after Start button
+                if (startBtn && startBtn.parentNode) {
+                    startBtn.parentNode.insertBefore(memoryRetryBtn, startBtn.nextSibling);
+                } else {
+                    tasksContainer.appendChild(memoryRetryBtn);
+                }
+                memoryRetryBtn.onclick = function() {
+                    showDay6MemoryTask();
+                };
+                // Insert score below Retry button
+                const scoreDiv = document.createElement('div');
+                scoreDiv.className = 'memory-score-div';
+                scoreDiv.style.fontSize = '1.35rem';
+                scoreDiv.style.fontWeight = '700';
+                scoreDiv.style.color = '#4A90E2';
+                scoreDiv.style.margin = '0.7rem 0 1.2rem 0';
+                scoreDiv.textContent = `Your score: ${score} / 9`;
+                memoryRetryBtn.insertAdjacentElement('afterend', scoreDiv);
 // --- Day 7: Mind Unwind – Simple Puzzle Game ---
 function showDay7PuzzleTask() {
     const tasksContainer = document.querySelector('.tasks-container');
@@ -1961,28 +1982,10 @@ function showDay7PuzzleTask() {
 }
 // --- End Day 7 ---
 
-                // Retry button
-                const retryBtn = document.createElement('button');
-                retryBtn.textContent = 'Retry';
-                retryBtn.style.background = '#f07264';
-                retryBtn.style.color = '#fff';
-                retryBtn.style.fontSize = '1rem';
-                retryBtn.style.fontWeight = '600';
-                retryBtn.style.border = 'none';
-                retryBtn.style.borderRadius = '12px';
-                retryBtn.style.padding = '0.4rem 1.2rem';
-                retryBtn.style.marginTop = '1.1rem';
-                retryBtn.style.cursor = 'pointer';
-                retryBtn.style.transition = 'background 0.2s';
-                retryBtn.style.boxShadow = '0 2px 8px rgba(240,114,100,0.10)';
-                tasksContainer.appendChild(retryBtn);
-                retryBtn.onclick = function() {
-                    showDay6MemoryTask();
-                };
+                // (removed duplicate Retry button code)
             }
         }
-    }
-// --- End Day 6 ---
+    } // --- End Day 6 ---
     </script>
 </body>
 </html>
