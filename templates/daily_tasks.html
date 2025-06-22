@@ -335,6 +335,196 @@
         </div>
     </div>
     <script>
+// --- Day 7: Mind Unwind – Simple Puzzle Game ---
+function showDay7PuzzleTask() {
+    const tasksContainer = document.querySelector('.tasks-container');
+    tasksContainer.innerHTML = '';
+    // Title
+    const h2 = document.createElement('h2');
+    h2.textContent = 'Your Daily Task';
+    tasksContainer.appendChild(h2);
+    // Subtitle styled like a title, but smaller
+    const subtitle = document.createElement('div');
+    subtitle.textContent = 'Mind Unwind – Simple Puzzle Game';
+    subtitle.style.fontSize = '1.35rem';
+    subtitle.style.fontWeight = '700';
+    subtitle.style.color = '#f07264';
+    subtitle.style.marginBottom = '0.5rem';
+    subtitle.style.letterSpacing = '0.5px';
+    tasksContainer.appendChild(subtitle);
+    // Description (with goal and mental break info)
+    const desc = document.createElement('div');
+    desc.className = 'task-desc';
+    desc.innerHTML = `<p>Challenge your mind gently with this relaxing puzzle. Rearrange the pieces to complete the picture or pattern.<br><br>Take your time—there’s no timer, no pressure. Just a quiet space to focus, think, and enjoy the satisfaction of solving.</p>`;
+    tasksContainer.appendChild(desc);
+
+    // Add the complete button at the bottom, always visible (like previous tasks)
+    let completeBtn = document.createElement('button');
+    completeBtn.id = 'complete-task-btn';
+    completeBtn.className = 'next-btn fixed-complete-btn';
+    completeBtn.style.background = '#4CAF50';
+    completeBtn.style.color = '#fff';
+    completeBtn.textContent = 'I completed the task';
+    // Add to tasksContainer so it is absolutely positioned at the bottom
+    tasksContainer.appendChild(completeBtn);
+    completeBtn.onclick = function() {
+        // Mark Day 7 as green (completed)
+        const weekDays = document.querySelectorAll('.week-day-vertical .day-circle');
+        if (weekDays.length > 6) {
+            const day7 = weekDays[6];
+            day7.innerHTML = tickSVG;
+            day7.style.background = '#4CAF50';
+            day7.style.borderColor = '#388E3C';
+            day7.style.display = 'flex';
+            day7.style.alignItems = 'center';
+            day7.style.justifyContent = 'center';
+            day7.style.padding = '0';
+        }
+        const day7Label = document.querySelectorAll('.week-day-vertical .day-label')[6];
+        if (day7Label) {
+            day7Label.style.color = '#388E3C';
+            day7Label.style.fontWeight = '700';
+        }
+        // Remove all children from tasksContainer
+        while (tasksContainer.firstChild) tasksContainer.removeChild(tasksContainer.firstChild);
+        // Show congratulations message and Assistant button
+        const congratsDiv = document.createElement('div');
+        congratsDiv.style.fontSize = '1.18rem';
+        congratsDiv.style.color = '#4CAF50';
+        congratsDiv.style.fontWeight = '700';
+        congratsDiv.style.margin = '2.5rem 0 1.5rem 0';
+        congratsDiv.textContent = 'Congratulations! You have completed the week. Please feel free to go to Assistant and answer the questions given.';
+        tasksContainer.appendChild(congratsDiv);
+
+        const assistantBtn = document.createElement('a');
+        assistantBtn.href = '/';
+        assistantBtn.textContent = 'Go to Assistant';
+        assistantBtn.className = 'next-btn';
+        assistantBtn.style.background = '#4A90E2';
+        assistantBtn.style.color = '#fff';
+        assistantBtn.style.fontSize = '1.13rem';
+        assistantBtn.style.fontWeight = '600';
+        assistantBtn.style.borderRadius = '18px';
+        assistantBtn.style.padding = '0.7rem 2.2rem';
+        assistantBtn.style.boxShadow = '0 2px 8px rgba(74,144,226,0.10)';
+        assistantBtn.style.marginTop = '1.2rem';
+        assistantBtn.style.display = 'inline-block';
+        assistantBtn.style.textDecoration = 'none';
+        tasksContainer.appendChild(assistantBtn);
+    };
+
+    // Puzzle game container
+    const gameDiv = document.createElement('div');
+    gameDiv.style.display = 'flex';
+    gameDiv.style.justifyContent = 'center';
+    gameDiv.style.alignItems = 'center';
+    gameDiv.style.margin = '2rem 0';
+    gameDiv.style.minHeight = '340px';
+    tasksContainer.appendChild(gameDiv);
+
+    // 3x3 sliding puzzle with image tiles
+    const size = 3;
+    let board = [];
+    let empty = {row: size-1, col: size-1};
+    // Use 8 images from static/images/puzzle/1.jpg ... 8.jpeg (or .jpg/.jpeg/.png)
+    const imagePaths = [
+        '/static/images/puzzle/1.jpg',
+        '/static/images/puzzle/2.jpg',
+        '/static/images/puzzle/3.png',
+        '/static/images/puzzle/4.jpg',
+        '/static/images/puzzle/5.jpeg',
+        '/static/images/puzzle/6.jpg',
+        '/static/images/puzzle/7.jpg',
+        '/static/images/puzzle/8.jpeg'
+    ];
+    // Fill board with tile indices 0-7 and one empty
+    let nums = Array.from({length: size*size-1}, (_,i)=>i);
+    // Shuffle
+    for (let i = nums.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [nums[i], nums[j]] = [nums[j], nums[i]];
+    }
+    nums.push(null);
+    for (let r=0; r<size; r++) {
+        board[r] = [];
+        for (let c=0; c<size; c++) {
+            board[r][c] = nums[r*size+c];
+        }
+    }
+
+    // Render puzzle
+    const puzzle = document.createElement('div');
+    puzzle.style.display = 'grid';
+    puzzle.style.gridTemplateColumns = `repeat(${size}, 96px)`;
+    puzzle.style.gridTemplateRows = `repeat(${size}, 96px)`;
+    puzzle.style.gap = '0.7rem';
+    puzzle.style.background = 'none';
+    puzzle.style.borderRadius = '18px';
+    puzzle.style.boxShadow = '0 2px 8px rgba(74,144,226,0.10)';
+    puzzle.style.padding = '0.5rem';
+    gameDiv.appendChild(puzzle);
+
+    function renderPuzzle() {
+        puzzle.innerHTML = '';
+        for (let r=0; r<size; r++) {
+            for (let c=0; c<size; c++) {
+                const val = board[r][c];
+                const tile = document.createElement('div');
+                tile.style.width = '96px';
+                tile.style.height = '96px';
+                tile.style.display = 'flex';
+                tile.style.alignItems = 'center';
+                tile.style.justifyContent = 'center';
+                tile.style.borderRadius = '14px';
+                tile.style.background = val !== null ? '#E2BDA7' : 'transparent';
+                tile.style.cursor = val !== null ? 'pointer' : 'default';
+                tile.style.transition = 'background 0.2s, color 0.2s';
+                tile.style.overflow = 'hidden';
+                tile.style.position = 'relative';
+                if (val !== null) {
+                    const img = document.createElement('img');
+                    img.src = imagePaths[val];
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+                    img.style.objectFit = 'cover';
+                    img.style.borderRadius = '14px';
+                    tile.appendChild(img);
+                }
+                // Move logic
+                tile.onclick = function() {
+                    if (val === null) return;
+                    // Can move if adjacent to empty
+                    if ((Math.abs(empty.row - r) + Math.abs(empty.col - c)) === 1) {
+                        board[empty.row][empty.col] = val;
+                        board[r][c] = null;
+                        empty = {row: r, col: c};
+                        renderPuzzle();
+                        if (isSolved()) showCompleteBtn();
+                    }
+                };
+                puzzle.appendChild(tile);
+            }
+        }
+    }
+
+    function isSolved() {
+        let n = 0;
+        for (let r=0; r<size; r++) {
+            for (let c=0; c<size; c++) {
+                if (r === size-1 && c === size-1) {
+                    if (board[r][c] !== null) return false;
+                } else {
+                    if (board[r][c] !== n) return false;
+                    n++;
+                }
+            }
+        }
+        return true;
+    }
+
+    renderPuzzle();
+}
+// --- End Day 7 ---
     // Animated Breathing Circle Game
     const canvas = document.getElementById('breathing-circle');
     const ctx = canvas.getContext('2d');
@@ -1599,185 +1789,177 @@ function showDay5BubbleWrapTask() {
                     };
                 }
             } else {
-                // Game over, show score and add complete button
-                let resultDiv = document.createElement('div');
-                resultDiv.id = 'memory-result';
-                resultDiv.style.fontSize = '1.25rem';
-                resultDiv.style.color = '#4A90E2';
-                resultDiv.style.margin = '1.5rem 0 0.7rem 0';
-                resultDiv.innerHTML = `Game over!<br>Your score: <b>${score} / 9</b>`;
-                tasksContainer.appendChild(resultDiv);
-
-                // Add "I completed the task" button for Day 6
-                // Remove all children from tasksContainer (title, subtitle, desc, game, button, result)
+                // Game over, show score and show wait message only
                 while (tasksContainer.firstChild) tasksContainer.removeChild(tasksContainer.firstChild);
-                // Show Day 7 task immediately
-                showDay7PuzzleTask();
+                // Show Day 7 puzzle task immediately after Day 6 completion
 
-    // --- Day 7: Mind Unwind – Simple Puzzle Game ---
-    function showDay7PuzzleTask() {
-        const tasksContainer = document.querySelector('.tasks-container');
-        tasksContainer.innerHTML = '';
-        // Title
-        const h2 = document.createElement('h2');
-        h2.textContent = 'Your Daily Task';
-        tasksContainer.appendChild(h2);
-        // Subtitle styled like a title, but smaller
-        const subtitle = document.createElement('div');
-        subtitle.textContent = 'Mind Unwind – Simple Puzzle Game';
-        subtitle.style.fontSize = '1.35rem';
-        subtitle.style.fontWeight = '700';
-        subtitle.style.color = '#f07264';
-        subtitle.style.marginBottom = '0.5rem';
-        subtitle.style.letterSpacing = '0.5px';
-        tasksContainer.appendChild(subtitle);
-        // Description (with goal and mental break info)
-        const desc = document.createElement('div');
-        desc.className = 'task-desc';
-        desc.innerHTML = `<p>Challenge your mind gently with this relaxing puzzle. Rearrange the pieces to complete the picture or pattern.<br><br>Take your time—there’s no timer, no pressure. Just a quiet space to focus, think, and enjoy the satisfaction of solving.</p><ul style='margin:0 0 0.7rem 1.2rem;padding:0;font-size:1.08rem;'><li>🎯 <b>Goal:</b> Solve the puzzle to reveal the full image and bring everything into place.</li><li>🧘 A perfect mental break to sharpen focus and ease stress.</li></ul>`;
-        tasksContainer.appendChild(desc);
+                setTimeout(function() {
+                    showDay7PuzzleTask();
+                }, 0);
+// --- Day 7: Mind Unwind – Simple Puzzle Game ---
+function showDay7PuzzleTask() {
+    const tasksContainer = document.querySelector('.tasks-container');
+    tasksContainer.innerHTML = '';
+    // Title
+    const h2 = document.createElement('h2');
+    h2.textContent = 'Your Daily Task';
+    tasksContainer.appendChild(h2);
+    // Subtitle styled like a title, but smaller
+    const subtitle = document.createElement('div');
+    subtitle.textContent = 'Mind Unwind – Simple Puzzle Game';
+    subtitle.style.fontSize = '1.35rem';
+    subtitle.style.fontWeight = '700';
+    subtitle.style.color = '#f07264';
+    subtitle.style.marginBottom = '0.5rem';
+    subtitle.style.letterSpacing = '0.5px';
+    tasksContainer.appendChild(subtitle);
+    // Description (with goal and mental break info)
+    const desc = document.createElement('div');
+    desc.className = 'task-desc';
+    desc.innerHTML = `<p>Challenge your mind gently with this relaxing puzzle. Rearrange the pieces to complete the picture or pattern.<br><br>Take your time—there’s no timer, no pressure. Just a quiet space to focus, think, and enjoy the satisfaction of solving.</p><ul style='margin:0 0 0.7rem 1.2rem;padding:0;font-size:1.08rem;'>`;
+    tasksContainer.appendChild(desc);
 
-        // Puzzle game container
-        const gameDiv = document.createElement('div');
-        gameDiv.style.display = 'flex';
-        gameDiv.style.justifyContent = 'center';
-        gameDiv.style.alignItems = 'center';
-        gameDiv.style.margin = '2rem 0';
-        gameDiv.style.minHeight = '340px';
-        tasksContainer.appendChild(gameDiv);
+    // Puzzle game container
+    const gameDiv = document.createElement('div');
+    gameDiv.style.display = 'flex';
+    gameDiv.style.justifyContent = 'center';
+    gameDiv.style.alignItems = 'center';
+    gameDiv.style.margin = '2rem 0';
+    gameDiv.style.minHeight = '340px';
+    tasksContainer.appendChild(gameDiv);
 
-        // 3x3 sliding puzzle with image tiles
-        const size = 3;
-        let board = [];
-        let empty = {row: size-1, col: size-1};
-        // Use 8 images from static/images/puzzle/1.jpg ... 8.jpeg (or .jpg/.jpeg/.png)
-        const imagePaths = [
-            '/static/images/puzzle/1.jpg',
-            '/static/images/puzzle/2.jpg',
-            '/static/images/puzzle/3.png',
-            '/static/images/puzzle/4.jpg',
-            '/static/images/puzzle/5.jpeg',
-            '/static/images/puzzle/6.jpg',
-            '/static/images/puzzle/7.jpg',
-            '/static/images/puzzle/8.jpeg'
-        ];
-        // Fill board with tile indices 0-7 and one empty
-        let nums = Array.from({length: size*size-1}, (_,i)=>i);
-        // Shuffle
-        for (let i = nums.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [nums[i], nums[j]] = [nums[j], nums[i]];
-        }
-        nums.push(null);
-        for (let r=0; r<size; r++) {
-            board[r] = [];
-            for (let c=0; c<size; c++) {
-                board[r][c] = nums[r*size+c];
-            }
-        }
-
-        // Render puzzle
-        const puzzle = document.createElement('div');
-        puzzle.style.display = 'grid';
-        puzzle.style.gridTemplateColumns = `repeat(${size}, 96px)`;
-        puzzle.style.gridTemplateRows = `repeat(${size}, 96px)`;
-        puzzle.style.gap = '0.7rem';
-        puzzle.style.background = 'none';
-        puzzle.style.borderRadius = '18px';
-        puzzle.style.boxShadow = '0 2px 8px rgba(74,144,226,0.10)';
-        puzzle.style.padding = '0.5rem';
-        gameDiv.appendChild(puzzle);
-
-        function renderPuzzle() {
-            puzzle.innerHTML = '';
-            for (let r=0; r<size; r++) {
-                for (let c=0; c<size; c++) {
-                    const val = board[r][c];
-                    const tile = document.createElement('div');
-                    tile.style.width = '96px';
-                    tile.style.height = '96px';
-                    tile.style.display = 'flex';
-                    tile.style.alignItems = 'center';
-                    tile.style.justifyContent = 'center';
-                    tile.style.borderRadius = '14px';
-                    tile.style.background = val !== null ? '#E2BDA7' : 'transparent';
-                    tile.style.cursor = val !== null ? 'pointer' : 'default';
-                    tile.style.transition = 'background 0.2s, color 0.2s';
-                    tile.style.overflow = 'hidden';
-                    tile.style.position = 'relative';
-                    if (val !== null) {
-                        const img = document.createElement('img');
-                        img.src = imagePaths[val];
-                        img.style.width = '100%';
-                        img.style.height = '100%';
-                        img.style.objectFit = 'cover';
-                        img.style.borderRadius = '14px';
-                        tile.appendChild(img);
-                        tile.onclick = function() {
-                            // If adjacent to empty, move
-                            if ((Math.abs(r-empty.row)+Math.abs(c-empty.col))===1) {
-                                board[empty.row][empty.col] = val;
-                                board[r][c] = null;
-                                empty = {row: r, col: c};
-                                renderPuzzle();
-                                if (isSolved()) showCompleteBtn();
-                            }
-                        };
-                    }
-                    puzzle.appendChild(tile);
-                }
-            }
-        }
-
-        function isSolved() {
-            let n = 0;
-            for (let r=0; r<size; r++) {
-                for (let c=0; c<size; c++) {
-                    if (r===size-1 && c===size-1) return board[r][c] === null;
-                    if (board[r][c] !== n++) return false;
-                }
-            }
-            return true;
-        }
-
-        // Show complete button only when solved
-        let completeBtn = null;
-        function showCompleteBtn() {
-            if (completeBtn) return;
-            completeBtn = document.createElement('button');
-            completeBtn.id = 'complete-task-btn';
-            completeBtn.className = 'next-btn fixed-complete-btn';
-            completeBtn.style.background = '#4CAF50';
-            completeBtn.style.color = '#fff';
-            completeBtn.textContent = 'I completed the task';
-            tasksContainer.appendChild(completeBtn);
-            completeBtn.onclick = function() {
-                // Mark Day 7 as green (completed)
-                const weekDays = document.querySelectorAll('.week-day-vertical .day-circle');
-                if (weekDays.length > 6) {
-                    const day7 = weekDays[6];
-                    day7.innerHTML = tickSVG;
-                    day7.style.background = '#4CAF50';
-                    day7.style.borderColor = '#388E3C';
-                    day7.style.display = 'flex';
-                    day7.style.alignItems = 'center';
-                    day7.style.justifyContent = 'center';
-                    day7.style.padding = '0';
-                }
-                const day7Label = document.querySelectorAll('.week-day-vertical .day-label')[6];
-                if (day7Label) {
-                    day7Label.style.color = '#388E3C';
-                    day7Label.style.fontWeight = '700';
-                }
-                // Remove all children from tasksContainer
-                while (tasksContainer.firstChild) tasksContainer.removeChild(tasksContainer.firstChild);
-                // Optionally show a congrats message or next steps here
-            };
-        }
-
-        renderPuzzle();
+    // 3x3 sliding puzzle with image tiles
+    const size = 3;
+    let board = [];
+    let empty = {row: size-1, col: size-1};
+    // Use 8 images from static/images/puzzle/1.jpg ... 8.jpeg (or .jpg/.jpeg/.png)
+    const imagePaths = [
+        '/static/images/puzzle/1.jpg',
+        '/static/images/puzzle/2.jpg',
+        '/static/images/puzzle/3.png',
+        '/static/images/puzzle/4.jpg',
+        '/static/images/puzzle/5.jpeg',
+        '/static/images/puzzle/6.jpg',
+        '/static/images/puzzle/7.jpg',
+        '/static/images/puzzle/8.jpeg'
+    ];
+    // Fill board with tile indices 0-7 and one empty
+    let nums = Array.from({length: size*size-1}, (_,i)=>i);
+    // Shuffle
+    for (let i = nums.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [nums[i], nums[j]] = [nums[j], nums[i]];
     }
-    // --- End Day 7 ---
+    nums.push(null);
+    for (let r=0; r<size; r++) {
+        board[r] = [];
+        for (let c=0; c<size; c++) {
+            board[r][c] = nums[r*size+c];
+        }
+    }
+
+    // Render puzzle
+    const puzzle = document.createElement('div');
+    puzzle.style.display = 'grid';
+    puzzle.style.gridTemplateColumns = `repeat(${size}, 96px)`;
+    puzzle.style.gridTemplateRows = `repeat(${size}, 96px)`;
+    puzzle.style.gap = '0.7rem';
+    puzzle.style.background = 'none';
+    puzzle.style.borderRadius = '18px';
+    puzzle.style.boxShadow = '0 2px 8px rgba(74,144,226,0.10)';
+    puzzle.style.padding = '0.5rem';
+    gameDiv.appendChild(puzzle);
+
+    function renderPuzzle() {
+        puzzle.innerHTML = '';
+        for (let r=0; r<size; r++) {
+            for (let c=0; c<size; c++) {
+                const val = board[r][c];
+                const tile = document.createElement('div');
+                tile.style.width = '96px';
+                tile.style.height = '96px';
+                tile.style.display = 'flex';
+                tile.style.alignItems = 'center';
+                tile.style.justifyContent = 'center';
+                tile.style.borderRadius = '14px';
+                tile.style.background = val !== null ? '#E2BDA7' : 'transparent';
+                tile.style.cursor = val !== null ? 'pointer' : 'default';
+                tile.style.transition = 'background 0.2s, color 0.2s';
+                tile.style.overflow = 'hidden';
+                tile.style.position = 'relative';
+                if (val !== null) {
+                    const img = document.createElement('img');
+                    img.src = imagePaths[val];
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+                    img.style.objectFit = 'cover';
+                    img.style.borderRadius = '14px';
+                    tile.appendChild(img);
+                    tile.onclick = function() {
+                        // If adjacent to empty, move
+                        if ((Math.abs(r-empty.row)+Math.abs(c-empty.col))===1) {
+                            board[empty.row][empty.col] = val;
+                            board[r][c] = null;
+                            empty = {row: r, col: c};
+                            renderPuzzle();
+                            if (isSolved()) showCompleteBtn();
+                        }
+                    };
+                }
+                puzzle.appendChild(tile);
+            }
+        }
+    }
+
+    function isSolved() {
+        let n = 0;
+        for (let r=0; r<size; r++) {
+            for (let c=0; c<size; c++) {
+                if (r===size-1 && c===size-1) return board[r][c] === null;
+                if (board[r][c] !== n++) return false;
+            }
+        }
+        return true;
+    }
+
+    // Show complete button only when solved
+    let completeBtn = null;
+    function showCompleteBtn() {
+        if (completeBtn) return;
+        completeBtn = document.createElement('button');
+        completeBtn.id = 'complete-task-btn';
+        completeBtn.className = 'next-btn fixed-complete-btn';
+        completeBtn.style.background = '#4CAF50';
+        completeBtn.style.color = '#fff';
+        completeBtn.textContent = 'I completed the task';
+        tasksContainer.appendChild(completeBtn);
+        completeBtn.onclick = function() {
+            // Mark Day 7 as green (completed)
+            const weekDays = document.querySelectorAll('.week-day-vertical .day-circle');
+            if (weekDays.length > 6) {
+                const day7 = weekDays[6];
+                day7.innerHTML = tickSVG;
+                day7.style.background = '#4CAF50';
+                day7.style.borderColor = '#388E3C';
+                day7.style.display = 'flex';
+                day7.style.alignItems = 'center';
+                day7.style.justifyContent = 'center';
+                day7.style.padding = '0';
+            }
+            const day7Label = document.querySelectorAll('.week-day-vertical .day-label')[6];
+            if (day7Label) {
+                day7Label.style.color = '#388E3C';
+                day7Label.style.fontWeight = '700';
+            }
+            // Remove all children from tasksContainer
+            while (tasksContainer.firstChild) tasksContainer.removeChild(tasksContainer.firstChild);
+            // Optionally show a congrats message or next steps here
+        };
+    }
+
+    renderPuzzle();
+}
+// --- End Day 7 ---
 
                 // Retry button
                 const retryBtn = document.createElement('button');
