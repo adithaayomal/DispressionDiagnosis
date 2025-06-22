@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mandala Coloring Therapy</title>
+    <style>
+        body {
+            body {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center; /* Change from flex-start to center */
+                min-height: 100vh;
+                margin: 0;
+                padding: 0;
+                /* background and font as before */
+            }
+
+
+        }
+        .mandala-page-layout {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            width: 100%;
+            min-height: 100vh;
+            padding: 2rem 1rem; /* Add some padding */
+            box-sizing: border-box;
+        }
+        .mandala-container {
+            width: 500px;
+            max-width: 95vw;
+            margin-top: 3.5rem;
+            background: rgba(255,255,255,0.93);
+            border-radius: 32px;
+            box-shadow: 0 2px 18px rgba(0,0,0,0.13);
+            padding: 2.5rem 2.5rem 2rem 2.5rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            text-align: center;
+            color: #f07264;
+            margin-bottom: 1.5rem;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.2em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.13);
+            color: #E2BDA7;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .header p {
+            margin: 10px 0 0 0;
+            font-size: 1.08em;
+            opacity: 0.9;
+            color: #444;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 1.5rem;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .color-palette {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .color-btn {
+            width: 36px;
+            height: 36px;
+            border: 3px solid #ddd;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .color-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.13);
+        }
+
+        .color-btn.active {
+            border-color: #E2BDA7;
+            transform: scale(1.18);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.13);
+        }
+        .brush-size {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .brush-size input {
+            width: 90px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 18px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            background: linear-gradient(90deg, #f07264 60%, #E2BDA7 100%);
+            color: white;
+            font-size: 1.08rem;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover {
+            background: linear-gradient(90deg, #E2BDA7 10%, #f07264 100%);
+            color: #f07264;
+        }
+
+        .canvas-container {
+            display: flex;
+            justify-content: center;
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.07);
+            margin-bottom: 1.2rem;
+        }
+
+        canvas {
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            cursor: crosshair;
+            background: white;
+            touch-action: none;
+        }
+
+        .therapy-quote {
+            text-align: center;
+            margin-top: 1.2rem;
+            font-style: italic;
+            color: #666;
+            padding: 15px;
+            background: rgba(102, 126, 234, 0.08);
+            border-radius: 10px;
+            font-size: 1.05rem;
+        }
+
+        @media (max-width: 600px) {
+            .mandala-container {
+                width: 98vw;
+                padding: 1.2rem 0.5rem 1rem 0.5rem;
+            }
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .color-palette {
+                justify-content: center;
+            }
+            
+            canvas {
+                width: 100%;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="mandala-page-layout">
+        <div class="mandala-container">
+            <div class="header">
+                <h1>🌸 Mandala Coloring Therapy 🌸</h1>
+                <p>Relax, breathe, and let your creativity flow through beautiful mandala patterns</p>
+            </div>
+            <div class="controls">
+                <div class="color-palette">
+                    <div class="color-btn active" style="background: #ff6b6b;" data-color="#ff6b6b"></div>
+                    <div class="color-btn" style="background: #4ecdc4;" data-color="#4ecdc4"></div>
+                    <div class="color-btn" style="background: #45b7d1;" data-color="#45b7d1"></div>
+                    <div class="color-btn" style="background: #f9ca24;" data-color="#f9ca24"></div>
+                    <div class="color-btn" style="background: #f0932b;" data-color="#f0932b"></div>
+                    <div class="color-btn" style="background: #eb4d4b;" data-color="#eb4d4b"></div>
+                    <div class="color-btn" style="background: #6c5ce7;" data-color="#6c5ce7"></div>
+                    <div class="color-btn" style="background: #a29bfe;" data-color="#a29bfe"></div>
+                    <div class="color-btn" style="background: #fd79a8;" data-color="#fd79a8"></div>
+                    <div class="color-btn" style="background: #00b894;" data-color="#00b894"></div>
+                    <div class="color-btn" style="background: #e17055;" data-color="#e17055"></div>
+                    <div class="color-btn" style="background: #2d3436;" data-color="#2d3436"></div>
+                </div>
+                <div class="brush-size">
+                    <label for="brushSize">Brush Size:</label>
+                    <input type="range" id="brushSize" min="2" max="20" value="8">
+                    <span id="brushSizeValue">8</span>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn" onclick="clearCanvas()">Clear All</button>
+                    <button class="btn" onclick="newMandala()">New Mandala</button>
+                    <button class="btn" onclick="downloadImage()">Save Art</button>
+                </div>
+            </div>
+            <div class="canvas-container">
+                <canvas id="mandalaCanvas" width="400" height="400"></canvas>
+            </div>
+            <div class="therapy-quote">
+                <p>"Coloring mandalas can reduce anxiety, promote mindfulness, and provide a meditative experience that calms the mind." ✨</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('mandalaCanvas');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        let currentColor = '#ff6b6b';
+        let brushSize = 8;
+        let lastX = 0, lastY = 0;
+
+        function startDrawing(e) {
+            isDrawing = true;
+            let x, y;
+            const rect = canvas.getBoundingClientRect();
+            if (e.touches) {
+                e.preventDefault();
+                x = e.touches[0].clientX - rect.left;
+                y = e.touches[0].clientY - rect.top;
+            } else {
+                x = e.clientX - rect.left;
+                y = e.clientY - rect.top;
+            }
+            lastX = x;
+            lastY = y;
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            let x, y;
+            const rect = canvas.getBoundingClientRect();
+            if (e.touches) {
+                e.preventDefault();
+                x = e.touches[0].clientX - rect.left;
+                y = e.touches[0].clientY - rect.top;
+            } else {
+                x = e.clientX - rect.left;
+                y = e.clientY - rect.top;
+            }
+            ctx.lineWidth = brushSize;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = currentColor;
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            lastX = x;
+            lastY = y;
+        }
+
+        function stopDrawing(e) {
+            if (e && e.touches) e.preventDefault();
+            if (isDrawing) {
+                isDrawing = false;
+                ctx.beginPath();
+            }
+        }
+
+        // Mandala patterns
+        const mandalaPatterns = [
+            // Pattern 1: Lotus-inspired
+            function(centerX, centerY, radius) {
+                drawCircle(centerX, centerY, radius, 2);
+                for (let i = 0; i < 8; i++) {
+                    const angle = (i * Math.PI * 2) / 8;
+                    const x = centerX + Math.cos(angle) * radius * 0.7;
+                    const y = centerY + Math.sin(angle) * radius * 0.7;
+                    drawCircle(x, y, radius * 0.3, 1);
+                }
+                drawCircle(centerX, centerY, radius * 0.5, 1);
+                drawCircle(centerX, centerY, radius * 0.3, 1);
+                for (let i = 0; i < 6; i++) {
+                    const angle = (i * Math.PI * 2) / 6;
+                    const x1 = centerX + Math.cos(angle) * radius * 0.15;
+                    const y1 = centerY + Math.sin(angle) * radius * 0.15;
+                    const x2 = centerX + Math.cos(angle) * radius * 0.25;
+                    const y2 = centerY + Math.sin(angle) * radius * 0.25;
+                    drawLine(x1, y1, x2, y2);
+                }
+            },
+            
+            // Pattern 2: Geometric
+            function(centerX, centerY, radius) {
+                drawCircle(centerX, centerY, radius, 2);
+                drawPolygon(centerX, centerY, radius * 0.8, 6);
+                drawPolygon(centerX, centerY, radius * 0.6, 6);
+                for (let i = 0; i < 12; i++) {
+                    const angle = (i * Math.PI * 2) / 12;
+                    const x1 = centerX + Math.cos(angle) * radius * 0.4;
+                    const y1 = centerY + Math.sin(angle) * radius * 0.4;
+                    const x2 = centerX + Math.cos(angle) * radius * 0.6;
+                    const y2 = centerY + Math.sin(angle) * radius * 0.6;
+                    drawLine(x1, y1, x2, y2);
+                }
+                for (let i = 0; i < 8; i++) {
+                    const angle = (i * Math.PI * 2) / 8;
+                    const x = centerX + Math.cos(angle) * radius * 0.2;
+                    const y = centerY + Math.sin(angle) * radius * 0.2;
+                    drawLine(centerX, centerY, x, y);
+                }
+            },
+            
+            // Pattern 3: Floral
+            function(centerX, centerY, radius) {
+                drawCircle(centerX, centerY, radius, 2);
+                for (let i = 0; i < 16; i++) {
+                    const angle = (i * Math.PI * 2) / 16;
+                    const x = centerX + Math.cos(angle) * radius * 0.8;
+                    const y = centerY + Math.sin(angle) * radius * 0.8;
+                    drawCircle(x, y, radius * 0.15, 1);
+                }
+                drawCircle(centerX, centerY, radius * 0.6, 1);
+                for (let i = 0; i < 8; i++) {
+                    const angle = (i * Math.PI * 2) / 8;
+                    const x = centerX + Math.cos(angle) * radius * 0.4;
+                    const y = centerY + Math.sin(angle) * radius * 0.4;
+                    drawCircle(x, y, radius * 0.12, 1);
+                }
+                drawCircle(centerX, centerY, radius * 0.15, 2);
+            }
+        ];
+
+        function drawCircle(x, y, radius, lineWidth = 1) {
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, 2 * Math.PI);
+            ctx.strokeStyle = '#ddd';
+            ctx.lineWidth = lineWidth;
+            ctx.stroke();
+        }
+
+        function drawPolygon(x, y, radius, sides) {
+            ctx.beginPath();
+            for (let i = 0; i <= sides; i++) {
+                const angle = (i * 2 * Math.PI) / sides;
+                const px = x + radius * Math.cos(angle);
+                const py = y + radius * Math.sin(angle);
+                if (i === 0) {
+                    ctx.moveTo(px, py);
+                } else {
+                    ctx.lineTo(px, py);
+                }
+            }
+            ctx.strokeStyle = '#ddd';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        }
+
+        function drawLine(x1, y1, x2, y2) {
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.strokeStyle = '#ddd';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        }
+
+        function drawMandala() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = Math.min(canvas.width, canvas.height) * 0.4;
+            const pattern = mandalaPatterns[Math.floor(Math.random() * mandalaPatterns.length)];
+            pattern(centerX, centerY, radius);
+        }
+
+        function newMandala() {
+            drawMandala();
+        }
+
+        function clearCanvas() {
+            drawMandala();
+        }
+
+        function downloadImage() {
+            const link = document.createElement('a');
+            link.download = 'my-mandala-art.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Color selection
+            document.querySelectorAll('.color-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentColor = this.dataset.color;
+                });
+            });
+
+            // Brush size control
+            const brushSizeSlider = document.getElementById('brushSize');
+            const brushSizeValue = document.getElementById('brushSizeValue');
+            brushSizeSlider.addEventListener('input', function() {
+                brushSize = this.value;
+                brushSizeValue.textContent = this.value;
+            });
+
+            // Drawing functionality
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+            // Touch events for mobile
+            canvas.addEventListener('touchstart', startDrawing);
+            canvas.addEventListener('touchmove', draw);
+            canvas.addEventListener('touchend', stopDrawing);
+            // Initialize with a mandala
+            drawMandala();
+        });
+
+        // Initialize with a mandala
+        drawMandala();
+    </script>
+</body>
+</html>

@@ -256,11 +256,12 @@
             justify-content: center;
             margin-bottom: 1.5rem;
             margin-top: 10rem;
-            width: 100%;
+            width: 100px;
+
         }
         .ambient-btn {
-            width: 70px;
-            height: 70px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
             background: #AEE1F9;
             border: none;
@@ -270,7 +271,7 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-size: 1.1rem;
+            font-size: 1.7rem;
             transition: background 0.2s;
         }
         .ambient-btn:hover {
@@ -308,11 +309,11 @@
         <aside class="week-progress-vertical" style="margin-top: 3rem; margin-left: 7rem; align-items: flex-start;">
             <div class="week-days-vertical" style="align-items: flex-start; gap: 2.1rem;">
                 <div class="week-title">Complete the tasks for 7 days and you <br>should come back to the Assistant.</div>
-                <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">1</span><span class="day-label"><b>Day 1</b><br> Breathe with the Circle </span></div>
+                <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">1</span><span class="day-label"><b>Day 1</b><br> Self-Love Journal </span></div>
                 <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">2</span><span class="day-label"><b>Day 2</b><br> mindful-click-game </span></div>
                 <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">3</span><span class="day-label"><b>Day 3</b><br> Ambient Sound Experience </span></div>
                 <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">4</span><span class="day-label"><b>Day 4</b><br> Gentle Movement for Calm </span></div>
-                <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">5</span><span class="day-label"><b>Day 5</b><br> Bubble Wrap Popping Game </span></div>
+                <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">5</span><span class="day-label"><b>Day 5</b><br> Exercise for a Better Mood </span></div>
                 <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">6</span><span class="day-label"><b>Day 6</b><br> Memory Challenge </span></div>
                 <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">7</span><span class="day-label"><b>Day 7</b><br> Mind Unwind – Simple Puzzle Game </span></div>
             </div>
@@ -321,13 +322,10 @@
             <h2>Your Daily Task</h2>
             
             <main class="main-tasks-content">
-                <div class="breathing-section" style="background:none;box-shadow:none;padding:0;">
-                    <div class="breathing-title">Breathe with the Circle</div>
-                    <div class="breathing-desc">Follow the animation below. Inhale as the circle expands, hold, exhale as it contracts, hold. Try to sync your breath for a few cycles to relax and focus.</div>
-                    <div id="breathing-game" class="breathing-game">
-                        <canvas id="breathing-circle" width="260" height="260"></canvas>
-                        <div id="breathing-instruction" class="breathing-instruction">Inhale</div>
-                    </div>
+                <div class="selflove-section" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:340px;">
+                    <div class="selflove-title" style="font-size:1.35rem;font-weight:700;color:#f07264;margin-bottom:0.5rem;margin-top :7rem;">Self-Love Journal</div>
+                    <div class="selflove-desc" style="font-size:1.08rem;color:#444;margin-bottom:5rem;text-align:center;max-width:340px;">Take a quiet moment to reflect on who you are, not what you’ve done. Write freely — no right or wrong answers.</div>
+                    <a href="/self" style="display:flex;align-items:center;justify-content:center;width:220px;min-width:220px;max-width:220px;height:220px;min-height:220px;max-height:220px;aspect-ratio:1/1;border-radius:50%;background:linear-gradient(135deg,#7fb3d3,#a8d5ba);color:#fff;font-size:1.25rem;font-weight:700;text-decoration:none;box-shadow:0 4px 24px 0 rgba(74,144,226,0.13);margin-bottom:2.2rem;transition:background 0.2s,transform 0.1s;text-align:center;">Your Journal</a>
                 </div>
                 <button id="complete-task-btn" class="next-btn fixed-complete-btn" style="background:#4CAF50; color:#fff;">I completed the task</button>
                 <div class="next-section" style="display:none;"></div>
@@ -550,80 +548,82 @@ function showDay7PuzzleTask() {
     renderPuzzle();
 }
 // --- End Day 7 ---
-    // Animated Breathing Circle Game
+    // Animated Breathing Circle Game (only run if canvas exists)
     const canvas = document.getElementById('breathing-circle');
-    const ctx = canvas.getContext('2d');
-    const instruction = document.getElementById('breathing-instruction');
-    let phase = 0; // 0: inhale, 1: hold, 2: exhale, 3: hold
-    let t = 0;
-    const phases = [
-        { label: 'Inhale', color: '#E2BDA7', duration: 4000, shadow: '#f07264' },
-        { label: 'Hold', color: '#f7c6b7', duration: 2000, shadow: '#f07264' },
-        { label: 'Exhale', color: '#f07264', duration: 4000, shadow: '#f07264' },
-        { label: 'Hold', color: '#f7c6b7', duration: 2000, shadow: '#f07264' }
-    ];
-    let start = null;
-    function animateBreath(ts) {
-        if (!start) start = ts;
-        let elapsed = ts - start;
-        let p = phases[phase];
-        let progress = Math.min(elapsed / p.duration, 1);
-        // Circle radius: 60 (min) to 120 (max)
-        let radius;
-        if (phase === 0) radius = 60 + 60 * easeInOut(progress); // Inhale
-        else if (phase === 1) radius = 120; // Hold (full)
-        else if (phase === 2) radius = 120 - 60 * easeInOut(progress); // Exhale
-        else radius = 60; // Hold (empty)
-        // Animate background glow
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(130, 130, radius + 12, 0, 2 * Math.PI);
-        ctx.globalAlpha = 0.18;
-        ctx.fillStyle = p.shadow;
-        ctx.filter = 'blur(10px)';
-        ctx.fill();
-        ctx.restore();
-        // Main circle
-        ctx.beginPath();
-        ctx.arc(130, 130, radius, 0, 2 * Math.PI);
-        ctx.fillStyle = p.color;
-        ctx.globalAlpha = 0.82;
-        ctx.filter = 'none';
-        ctx.fill();
-        ctx.globalAlpha = 1.0;
-        ctx.lineWidth = 5;
-        ctx.strokeStyle = '#f07264';
-        ctx.shadowColor = p.shadow;
-        ctx.shadowBlur = 16;
-        ctx.stroke();
-        ctx.shadowBlur = 0;
-        // Breathing dots
-        for (let i = 0; i < 8; i++) {
-            let angle = (i / 8) * 2 * Math.PI;
-            let dotR = radius + 18 + 6 * Math.sin(ts/400 + i);
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+        const instruction = document.getElementById('breathing-instruction');
+        let phase = 0; // 0: inhale, 1: hold, 2: exhale, 3: hold
+        let t = 0;
+        const phases = [
+            { label: 'Inhale', color: '#E2BDA7', duration: 4000, shadow: '#f07264' },
+            { label: 'Hold', color: '#f7c6b7', duration: 2000, shadow: '#f07264' },
+            { label: 'Exhale', color: '#f07264', duration: 4000, shadow: '#f07264' },
+            { label: 'Hold', color: '#f7c6b7', duration: 2000, shadow: '#f07264' }
+        ];
+        let start = null;
+        function animateBreath(ts) {
+            if (!start) start = ts;
+            let elapsed = ts - start;
+            let p = phases[phase];
+            let progress = Math.min(elapsed / p.duration, 1);
+            // Circle radius: 60 (min) to 120 (max)
+            let radius;
+            if (phase === 0) radius = 60 + 60 * easeInOut(progress); // Inhale
+            else if (phase === 1) radius = 120; // Hold (full)
+            else if (phase === 2) radius = 120 - 60 * easeInOut(progress); // Exhale
+            else radius = 60; // Hold (empty)
+            // Animate background glow
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.save();
             ctx.beginPath();
-            ctx.arc(130 + dotR * Math.cos(angle), 130 + dotR * Math.sin(angle), 4, 0, 2 * Math.PI);
-            ctx.fillStyle = '#fff';
-            ctx.globalAlpha = 0.7;
+            ctx.arc(130, 130, radius + 12, 0, 2 * Math.PI);
+            ctx.globalAlpha = 0.18;
+            ctx.fillStyle = p.shadow;
+            ctx.filter = 'blur(10px)';
             ctx.fill();
+            ctx.restore();
+            // Main circle
+            ctx.beginPath();
+            ctx.arc(130, 130, radius, 0, 2 * Math.PI);
+            ctx.fillStyle = p.color;
+            ctx.globalAlpha = 0.82;
+            ctx.filter = 'none';
+            ctx.fill();
+            ctx.globalAlpha = 1.0;
+            ctx.lineWidth = 5;
+            ctx.strokeStyle = '#f07264';
+            ctx.shadowColor = p.shadow;
+            ctx.shadowBlur = 16;
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+            // Breathing dots
+            for (let i = 0; i < 8; i++) {
+                let angle = (i / 8) * 2 * Math.PI;
+                let dotR = radius + 18 + 6 * Math.sin(ts/400 + i);
+                ctx.beginPath();
+                ctx.arc(130 + dotR * Math.cos(angle), 130 + dotR * Math.sin(angle), 4, 0, 2 * Math.PI);
+                ctx.fillStyle = '#fff';
+                ctx.globalAlpha = 0.7;
+                ctx.fill();
+            }
+            ctx.globalAlpha = 1.0;
+            instruction.textContent = p.label;
+            instruction.style.color = '#f07264';
+            if (elapsed < p.duration) {
+                requestAnimationFrame(animateBreath);
+            } else {
+                phase = (phase + 1) % phases.length;
+                start = null;
+                requestAnimationFrame(animateBreath);
+            }
         }
-        ctx.globalAlpha = 1.0;
-        instruction.textContent = p.label;
-        instruction.style.color = '#f07264';
-        if (elapsed < p.duration) {
-            requestAnimationFrame(animateBreath);
-        } else {
-            phase = (phase + 1) % phases.length;
-            start = null;
+        function easeInOut(x) {
+            return x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
+        }
+        if (canvas && ctx && instruction) {
             requestAnimationFrame(animateBreath);
         }
-    }
-    function easeInOut(x) {
-        return x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
-    }
-    if (canvas && ctx && instruction) {
-        requestAnimationFrame(animateBreath);
     }
     // Add tick SVG for completed day
     const tickSVG = '<svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="11" cy="11" r="11" fill="#4CAF50"/><path d="M6 12.5L10 16L16 8" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -631,9 +631,9 @@ function showDay7PuzzleTask() {
         const completeBtn = document.getElementById('complete-task-btn');
         if (completeBtn) {
             completeBtn.onclick = function() {
-                // Remove/hide breathing section and button
-                const breathingSection = document.querySelector('.breathing-section');
-                if (breathingSection) breathingSection.remove();
+                // Remove/hide self-love section and button
+                const selfloveSection = document.querySelector('.selflove-section');
+                if (selfloveSection) selfloveSection.remove();
                 completeBtn.remove();
                 // Remove title if present
                 const h2 = document.querySelector('.tasks-container h2');
@@ -677,18 +677,17 @@ function showDay7PuzzleTask() {
                     h2.style.letterSpacing = '1px';
                     // Insert at the top of mainContent
                     mainContent.prepend(h2);
-                    // Mindful Click content
+                    // Mindful Click content (title, subtitle, button only)
                     const mindfulDiv = document.createElement('div');
                     mindfulDiv.className = 'mindful-click-section';
                     mindfulDiv.innerHTML = `
-                        <div class="mindful-title" style="font-size:1.35rem;font-weight:700;color:#f07264;margin-bottom:0.5rem;letter-spacing:0.5px;">Mindful Click</div>
-                        <div class="mindful-desc" style="font-size:1.08rem;color:#444;margin-bottom:1.2rem;text-align:center;">A floating shape will move gently across the screen. Click it slowly and gently—no rushing. Each click will bring a calming animation. Try to stay present and relaxed.</div>
-                        <div id="mindful-click-game" style="width:260px;height:260px;position:relative;margin:0 auto;background:rgba(74,144,226,0.08);border-radius:24px;"></div>
+                        <div class="mindful-title" style="font-size:1.35rem;font-weight:700;color:#f07264;margin-bottom:0.5rem;letter-spacing:0.5px;">Practice gratitude</div>
+                        <div class="mindful-desc" style="font-size:1.08rem;color:#444;margin-bottom:1.2rem;text-align:center;">When you do something you love, or even when you find a new activity you enjoy, you may be able to benefit your mental health more by taking time to be thankful for it.<br><br>Practicing gratitude can have lasting positive effects on your overall mental health.</div>
+                        <a href="/gratitude_practice" style="display:flex;align-items:center;justify-content:center;width:220px;min-width:220px;max-width:220px;height:220px;min-height:220px;max-height:220px;aspect-ratio:1/1;border-radius:50%;background:linear-gradient(135deg,#7fb3d3,#800080);color:#fff;font-size:1.25rem;font-weight:700;text-decoration:none;box-shadow:0 4px 24px 0 rgba(74,144,226,0.13);margin-bottom:2.2rem;transition:background 0.2s,transform 0.1s;text-align:center;">Gratitude Journal</a>
                         <button id="complete-mindful-btn" class="next-btn fixed-complete-btn" style="background:#4CAF50; color:#fff;">I completed the task</button>
                     `;
                     // Insert after h2
                     h2.insertAdjacentElement('afterend', mindfulDiv);
-                    startMindfulClickGame();
                     // Add event for new complete button
                     const completeMindfulBtn = document.getElementById('complete-mindful-btn');
                     if (completeMindfulBtn) {
@@ -734,13 +733,15 @@ function showDay7PuzzleTask() {
                                 const ambientDiv = document.createElement('div');
                                 ambientDiv.className = 'ambient-section';
                                 ambientDiv.innerHTML = `
-                                    <div class="ambient-title">Ambient Sound Experience</div>
-                                    <div class="ambient-desc">Choose an environment. The background and sound will change. Relax and enjoy the ambiance for a few minutes.</div>
+                                    <div class="ambient-title">Listen to music</div>
+                                    <div class="ambient-desc">Relax and enjoy the music for a few minutes.</div>
                                     <div class="ambient-btns" style="display:flex;justify-content:center;gap:1.2rem;margin-bottom:1.5rem;width:100%;">
-                                        <button class="ambient-btn" data-env="rain"><span style='font-size:2rem;'>🌧️</span><span style='font-size:0.95rem;'>Rain</span></button>
-                                        <button class="ambient-btn" data-env="ocean"><span style='font-size:2rem;'>🌊</span><span style='font-size:0.95rem;'>Ocean</span></button>
-                                        <button class="ambient-btn" data-env="forest"><span style='font-size:2rem;'>🌲</span><span style='font-size:0.95rem;'>Forest</span></button>
-                                        <button class="ambient-btn" data-env="wind"><span style='font-size:2rem;'>💨</span><span style='font-size:0.95rem;'>Wind</span></button>
+                                        <button class="ambient-btn" data-env="rain"><span style='font-size:2rem;'>1</span></button>
+                                        <button class="ambient-btn" data-env="ocean"><span style='font-size:2rem;'>2</span></button>
+                                        <button class="ambient-btn" data-env="forest"><span style='font-size:2rem;'>3</span></button>
+                                        <button class="ambient-btn" data-env="wind"><span style='font-size:2rem;'>4</span></button>
+                                        
+                                        
                                     </div>
                                     <div id="ambient-particles"></div>
                                     <audio id="ambient-audio" loop></audio>
@@ -760,26 +761,26 @@ function showDay7PuzzleTask() {
                                 const envs = {
                                     rain: {
                                         bg: 'linear-gradient(120deg,#AEE1F9 60%,#E2BDA7 100%)',
-                                        audio: '/static/music/rain.wav',
-                                        icon: '🌧️',
+                                        audio: '/static/music/music1.mpeg',
+                                        icon: '♫',
                                         particle: 'raindrop'
                                     },
                                     ocean: {
                                         bg: 'linear-gradient(120deg,#B3E5FC 60%,#E2BDA7 100%)',
-                                        audio: '/static/music/ocean.wav',
-                                        icon: '🌊',
+                                        audio: '/static/music/music2.mpeg',
+                                        icon: '♪',
                                         particle: 'bubble'
                                     },
                                     forest: {
                                         bg: 'linear-gradient(120deg,#C8E6C9 60%,#E2BDA7 100%)',
-                                        audio: '/static/music/forest.wav',
-                                        icon: '🌲',
+                                        audio: '/static/music/music3.mpeg',
+                                        icon: '𝄞',
                                         particle: 'leaf'
                                     },
                                     wind: {
                                         bg: 'linear-gradient(120deg,#D1C4E9 60%,#E2BDA7 100%)',
-                                        audio: '/static/music/wind.wav',
-                                        icon: '💨',
+                                        audio: '/static/music/music4.mpeg',
+                                        icon: '♫',
                                         particle: 'wind'
                                     }
                                 };
@@ -849,64 +850,6 @@ function showDay7PuzzleTask() {
         }
     });
 
-    function startMindfulClickGame() {
-        const gameArea = document.getElementById('mindful-click-game');
-        if (!gameArea) return;
-        // Remove any previous shape
-        gameArea.innerHTML = '';
-        // Create the floating shape (circle)
-        const shape = document.createElement('div');
-        shape.style.width = '54px';
-        shape.style.height = '54px';
-        shape.style.borderRadius = '50%';
-        shape.style.background = 'linear-gradient(135deg,#AEE1F9 60%,#E2BDA7 100%)';
-        shape.style.position = 'absolute';
-        shape.style.boxShadow = '0 4px 24px 0 rgba(74,144,226,0.13)';
-        shape.style.cursor = 'pointer';
-        shape.style.transition = 'opacity 0.6s cubic-bezier(.4,0,.2,1), transform 0.6s cubic-bezier(.4,0,.2,1)';
-        // Random start position
-        let pos = randomPosition();
-        shape.style.left = pos.x + 'px';
-        shape.style.top = pos.y + 'px';
-        // Animate floating
-        let angle = Math.random() * 2 * Math.PI;
-        let radius = 60 + Math.random() * 40;
-        let t = 0;
-        let animId;
-        function float() {
-            t += 0.012;
-            const cx = 100 + Math.cos(angle + t) * radius;
-            const cy = 100 + Math.sin(angle + t/1.5) * radius;
-            shape.style.left = cx + 'px';
-            shape.style.top = cy + 'px';
-            animId = requestAnimationFrame(float);
-        }
-        float();
-        // Click handler
-        shape.onclick = function() {
-            cancelAnimationFrame(animId);
-            // Calming animation: fade + scale + soft glow
-            shape.style.boxShadow = '0 0 32px 12px #AEE1F9, 0 0 0 0 #fff';
-            shape.style.opacity = '0';
-            shape.style.transform = 'scale(1.3)';
-            // Optional: play soft chime
-            // setTimeout(() => { /* play sound here if desired */ }, 100);
-            setTimeout(() => {
-                // Remove and spawn new shape
-                shape.remove();
-                startMindfulClickGame();
-            }, 600);
-        };
-        gameArea.appendChild(shape);
-    }
-    function randomPosition() {
-        // Keep shape within bounds (game area 260x260, shape 54x54)
-        const max = 206; // 260-54
-        return {
-            x: Math.floor(Math.random() * max),
-            y: Math.floor(Math.random() * max)
-        };
-    }
     // --- Day 4: Yoga Video – Gentle Movement for Calm ---
     function showDay4YogaTask() {
         const mainContent = document.querySelector('.main-tasks-content');
@@ -949,7 +892,7 @@ function showDay7PuzzleTask() {
         // Title
         const yogaTitle = document.createElement('div');
         yogaTitle.className = 'yoga-title';
-        yogaTitle.textContent = 'Yoga Video – Gentle Movement for Calm';
+        yogaTitle.textContent = 'Exercise for a Better Mood';
         yogaTitle.style.color = '#f07264';
         yogaTitle.style.fontSize = '1.35rem';
         yogaTitle.style.fontWeight = '700';
@@ -959,7 +902,7 @@ function showDay7PuzzleTask() {
         // Description
         const yogaDesc = document.createElement('div');
         yogaDesc.className = 'yoga-desc';
-        yogaDesc.innerHTML = `Take a few minutes to reconnect with your body and breath. This short 5–10 minute yoga routine is designed to help you release tension, improve focus, and relax your mind.<br><br>Find a quiet space, sit or lie comfortably, and let the gentle movements guide you toward calm.`;
+        yogaDesc.innerHTML = `Press play and follow along at your own pace. You don’t need to be perfect — just moving a little is enough.`;
         yogaDesc.style.color = '#333';
         yogaDesc.style.fontSize = '1.08rem';
         yogaDesc.style.marginBottom = '1.2rem';
@@ -1034,15 +977,52 @@ function showDay5BubbleWrapTask() {
 
     // 2. Subtitle
     const subtitle = document.createElement('div');
-    subtitle.textContent = 'Bubble Wrap Popping Game';
+    subtitle.textContent = 'Mandela art drawing';
     subtitle.style.fontSize = '1.35rem';
     subtitle.style.fontWeight = '700';
     subtitle.style.color = '#f07264';
     subtitle.style.marginBottom = '0.5rem';
+    subtitle.style.marginTop = '3rem';
     subtitle.style.letterSpacing = '0.5px';
     tasksContainer.appendChild(subtitle);
 
+    // 2b. Description under subtitle
+    const mandalaDesc = document.createElement('div');
+    mandalaDesc.textContent = 'No artistic skill needed — just follow the patterns, shapes, or your imagination.';
+    mandalaDesc.style.fontSize = '1.08rem';
+    mandalaDesc.style.marginTop = '1.5rem';
+    mandalaDesc.style.color = '#444';
+    mandalaDesc.style.marginBottom = '5rem';
+    mandalaDesc.style.textAlign = 'center';
+    tasksContainer.appendChild(mandalaDesc);
+    // Add "Your Journal" link, centered and pink
+    const journalLink = document.createElement('a');
+    journalLink.href = "/mandela_coloring";
+    journalLink.textContent = "Mandela Art";
+    journalLink.style.display = "flex";
+    journalLink.style.alignItems = "center";
+    journalLink.style.justifyContent = "center";
+    journalLink.style.width = "220px";
+    journalLink.style.minWidth = "220px";
+    journalLink.style.maxWidth = "220px";
+    journalLink.style.height = "220px";
+    journalLink.style.minHeight = "220px";
+    journalLink.style.maxHeight = "220px";
+    journalLink.style.aspectRatio = "1/1";
+    journalLink.style.borderRadius = "50%";
+    journalLink.style.background = "linear-gradient(135deg,#f07264,#e2bda7)";
+    journalLink.style.color = "#fff";
+    journalLink.style.fontSize = "1.25rem";
+    journalLink.style.fontWeight = "700";
+    journalLink.style.textDecoration = "none";
+    journalLink.style.boxShadow = "0 4px 24px 0 rgba(240,114,100,0.13)";
+    journalLink.style.margin = "0 auto 2.2rem auto";
+    journalLink.style.transition = "background 0.2s,transform 0.1s";
+    journalLink.style.textAlign = "center";
+    tasksContainer.appendChild(journalLink);
     // 3. Game
+
+
     const gameDiv = document.createElement('div');
     gameDiv.style.position = 'relative';
     gameDiv.style.width = '100%';
@@ -1053,147 +1033,17 @@ function showDay5BubbleWrapTask() {
     gameDiv.style.boxShadow = '0 4px 24px 0 rgba(74,144,226,0.09)';
     tasksContainer.appendChild(gameDiv);
 
-    // Custom cursor
-    const cursor = document.createElement('div');
-    cursor.id = 'bubble-cursor';
-    cursor.style.position = 'absolute';
-    cursor.style.width = '40px';
-    cursor.style.height = '40px';
-    cursor.style.borderRadius = '50%';
-    cursor.style.background = 'rgba(255,0,0,0.3)';
-    cursor.style.border = '2px solid #ff0000';
-    cursor.style.pointerEvents = 'none';
-    cursor.style.zIndex = '100';
-    cursor.style.transform = 'translate(-50%, -50%)';
-    gameDiv.appendChild(cursor);
+    
 
-    // Canvas
-    const canvas = document.createElement('canvas');
-    canvas.width = gameDiv.offsetWidth || 800;
-    canvas.height = 400;
-    canvas.style.display = 'block';
-    canvas.style.margin = '0 auto';
-    canvas.style.background = '#fff';
-    canvas.style.borderRadius = '18px';
-    canvas.style.boxShadow = '0 2px 8px rgba(74,144,226,0.10)';
-    canvas.style.cursor = 'none';
-    gameDiv.appendChild(canvas);
-    const ctx = canvas.getContext('2d');
-
-    // Game variables
-    let bubbles = [];
-    let poppedCount = 0;
-    let totalBubbles = 0;
-    let gameActive = true;
-
-    // Bubble class
-    class BubbleWrapBubble {
-        constructor(x, y, size) {
-            this.x = x;
-            this.y = y;
-            this.size = size;
-            this.radius = size / 2;
-            this.popped = false;
-        }
-        draw() {
-            ctx.save();
-            if (this.popped) {
-                ctx.fillStyle = '#e8e8e8';
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius * 0.9, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.fillStyle = '#d0d0d0';
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius * 0.3, 0, Math.PI * 2);
-                ctx.fill();
-            } else {
-                ctx.fillStyle = 'rgba(0,0,0,0.1)';
-                ctx.beginPath();
-                ctx.ellipse(this.x + 2, this.y + this.radius * 0.8, this.radius * 0.8, this.radius * 0.3, 0, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.fillStyle = '#f0f0f0';
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fill();
-                const gradient = ctx.createRadialGradient(
-                    this.x - this.radius * 0.3, this.y - this.radius * 0.3, 0,
-                    this.x, this.y, this.radius
-                );
-                gradient.addColorStop(0, 'rgba(255,255,255,0.8)');
-                gradient.addColorStop(0.7, 'rgba(240,240,240,0.4)');
-                gradient.addColorStop(1, 'rgba(200,200,200,0.8)');
-                ctx.fillStyle = gradient;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.fillStyle = 'rgba(255,255,255,0.9)';
-                ctx.beginPath();
-                ctx.arc(this.x - this.radius * 0.3, this.y - this.radius * 0.3, this.radius * 0.25, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.strokeStyle = 'rgba(180,180,180,0.6)';
-                ctx.lineWidth = 1;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.stroke();
-            }
-            ctx.restore();
-        }
-        isClicked(mouseX, mouseY) {
-            if (this.popped) return false;
-            const dx = mouseX - this.x;
-            const dy = mouseY - this.y;
-            return (dx * dx + dy * dy) <= (this.radius * this.radius);
-        }
-        pop() {
-            if (this.popped) return;
-            this.popped = true;
-            poppedCount++;
-            updateUI();
-        }
-    }
+    
 
     // Create bubble wrap grid
-    function createBubbleWrap() {
-        bubbles = [];
-        poppedCount = 0;
-        const bubbleSize = 40;
-        const spacing = bubbleSize + 5;
-        const startX = bubbleSize;
-        const startY = bubbleSize;
-        const cols = Math.floor((canvas.width - startX * 2) / spacing);
-        const rows = Math.floor((canvas.height - startY * 2) / spacing);
-        for (let row = 0; row < rows; row++) {
-            for (let col = 0; col < cols; col++) {
-                const x = startX + col * spacing + (row % 2) * (spacing / 2);
-                const y = startY + row * spacing;
-                if (x + bubbleSize/2 < canvas.width - startX) {
-                    bubbles.push(new BubbleWrapBubble(x, y, bubbleSize));
-                }
-            }
-        }
-        totalBubbles = bubbles.length;
-        updateUI();
-    }
+    
 
     // 4. Bubbles left text
-    let bubblesLeftDiv = document.createElement('div');
-    bubblesLeftDiv.style.position = 'static';
-    bubblesLeftDiv.style.margin = '1.2rem auto 0 auto';
-    bubblesLeftDiv.style.background = 'none';
-    bubblesLeftDiv.style.boxShadow = 'none';
-    bubblesLeftDiv.style.borderRadius = '0';
-    bubblesLeftDiv.style.padding = '0';
-    bubblesLeftDiv.style.color = '#4A90E2';
-    bubblesLeftDiv.style.fontSize = '1.18rem';
-    bubblesLeftDiv.style.fontWeight = '600';
-    bubblesLeftDiv.style.textAlign = 'center';
-    bubblesLeftDiv.textContent = 'Bubbles Left: 0';
-    tasksContainer.appendChild(bubblesLeftDiv);
+    
 
-    function updateUI() {
-        const remaining = totalBubbles - poppedCount;
-        bubblesLeftDiv.textContent = `Bubbles Left: ${remaining}`;
-    }
+    
 
     // 5. I completed the task button (match position to other buttons)
     const completeBtn = document.createElement('button');

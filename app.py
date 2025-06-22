@@ -116,6 +116,42 @@ QUESTIONS = [
     "Do you have thoughts of self-harm or suicide?"
 ]
 
+# Route for Self-Love Journal page
+@app.route('/self')
+@login_required
+def self_journal():
+    return render_template('self.html')
+
+# Route for mandala page
+@app.route('/mandela_coloring')
+@login_required
+def mandala_coloring():
+    return render_template('mandala_coloring_therapy.html')
+
+# Route for mandala page
+@app.route('/gratitude_practice')
+@login_required
+def gratitude_practice():
+    return render_template('gratitude_practice.html')
+
+# Route for task d page
+@app.route('/daily_tasks_dep')
+@login_required
+def daily_tasks_dep():
+    return render_template('daily_tasks_dep.html')
+
+# Route for task d page
+@app.route('/daily_tasks_anxiety')
+@login_required
+def daily_tasks_anxiety():
+    return render_template('daily_tasks_anx.html')
+
+# Route for task d page
+@app.route('/daily_tasks_stress')
+@login_required
+def daily_tasks_stress():
+    return render_template('daily_tasks_stress.html')
+
 @app.route('/')
 @login_required
 def index():
@@ -189,26 +225,51 @@ def next_question():
             db.session.commit()
             return jsonify({"response": next_q, "finished": False})
         else:
+            
             # Assessment finished, calculate result
             score, yes_responses = calculate_score(session['responses'])
             diagnosis = get_diagnosis((score, yes_responses), session['responses'])
             session['assessment_finished'] = True
+            # Calculate depression_score for this session
+            answers = list(session['responses'].values())
+            depression_qs = [0, 1, 5]
+            depression_score = sum([answers[i].lower() in ['yes', 'y', 'yeah', 'true'] for i in depression_qs if i < len(answers)])
+            anxiety_score = sum([answers[i].lower() in ['yes', 'y', 'yeah', 'true'] for i in [2, 4] if i < len(answers)])
+            stress_qs = [2, 3, 4]
+            stress_score = sum([answers[i].lower() in ['yes', 'y', 'yeah', 'true'] for i in stress_qs if i < len(answers)])
             # Send assessment complete message
             msg1 = f"Assessment complete!\n\n{diagnosis}"
             # Send daily tasks message with clickable link
-            msg2 = (
-                'You have daily tasks to complete.<br>'
-                '<a href="/daily_tasks" style="color:#2563eb;text-decoration:underline;font-weight:500;">Click here to view your daily tasks</a>.'
-            )
+            msg2 = ""
+            if depression_score >= 3:
+                msg2 = (
+                    'You have daily tasks to complete. depression<br>'
+                    '<a href="/daily_tasks_dep" style="color:#2563eb;text-decoration:underline;font-weight:500;">Click here to view your daily tasks</a>'
+                )
+            if anxiety_score == 2:
+                msg2 = (
+                    'You have daily tasks to complete. Anxeity<br>'
+                    '<a href="/daily_tasks_anxiety" style="color:#2563eb;text-decoration:underline;font-weight:500;">Click here to view your daily tasks</a>'
+                )
+            if stress_score == 3:
+                msg2 = (
+                    'You have daily tasks to complete. Stress<br>'
+                    '<a href="/daily_tasks_stress" style="color:#2563eb;text-decoration:underline;font-weight:500;">Click here to view your daily tasks</a>'
+                )
             # Send chat open message
             msg3 = "You can now chat with the bot and ask any question."
             for m in [msg1, msg2, msg3]:
-                chat_msg = ChatMessage(user_id=current_user.id, sender='bot', message=m)
-                db.session.add(chat_msg)
+                if m:  # Only add non-empty messages
+                    chat_msg = ChatMessage(user_id=current_user.id, sender='bot', message=m)
+                    db.session.add(chat_msg)
             db.session.commit()
             # Return all 3 messages as a list for separate rendering
+            responses_list = [msg1]
+            if msg2:
+                responses_list.append(msg2)
+            responses_list.append(msg3)
             return jsonify({
-                "responses": [msg1, msg2, msg3],
+                "responses": responses_list,
                 "response_type": "multiple",
                 "finished": True
             })
@@ -342,16 +403,19 @@ def get_diagnosis(score, user_responses):
         suggestions.append(
             "It seems you may be experiencing some emotional challenges that can affect your mood and daily life. "
             "Consider reaching out to a counselor or someone you trust to talk about how you're feeling."
+            
         )
     if anxiety_score == 2:
         suggestions.append(
             "Some of your answers suggest you might be feeling worried or having trouble concentrating. "
             "Practicing relaxation techniques or speaking with a mental health professional could be helpful."
+            
         )
     if stress_score == 3:
         suggestions.append(
             "Your responses indicate you might be under significant stress. "
             "Remember, support is available and talking to someone can make a difference."
+            
         )
     if not suggestions:
         suggestions.append(

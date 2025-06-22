@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Self-Love Journal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #a8d5ba 0%, #7fb3d3 100%);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .decorative-elements {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .leaves {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 150px;
+            height: 150px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M20 50 Q30 20 50 30 Q70 20 80 50 Q70 80 50 70 Q30 80 20 50" fill="%23447c69" opacity="0.7"/><path d="M30 60 Q40 40 55 45 Q70 40 75 60 Q70 80 55 75 Q40 80 30 60" fill="%235a9b8a" opacity="0.8"/></svg>') no-repeat center;
+            background-size: contain;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            color: #2d5a47;
+            font-weight: 300;
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+        }
+
+        .date-inputs {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .date-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .date-group label {
+            font-size: 1.1rem;
+            color: #2d5a47;
+            font-weight: 500;
+        }
+
+        .date-group input {
+            padding: 8px 12px;
+            border: 2px solid #a8d5ba;
+            border-radius: 8px;
+            font-size: 1rem;
+            width: 80px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .date-group input:focus {
+            outline: none;
+            border-color: #7fb3d3;
+            box-shadow: 0 0 10px rgba(127, 179, 211, 0.3);
+        }
+
+        .journal-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .journal-section {
+            background: rgba(240, 248, 255, 0.8);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(168, 213, 186, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .journal-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            color: #2d5a47;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .happy-things {
+            grid-column: 1;
+            grid-row: 1;
+        }
+
+        .priorities {
+            grid-column: 2;
+            grid-row: 1;
+        }
+
+        .self-care {
+            grid-column: 1;
+            grid-row: 2;
+        }
+
+        .mood-section {
+            grid-column: 2;
+            grid-row: 2;
+        }
+
+        .dear-self {
+            grid-column: 1 / -1;
+            grid-row: 3;
+        }
+
+        .input-item {
+            margin-bottom: 12px;
+        }
+
+        .input-item input {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-bottom: 2px dotted #a8d5ba;
+            background: transparent;
+            font-size: 1rem;
+            color: #2d5a47;
+            transition: all 0.3s ease;
+        }
+
+        .input-item input:focus {
+            outline: none;
+            border-bottom-color: #7fb3d3;
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .input-item input::placeholder {
+            color: #7fb3d3;
+            opacity: 0.7;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-item:hover {
+            transform: translateX(5px);
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 15px;
+            accent-color: #7fb3d3;
+            cursor: pointer;
+        }
+
+        .checkbox-item input[type="text"] {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-bottom: 2px dotted #a8d5ba;
+            background: transparent;
+            font-size: 1rem;
+            color: #2d5a47;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-item input[type="text"]:focus {
+            outline: none;
+            border-bottom-color: #7fb3d3;
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .checkbox-item.completed {
+            opacity: 0.7;
+        }
+
+        .checkbox-item.completed input[type="text"] {
+            text-decoration: line-through;
+        }
+
+        .mood-selector {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+        }
+
+        .mood-emoji {
+            font-size: 2.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 10px;
+            border-radius: 50%;
+        }
+
+        .mood-emoji:hover {
+            transform: scale(1.2);
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .mood-emoji.selected {
+            background: #7fb3d3;
+            transform: scale(1.3);
+            box-shadow: 0 5px 15px rgba(127, 179, 211, 0.4);
+        }
+
+        .dear-self textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            border: 2px solid #a8d5ba;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: 'Georgia', serif;
+            color: #2d5a47;
+            background: rgba(255, 255, 255, 0.8);
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+
+        .dear-self textarea:focus {
+            outline: none;
+            border-color: #7fb3d3;
+            box-shadow: 0 0 15px rgba(127, 179, 211, 0.3);
+        }
+
+        .dear-self textarea::placeholder {
+            color: #7fb3d3;
+            opacity: 0.7;
+        }
+
+        .save-button {
+            display: block;
+            width: 200px;
+            margin: 30px auto 0;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #7fb3d3, #a8d5ba);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .save-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .save-button:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 20px;
+            }
+
+            .journal-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .dear-self {
+                grid-column: 1;
+            }
+
+            .title {
+                font-size: 2rem;
+            }
+
+            .date-inputs {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .mood-emoji {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="decorative-elements"></div>
+    <div class="leaves"></div>
+    
+    <div class="container">
+        <div class="header">
+            <h1 class="title">SELF-LOVE JOURNAL</h1>
+            <div class="date-inputs">
+                <div class="date-group">
+                    <label for="date">Date:</label>
+                    <input type="number" id="date" min="1" max="31" placeholder="DD">
+                </div>
+                <div class="date-group">
+                    <label for="month">Month:</label>
+                    <input type="number" id="month" min="1" max="12" placeholder="MM">
+                </div>
+                <div class="date-group">
+                    <label for="year">Year:</label>
+                    <input type="number" id="year" min="2020" max="2030" placeholder="YYYY">
+                </div>
+            </div>
+        </div>
+
+        <div class="journal-grid">
+            <div class="journal-section happy-things">
+                <h2 class="section-title">Things that made Me Happy Today:</h2>
+                <div class="input-item">
+                    <input type="text" placeholder="Something that brought you joy...">
+                </div>
+                <div class="input-item">
+                    <input type="text" placeholder="A moment that made you smile...">
+                </div>
+                <div class="input-item">
+                    <input type="text" placeholder="A person who brightened your day...">
+                </div>
+                <div class="input-item">
+                    <input type="text" placeholder="An achievement, big or small...">
+                </div>
+                <div class="input-item">
+                    <input type="text" placeholder="Something beautiful you noticed...">
+                </div>
+            </div>
+
+            <div class="journal-section priorities">
+                <h2 class="section-title">Priorities:</h2>
+                <div class="input-item">
+                    <input type="text" placeholder="Most important task for tomorrow...">
+                </div>
+                <div class="input-item">
+                    <input type="text" placeholder="A goal you're working towards...">
+                </div>
+                <div class="input-item">
+                    <input type="text" placeholder="Something you want to focus on...">
+                </div>
+                <div class="input-item">
+                    <input type="text" placeholder="A relationship to nurture...">
+                </div>
+            </div>
+
+            <div class="journal-section self-care">
+                <h2 class="section-title">Self-Care List</h2>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="care1">
+                    <input type="text" placeholder="Drink enough water">
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="care2">
+                    <input type="text" placeholder="Get fresh air">
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="care3">
+                    <input type="text" placeholder="Practice gratitude">
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="care4">
+                    <input type="text" placeholder="Move your body">
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="care5">
+                    <input type="text" placeholder="Connect with loved ones">
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="care6">
+                    <input type="text" placeholder="Do something creative">
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="care7">
+                    <input type="text" placeholder="Rest when needed">
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="care8">
+                    <input type="text" placeholder="Treat yourself kindly">
+                </div>
+            </div>
+
+            <div class="journal-section mood-section">
+                <h2 class="section-title">My Mood Today:</h2>
+                <div class="mood-selector">
+                    <span class="mood-emoji" data-mood="very-sad">😢</span>
+                    <span class="mood-emoji" data-mood="sad">😔</span>
+                    <span class="mood-emoji" data-mood="neutral">😐</span>
+                    <span class="mood-emoji" data-mood="happy">😊</span>
+                    <span class="mood-emoji" data-mood="very-happy">😄</span>
+                </div>
+            </div>
+
+            <div class="journal-section dear-self">
+                <h2 class="section-title">Dear Self:</h2>
+                <textarea placeholder="Write yourself a loving message... What do you want to remember about today? What are you proud of? What would you tell your best friend if they were you?"></textarea>
+            </div>
+        </div>
+
+        <button class="save-button" onclick="saveJournal()">Save Today's Entry</button>
+    </div>
+
+    <script>
+        // Auto-fill today's date
+        const today = new Date();
+        document.getElementById('date').value = today.getDate();
+        document.getElementById('month').value = today.getMonth() + 1;
+        document.getElementById('year').value = today.getFullYear();
+
+        // Mood selector functionality
+        const moodEmojis = document.querySelectorAll('.mood-emoji');
+        moodEmojis.forEach(emoji => {
+            emoji.addEventListener('click', () => {
+                moodEmojis.forEach(e => e.classList.remove('selected'));
+                emoji.classList.add('selected');
+            });
+        });
+
+        // Checkbox functionality
+        const checkboxes = document.querySelectorAll('.checkbox-item input[type="checkbox"]');
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const item = this.closest('.checkbox-item');
+                if (this.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        });
+
+        // Save functionality
+        function saveJournal() {
+            const button = document.querySelector('.save-button');
+            const originalText = button.textContent;
+            
+            button.textContent = 'Saved! ✓';
+            button.style.background = 'linear-gradient(135deg, #4CAF50, #8BC34A)';
+            
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.style.background = 'linear-gradient(135deg, #7fb3d3, #a8d5ba)';
+            }, 2000);
+        }
+
+        // Add some interactive effects
+        document.querySelectorAll('input[type="text"]').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+
+        // Floating animation for decorative elements
+        const decorativeElements = document.querySelector('.decorative-elements');
+        let angle = 0;
+        
+        setInterval(() => {
+            angle += 0.5;
+            decorativeElements.style.transform = `rotate(${angle}deg)`;
+        }, 100);
+    </script>
+</body>
+</html>

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bubble Wrap Popping Game</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            user-select: none;
+        }
+        
+        #gameCanvas {
+            display: block;
+            cursor: pointer;
+            background: #ffffff;
+        }
+        
+        #gameOver {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 24px;
+            display: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+        
+        #ui {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #333;
+            font-size: 20px;
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        #instructions {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: #333;
+            font-size: 16px;
+            text-align: right;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #45a049;
+        }
+
+        #cursor {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 0, 0, 0.3);
+            border: 2px solid #ff0000;
+            pointer-events: none;
+            z-index: 100;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+<body>
+    <div id="ui">
+        <div>Bubbles Left: <span id="bubblesLeft">0</span></div>
+        <div>Popped: <span id="popped">0</span></div>
+    </div>
+    
+    <div id="instructions">
+        Click on bubbles to pop them!<br>
+        Just like real bubble wrap! 🫧
+    </div>
+    
+    <div id="cursor"></div>
+    
+    <canvas id="gameCanvas"></canvas>
+    
+    <div id="gameOver">
+        <h2>🎉 All Bubbles Popped! 🎉</h2>
+        <p>You've finished the entire sheet!</p>
+        <p>Total Bubbles: <span id="totalBubbles">0</span></p>
+        <button onclick="restartGame()">New Bubble Wrap Sheet</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const gameOverDiv = document.getElementById('gameOver');
+        const bubblesLeftSpan = document.getElementById('bubblesLeft');
+        const poppedSpan = document.getElementById('popped');
+        const totalBubblesSpan = document.getElementById('totalBubbles');
+        const cursor = document.getElementById('cursor');
+
+        // Resize canvas to full screen
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            createBubbleWrap();
+        });
+
+        // Game variables
+        let bubbles = [];
+        let poppedCount = 0;
+        let totalBubbles = 0;
+        let gameActive = true;
+
+        // Bubble wrap bubble class
+        class BubbleWrapBubble {
+            constructor(x, y, size) {
+                this.x = x;
+                this.y = y;
+                this.size = size;
+                this.radius = size / 2;
+                this.popped = false;
+                this.animationProgress = 0;
+                this.popAnimation = 0;
+            }
+
+            draw() {
+                ctx.save();
+                
+                if (this.popped) {
+                    // Draw popped bubble (flat)
+                    ctx.fillStyle = '#e8e8e8';
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius * 0.9, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Inner circle to show it's been popped
+                    ctx.fillStyle = '#d0d0d0';
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius * 0.3, 0, Math.PI * 2);
+                    ctx.fill();
+                } else {
+                    // Draw unpopped bubble (3D effect)
+                    
+                    // Shadow
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+                    ctx.beginPath();
+                    ctx.ellipse(this.x + 2, this.y + this.radius * 0.8, this.radius * 0.8, this.radius * 0.3, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Main bubble base
+                    ctx.fillStyle = '#f0f0f0';
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Gradient for 3D effect
+                    const gradient = ctx.createRadialGradient(
+                        this.x - this.radius * 0.3, this.y - this.radius * 0.3, 0,
+                        this.x, this.y, this.radius
+                    );
+                    gradient.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
+                    gradient.addColorStop(0.7, 'rgba(240, 240, 240, 0.4)');
+                    gradient.addColorStop(1, 'rgba(200, 200, 200, 0.8)');
+                    
+                    ctx.fillStyle = gradient;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Highlight
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                    ctx.beginPath();
+                    ctx.arc(this.x - this.radius * 0.3, this.y - this.radius * 0.3, this.radius * 0.25, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Border
+                    ctx.strokeStyle = 'rgba(180, 180, 180, 0.6)';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+                
+                ctx.restore();
+            }
+
+            isClicked(mouseX, mouseY) {
+                if (this.popped) return false;
+                const dx = mouseX - this.x;
+                const dy = mouseY - this.y;
+                return (dx * dx + dy * dy) <= (this.radius * this.radius);
+            }
+
+            pop() {
+                if (this.popped) return;
+                this.popped = true;
+                poppedCount++;
+                updateUI();
+                
+                // Play pop sound effect (visual feedback)
+                this.createPopEffect();
+            }
+
+            createPopEffect() {
+                // Create a brief visual pop effect
+                const originalRadius = this.radius;
+                let scale = 1.3;
+                const fadeEffect = () => {
+                    if (scale > 1) {
+                        ctx.save();
+                        ctx.globalAlpha = 0.5;
+                        ctx.fillStyle = '#ffff00';
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, originalRadius * scale, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.restore();
+                        scale -= 0.1;
+                        requestAnimationFrame(fadeEffect);
+                    }
+                };
+                fadeEffect();
+            }
+        }
+
+        // Create bubble wrap grid
+        function createBubbleWrap() {
+            bubbles = [];
+            poppedCount = 0;
+            
+            const bubbleSize = 40;
+            const spacing = bubbleSize + 5;
+            const startX = bubbleSize;
+            const startY = bubbleSize;
+            
+            const cols = Math.floor((canvas.width - startX * 2) / spacing);
+            const rows = Math.floor((canvas.height - startY * 2) / spacing);
+            
+            for (let row = 0; row < rows; row++) {
+                for (let col = 0; col < cols; col++) {
+                    const x = startX + col * spacing + (row % 2) * (spacing / 2);
+                    const y = startY + row * spacing;
+                    
+                    if (x + bubbleSize/2 < canvas.width - startX) {
+                        bubbles.push(new BubbleWrapBubble(x, y, bubbleSize));
+                    }
+                }
+            }
+            
+            totalBubbles = bubbles.length;
+            updateUI();
+        }
+
+        // Update UI
+        function updateUI() {
+            const remaining = totalBubbles - poppedCount;
+            bubblesLeftSpan.textContent = remaining;
+            poppedSpan.textContent = poppedCount;
+            
+            if (remaining === 0 && gameActive) {
+                gameActive = false;
+                totalBubblesSpan.textContent = totalBubbles;
+                setTimeout(() => {
+                    gameOverDiv.style.display = 'block';
+                }, 500);
+            }
+        }
+
+        // Mouse tracking for custom cursor
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        // Click handler
+        canvas.addEventListener('click', (e) => {
+            if (!gameActive) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            
+            // Check if any bubble was clicked
+            bubbles.forEach(bubble => {
+                if (bubble.isClicked(mouseX, mouseY)) {
+                    bubble.pop();
+                }
+            });
+        });
+
+        // Touch support
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (!gameActive) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            const touchX = touch.clientX - rect.left;
+            const touchY = touch.clientY - rect.top;
+            
+            bubbles.forEach(bubble => {
+                if (bubble.isClicked(touchX, touchY)) {
+                    bubble.pop();
+                }
+            });
+        });
+
+        // Game loop
+        function gameLoop() {
+            // Clear canvas
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw subtle background pattern
+            ctx.fillStyle = 'rgba(240, 240, 240, 0.3)';
+            for (let x = 0; x < canvas.width; x += 20) {
+                ctx.fillRect(x, 0, 1, canvas.height);
+            }
+            for (let y = 0; y < canvas.height; y += 20) {
+                ctx.fillRect(0, y, canvas.width, 1);
+            }
+
+            // Draw all bubbles
+            bubbles.forEach(bubble => {
+                bubble.draw();
+            });
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Restart game
+        function restartGame() {
+            gameActive = true;
+            gameOverDiv.style.display = 'none';
+            createBubbleWrap();
+        }
+
+        // Hide default cursor
+        canvas.style.cursor = 'none';
+
+        // Start the game
+        createBubbleWrap();
+        gameLoop();
+    </script>
+</body>
+</html>
