@@ -128,6 +128,12 @@ def self_journal():
 def mandala_coloring():
     return render_template('mandala_coloring_therapy.html')
 
+# Route for mandala page
+@app.route('/gratitude_practice')
+@login_required
+def gratitude_practice():
+    return render_template('gratitude_practice.html')
+
 @app.route('/')
 @login_required
 def index():
@@ -210,7 +216,7 @@ def next_question():
             # Send daily tasks message with clickable link
             msg2 = (
                 'You have daily tasks to complete.<br>'
-                '<a href="/daily_tasks" style="color:#2563eb;text-decoration:underline;font-weight:500;">Click here to view your daily tasks</a>.'
+                
             )
             # Send chat open message
             msg3 = "You can now chat with the bot and ask any question."
@@ -354,16 +360,19 @@ def get_diagnosis(score, user_responses):
         suggestions.append(
             "It seems you may be experiencing some emotional challenges that can affect your mood and daily life. "
             "Consider reaching out to a counselor or someone you trust to talk about how you're feeling."
+            '<a href="/daily_tasks" style="color:#2563eb;text-decoration:underline;font-weight:500;">Click here to view your daily tasks</a>.'
         )
     if anxiety_score == 2:
         suggestions.append(
             "Some of your answers suggest you might be feeling worried or having trouble concentrating. "
             "Practicing relaxation techniques or speaking with a mental health professional could be helpful."
+            '<a href="/daily_tasks" style="color:#2563eb;text-decoration:underline;font-weight:500;">Click here to view your daily tasks</a>.'
         )
     if stress_score == 3:
         suggestions.append(
             "Your responses indicate you might be under significant stress. "
             "Remember, support is available and talking to someone can make a difference."
+            '<a href="/daily_tasks" style="color:#2563eb;text-decoration:underline;font-weight:500;">Click here to view your daily tasks</a>.'
         )
     if not suggestions:
         suggestions.append(
