@@ -1,0 +1,44 @@
+<nav class="navbar">
+        <span class="navbar-title">Mental Health Assistant</span>
+        <div class="navbar-left">
+            <div class="navbar-center">
+                <a href="/" class="navbar-link">Assistant</a>
+                <a href="/daily_tasks" class="navbar-link active">Daily Tasks</a>
+            </div>
+        </div>
+        <div class="navbar-right">
+            <span class="navbar-user">Welcome, {{ current_user.username }}</span>
+            <a href="/logout" class="navbar-link">Logout</a>
+        </div>
+    </nav>
+    <div class="daily-tasks-page-layout" style="gap: 0; justify-content: flex-start;">
+        <aside class="week-progress-vertical" style="margin-top: 3rem; margin-left: 7rem; align-items: flex-start;">
+            <div class="week-days-vertical" style="align-items: flex-start; gap: 2.1rem;">
+                <div class="week-title">Complete the tasks for 7 days and you <br>should come back to the Assistant.</div>
+                <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">1</span><span class="day-label"><b>Day 1</b><br> Breathe with the Circle </span></div>
+                <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">2</span><span class="day-label"><b>Day 2</b><br> mindful-click-game </span></div>
+                <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">3</span><span class="day-label"><b>Day 3</b><br> Ambient Sound Experience </span></div>
+                <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">4</span><span class="day-label"><b>Day 4</b><br> Gentle Movement for Calm </span></div>
+                <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">5</span><span class="day-label"><b>Day 5</b><br> Bubble Wrap Popping Game </span></div>
+                <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">6</span><span class="day-label"><b>Day 6</b><br> Memory Challenge </span></div>
+                <div class="week-day-vertical" style="flex-direction: row; gap: 0.7rem; align-items: flex-start;"><span class="day-circle">7</span><span class="day-label"><b>Day 7</b><br> Mind Unwind – Simple Puzzle Game </span></div>
+            </div>
+        </aside>
+        <div class="tasks-container">
+            <h2>Your Daily Task</h2>
+            
+            <main class="main-tasks-content">
+                <div class="breathing-section" style="background:none;box-shadow:none;padding:0;">
+                    <div class="breathing-title">Breathe with the Circle</div>
+                    <div class="breathing-desc">Follow the animation below. Inhale as the circle expands, hold, exhale as it contracts, hold. Try to sync your breath for a few cycles to relax and focus.</div>
+                    <div id="breathing-game" class="breathing-game">
+                        <canvas id="breathing-circle" width="260" height="260"></canvas>
+                        <div id="breathing-instruction" class="breathing-instruction">Inhale</div>
+                    </div>
+                </div>
+                <button id="complete-task-btn" class="next-btn fixed-complete-btn" style="background:#4CAF50; color:#fff;">I completed the task</button>
+                <div class="next-section" style="display:none;"></div>
+                <div id="task-result" class="task-result"></div>
+            </main>
+        </div>
+    </div>
