@@ -323,9 +323,12 @@
             
             <main class="main-tasks-content">
                 <div class="selflove-section" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:340px;">
-                    <div class="selflove-title" style="font-size:1.35rem;font-weight:700;color:#f07264;margin-bottom:0.5rem;margin-top :7rem;">Self-Love Journal</div>
-                    <div class="selflove-desc" style="font-size:1.08rem;color:#444;margin-bottom:5rem;text-align:center;max-width:340px;">Take a quiet moment to reflect on who you are, not what you’ve done. Write freely — no right or wrong answers.</div>
-                    <a href="/self" style="display:flex;align-items:center;justify-content:center;width:220px;min-width:220px;max-width:220px;height:220px;min-height:220px;max-height:220px;aspect-ratio:1/1;border-radius:50%;background:linear-gradient(135deg,#7fb3d3,#a8d5ba);color:#fff;font-size:1.25rem;font-weight:700;text-decoration:none;box-shadow:0 4px 24px 0 rgba(74,144,226,0.13);margin-bottom:2.2rem;transition:background 0.2s,transform 0.1s;text-align:center;">Your Journal</a>
+                    <div class="selflove-title" style="font-size:1.35rem;font-weight:700;color:#f07264;margin-bottom:0.5rem;margin-top :10rem;">Bubbler Timer</div>
+                    <div class="selflove-desc" style="font-size:1.08rem;color:#444;margin-bottom:0.8rem;text-align:center;max-width:340px;">This gentle animation mimics a liquid motion bubbler — where colorful droplets slowly fall, bounce, and swirl their way down through a clear path. There’s no task, no goal… just movement and calm.</div>
+                    <video autoplay loop muted playsinline style="width:200px;height:auto;border-radius:14px;box-shadow:0 2px 12px rgba(31,38,135,0.10);background:#000;pointer-events:none;" tabindex="-1">
+                        <source src="/static/video/Bubble.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
                 </div>
                 <button id="complete-task-btn" class="next-btn fixed-complete-btn" style="background:#4CAF50; color:#fff;">I completed the task</button>
                 <div class="next-section" style="display:none;"></div>
@@ -344,7 +347,7 @@ function showDay7PuzzleTask() {
     tasksContainer.appendChild(h2);
     // Subtitle styled like a title, but smaller
     const subtitle = document.createElement('div');
-    subtitle.textContent = 'Mind Unwind – Simple Puzzle Game';
+    subtitle.textContent = '1 2 3 4 5 – Grounding Technique';
     subtitle.style.fontSize = '1.35rem';
     subtitle.style.fontWeight = '700';
     subtitle.style.color = '#f07264';
@@ -354,8 +357,52 @@ function showDay7PuzzleTask() {
     // Description (with goal and mental break info)
     const desc = document.createElement('div');
     desc.className = 'task-desc';
-    desc.innerHTML = `<p>Challenge your mind gently with this relaxing puzzle. Rearrange the pieces to complete the picture or pattern.<br><br>Take your time—there’s no timer, no pressure. Just a quiet space to focus, think, and enjoy the satisfaction of solving.</p>`;
+    desc.innerHTML = `<p>This is a gentle mindfulness exercise that helps you calm your mind and reconnect with the present moment using your five senses.  </p>
+    <ul style="text-align: left; line-height: 1.6; margin-top: 1rem;">
+        <li><b>5 – Look around and name 5 things you can see</b><br>
+            
+        </li>
+        <li style="margin-top:0.7rem;"><b>4 – Listen and name 4 things you can hear</b><br>
+            
+        </li>
+        <li style="margin-top:0.7rem;"><b>3 – Touch 3 things around you</b><br>
+            
+        </li>
+        <li style="margin-top:0.7rem;"><b>2 – Notice 2 things you can smell</b><br>
+            
+        </li>
+        <li style="margin-top:0.7rem;"><b>1 – Name 1 thing you can taste</b><br>
+            
+        </li>
+    </ul>
+    
+    `;
     tasksContainer.appendChild(desc);
+    //1-2-3-4-5
+    const journalLink = document.createElement('a');
+    journalLink.href = "/self";
+    journalLink.textContent = "Grounding Technique";
+    journalLink.style.display = "flex";
+    journalLink.style.alignItems = "center";
+    journalLink.style.justifyContent = "center";
+    journalLink.style.width = "220px";
+    journalLink.style.minWidth = "220px";
+    journalLink.style.maxWidth = "220px";
+    journalLink.style.height = "220px";
+    journalLink.style.minHeight = "220px";
+    journalLink.style.maxHeight = "220px";
+    journalLink.style.aspectRatio = "1/1";
+    journalLink.style.borderRadius = "50%";
+    journalLink.style.background = "linear-gradient(135deg,#FF6666,#ADD8E6)";
+    journalLink.style.color = "#fff";
+    journalLink.style.fontSize = "1.25rem";
+    journalLink.style.fontWeight = "700";
+    journalLink.style.textDecoration = "none";
+    journalLink.style.boxShadow = "0 4px 24px 0 rgba(240,114,100,0.13)";
+    journalLink.style.margin = "0 auto 2.2rem auto";
+    journalLink.style.transition = "background 0.2s,transform 0.1s";
+    journalLink.style.textAlign = "center";
+    tasksContainer.appendChild(journalLink);
 
     // Add the complete button at the bottom, always visible (like previous tasks)
     let completeBtn = document.createElement('button');
@@ -436,99 +483,9 @@ function showDay7PuzzleTask() {
         tasksContainer.appendChild(assistantBtn);
     };
 
-    // Puzzle game container
-    const gameDiv = document.createElement('div');
-    gameDiv.style.display = 'flex';
-    gameDiv.style.justifyContent = 'center';
-    gameDiv.style.alignItems = 'center';
-    gameDiv.style.margin = '2rem 0';
-    gameDiv.style.minHeight = '340px';
-    tasksContainer.appendChild(gameDiv);
+    
 
-    // 3x3 sliding puzzle with image tiles
-    const size = 3;
-    let board = [];
-    let empty = {row: size-1, col: size-1};
-    // Use 8 images from static/images/puzzle/1.jpg ... 8.jpeg (or .jpg/.jpeg/.png)
-    const imagePaths = [
-        '/static/images/puzzle/1.jpg',
-        '/static/images/puzzle/2.jpg',
-        '/static/images/puzzle/3.jpg',
-        '/static/images/puzzle/4.jpg',
-        '/static/images/puzzle/5.jpg',
-        '/static/images/puzzle/6.jpg',
-        '/static/images/puzzle/7.jpg',
-        '/static/images/puzzle/8.jpg'
-    ];
-    // Fill board with tile indices 0-7 and one empty
-    let nums = Array.from({length: size*size-1}, (_,i)=>i);
-    // Shuffle
-    for (let i = nums.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [nums[i], nums[j]] = [nums[j], nums[i]];
-    }
-    nums.push(null);
-    for (let r=0; r<size; r++) {
-        board[r] = [];
-        for (let c=0; c<size; c++) {
-            board[r][c] = nums[r*size+c];
-        }
-    }
-
-    // Render puzzle
-    const puzzle = document.createElement('div');
-    puzzle.style.display = 'grid';
-    puzzle.style.gridTemplateColumns = `repeat(${size}, 96px)`;
-    puzzle.style.gridTemplateRows = `repeat(${size}, 96px)`;
-    puzzle.style.gap = '0.7rem';
-    puzzle.style.background = 'none';
-    puzzle.style.borderRadius = '18px';
-    puzzle.style.boxShadow = '0 2px 8px rgba(74,144,226,0.10)';
-    puzzle.style.padding = '0.5rem';
-    gameDiv.appendChild(puzzle);
-
-    function renderPuzzle() {
-        puzzle.innerHTML = '';
-        for (let r=0; r<size; r++) {
-            for (let c=0; c<size; c++) {
-                const val = board[r][c];
-                const tile = document.createElement('div');
-                tile.style.width = '96px';
-                tile.style.height = '96px';
-                tile.style.display = 'flex';
-                tile.style.alignItems = 'center';
-                tile.style.justifyContent = 'center';
-                tile.style.borderRadius = '14px';
-                tile.style.background = val !== null ? '#E2BDA7' : 'transparent';
-                tile.style.cursor = val !== null ? 'pointer' : 'default';
-                tile.style.transition = 'background 0.2s, color 0.2s';
-                tile.style.overflow = 'hidden';
-                tile.style.position = 'relative';
-                if (val !== null) {
-                    const img = document.createElement('img');
-                    img.src = imagePaths[val];
-                    img.style.width = '100%';
-                    img.style.height = '100%';
-                    img.style.objectFit = 'cover';
-                    img.style.borderRadius = '14px';
-                    tile.appendChild(img);
-                }
-                // Move logic
-                tile.onclick = function() {
-                    if (val === null) return;
-                    // Can move if adjacent to empty
-                    if ((Math.abs(empty.row - r) + Math.abs(empty.col - c)) === 1) {
-                        board[empty.row][empty.col] = val;
-                        board[r][c] = null;
-                        empty = {row: r, col: c};
-                        renderPuzzle();
-                        if (isSolved()) showCompleteBtn();
-                    }
-                };
-                puzzle.appendChild(tile);
-            }
-        }
-    }
+    
 
     function isSolved() {
         let n = 0;
@@ -545,7 +502,7 @@ function showDay7PuzzleTask() {
         return true;
     }
 
-    renderPuzzle();
+    
 }
 // --- End Day 7 ---
     // Animated Breathing Circle Game (only run if canvas exists)
@@ -681,9 +638,11 @@ function showDay7PuzzleTask() {
                     const mindfulDiv = document.createElement('div');
                     mindfulDiv.className = 'mindful-click-section';
                     mindfulDiv.innerHTML = `
-                        <div class="mindful-title" style="font-size:1.35rem;font-weight:700;color:#f07264;margin-bottom:0.5rem;letter-spacing:0.5px;">Practice gratitude</div>
-                        <div class="mindful-desc" style="font-size:1.08rem;color:#444;margin-bottom:1.2rem;text-align:center;">When you do something you love, or even when you find a new activity you enjoy, you may be able to benefit your mental health more by taking time to be thankful for it.<br><br>Practicing gratitude can have lasting positive effects on your overall mental health.</div>
-                        <a href="/gratitude_practice" style="display:flex;align-items:center;justify-content:center;width:220px;min-width:220px;max-width:220px;height:220px;min-height:220px;max-height:220px;aspect-ratio:1/1;border-radius:50%;background:linear-gradient(135deg,#7fb3d3,#800080);color:#fff;font-size:1.25rem;font-weight:700;text-decoration:none;box-shadow:0 4px 24px 0 rgba(74,144,226,0.13);margin-bottom:2.2rem;transition:background 0.2s,transform 0.1s;text-align:center;">Gratitude Journal</a>
+                        <div class="mindful-title" style="font-size:1.35rem;font-weight:700;color:#f07264;margin-bottom:0.5rem;letter-spacing:0.5px;">Pop Spinner</div>
+                        <div class="mindful-desc" style="font-size:1.08rem;color:#444;margin-bottom:1.2rem;text-align:center;">This is your time to fidget, focus, and relax.Grab the pop spinner on screen and give it a spin! <br> There’s no score, no rush — just a satisfying moment of motion and sound.</div>
+                        <div style="display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem;">
+                            <img src="/static/images/spinner.gif" alt="Pop Spinner" style="width:440px;border-radius:1rem;height:auto;user-select:none;pointer-events:none;filter:drop-shadow(0 2px 12px rgba(74,144,226,0.12));" draggable="false">
+                        </div>
                         <button id="complete-mindful-btn" class="next-btn fixed-complete-btn" style="background:#4CAF50; color:#fff;">I completed the task</button>
                     `;
                     // Insert after h2
@@ -733,16 +692,16 @@ function showDay7PuzzleTask() {
                                 const ambientDiv = document.createElement('div');
                                 ambientDiv.className = 'ambient-section';
                                 ambientDiv.innerHTML = `
-                                    <div class="ambient-title">Listen to music</div>
-                                    <div class="ambient-desc">Relax and enjoy the music for a few minutes.</div>
-                                    <div class="ambient-btns" style="display:flex;justify-content:center;gap:1.2rem;margin-bottom:1.5rem;width:100%;">
-                                        <button class="ambient-btn" data-env="rain"><span style='font-size:2rem;'>1</span></button>
-                                        <button class="ambient-btn" data-env="ocean"><span style='font-size:2rem;'>2</span></button>
-                                        <button class="ambient-btn" data-env="forest"><span style='font-size:2rem;'>3</span></button>
-                                        <button class="ambient-btn" data-env="wind"><span style='font-size:2rem;'>4</span></button>
+                                    <div class="ambient-title">Use Scent</div>
+                                    <div class="ambient-desc">Sniff lavender flowers or lavender essential oil for at least 3 minutes.</div>
+                                    <div class="ambient-desc">Lavender is well-known for its calming properties.</div>
+                                    <div class="ambient-desc">Keep a small bottle of lavender essential oil on hand for the scent, for when you feel anxious thoughts brewing.</div>
+                                    <div class="ambient-desc">If you practice mindfulness or meditation, try smelling lavender during your practice.</div>
+                                    <div class="ambient-desc">Over time, you’ll associate the feeling of relaxation with that scent, making it even more effective.</div>
+                                    
                                         
                                         
-                                    </div>
+                                    
                                     <div id="ambient-particles"></div>
                                     <audio id="ambient-audio" loop></audio>
                                 `;
@@ -892,7 +851,7 @@ function showDay7PuzzleTask() {
         // Title
         const yogaTitle = document.createElement('div');
         yogaTitle.className = 'yoga-title';
-        yogaTitle.textContent = 'Exercise for a Better Mood';
+        yogaTitle.textContent = 'Drink water';
         yogaTitle.style.color = '#f07264';
         yogaTitle.style.fontSize = '1.35rem';
         yogaTitle.style.fontWeight = '700';
@@ -902,38 +861,22 @@ function showDay7PuzzleTask() {
         // Description
         const yogaDesc = document.createElement('div');
         yogaDesc.className = 'yoga-desc';
-        yogaDesc.innerHTML = `Press play and follow along at your own pace. You don’t need to be perfect — just moving a little is enough.`;
+        yogaDesc.innerHTML = `Keep your body and mind refreshed by drinking water throughout the day.`;
         yogaDesc.style.color = '#333';
         yogaDesc.style.fontSize = '1.08rem';
         yogaDesc.style.marginBottom = '1.2rem';
         yogaDesc.style.textAlign = 'center';
         yogaDiv.appendChild(yogaDesc);
-        // Video player
-        const videoContainer = document.createElement('div');
-        videoContainer.style.display = 'flex';
-        videoContainer.style.flexDirection = 'column';
-        videoContainer.style.alignItems = 'center';
-        videoContainer.style.marginBottom = '1.2rem';
-        const yogaVideo = document.createElement('video');
-        yogaVideo.setAttribute('controls', '');
-        yogaVideo.setAttribute('width', '320');
-        yogaVideo.setAttribute('height', '180');
-        yogaVideo.style.borderRadius = '12px';
-        yogaVideo.style.boxShadow = '0 2px 12px rgba(31,38,135,0.10)';
-        yogaVideo.style.background = '#000';
-        yogaVideo.innerHTML = `<source src="/static/video/yoga.mp4" type="video/mp4">Your browser does not support the video tag.`;
-        videoContainer.appendChild(yogaVideo);
-        // Play button
-        const playBtn = document.createElement('button');
-        playBtn.textContent = '🎥 Click to Begin';
-        playBtn.className = 'next-btn';
-        playBtn.style.marginTop = '0.7rem';
-        playBtn.onclick = function() {
-            yogaVideo.play();
-            playBtn.style.display = 'none';
-        };
-        videoContainer.appendChild(playBtn);
-        yogaDiv.appendChild(videoContainer);
+        
+        const yogaImg = document.createElement('img');
+        yogaImg.src = '/static/images/water.png';
+        yogaImg.alt = 'Drink water';
+        yogaImg.style.width = '250px';
+        yogaImg.style.height = 'auto';
+        yogaImg.style.borderRadius = '14px';
+        yogaImg.style.boxShadow = '0 2px 12px rgba(31,38,135,0.10)';
+        yogaImg.style.marginBottom = '1.2rem';
+        yogaDiv.appendChild(yogaImg);
         // Complete button (only one, with unique class for Day 4)
         const completeYogaBtn = document.createElement('button');
         completeYogaBtn.textContent = 'I completed the task';
@@ -977,7 +920,7 @@ function showDay5BubbleWrapTask() {
 
     // 2. Subtitle
     const subtitle = document.createElement('div');
-    subtitle.textContent = 'Mandela art drawing';
+    subtitle.textContent = 'Self-Love Journal';
     subtitle.style.fontSize = '1.35rem';
     subtitle.style.fontWeight = '700';
     subtitle.style.color = '#f07264';
@@ -988,7 +931,7 @@ function showDay5BubbleWrapTask() {
 
     // 2b. Description under subtitle
     const mandalaDesc = document.createElement('div');
-    mandalaDesc.textContent = 'No artistic skill needed — just follow the patterns, shapes, or your imagination.';
+    mandalaDesc.textContent = 'Take a quiet moment to reflect on who you are, not what you’ve done. Write freely — no right or wrong answers.';
     mandalaDesc.style.fontSize = '1.08rem';
     mandalaDesc.style.marginTop = '1.5rem';
     mandalaDesc.style.color = '#444';
@@ -997,8 +940,8 @@ function showDay5BubbleWrapTask() {
     tasksContainer.appendChild(mandalaDesc);
     // Add "Your Journal" link, centered and pink
     const journalLink = document.createElement('a');
-    journalLink.href = "/mandela_coloring";
-    journalLink.textContent = "Mandela Art";
+    journalLink.href = "/self";
+    journalLink.textContent = "Self-Love Journal";
     journalLink.style.display = "flex";
     journalLink.style.alignItems = "center";
     journalLink.style.justifyContent = "center";
@@ -1010,7 +953,7 @@ function showDay5BubbleWrapTask() {
     journalLink.style.maxHeight = "220px";
     journalLink.style.aspectRatio = "1/1";
     journalLink.style.borderRadius = "50%";
-    journalLink.style.background = "linear-gradient(135deg,#f07264,#e2bda7)";
+    journalLink.style.background = "linear-gradient(135deg,#90EE90,#ADD8E6)";
     journalLink.style.color = "#fff";
     journalLink.style.fontSize = "1.25rem";
     journalLink.style.fontWeight = "700";
@@ -1417,7 +1360,7 @@ function showDay5BubbleWrapTask() {
         tasksContainer.appendChild(h2);
         // Subtitle
         const subtitle = document.createElement('div');
-        subtitle.textContent = 'Memory Challenge';
+        subtitle.textContent = 'Mantra Practice for Panic Attacks';
         subtitle.style.fontSize = '1.35rem';
         subtitle.style.fontWeight = '700';
         subtitle.style.color = '#f07264';
@@ -1427,37 +1370,18 @@ function showDay5BubbleWrapTask() {
         // Description
         const desc = document.createElement('div');
         desc.className = 'task-desc';
-        desc.innerHTML = `<p>Memorize the positions of the icons below. You have <b>15 seconds</b> to remember their locations. After that, the icons will be hidden and you will be asked to recall their positions!</p>`;
+        desc.innerHTML = `
+  <ul style="text-align: left; line-height: 1.6; margin-top: 1rem;">
+    🗣️ <span>Repeat a calming mantra:</span> <br>“This too will pass.” It helps ground you and shift your focus away from fear.<br><br>
+    ⏱️ <span>Panic attacks peak in about 10 minutes:</span> Remind yourself the intensity won’t last forever.<br><br>
+    📉 <span>Symptoms will gradually ease:</span> After the peak, most symptoms begin to fade on their own.<br><br>
+    🧠 <span>Mantras calm the nervous system:</span> Repetition can reduce racing thoughts and bring emotional control.<br><br>
+    🌬️ <span>Combine with slow breathing:</span> Inhale deeply, repeat the mantra silently or out loud, and exhale slowly.<br><br>
+    🙌 <span>Be kind to yourself:</span> Acknowledge your feelings, but remind yourself: <em>You are safe. It will pass.</em><br><br>   
+  </ul>`;
         tasksContainer.appendChild(desc);
 
-        // 3x3 grid, scale icons up, use only 9 icons
-        const icons = [
-            '🍎','🚗','🐶','⚽','🌳','🎩','🍕','🎲','🎸'
-        ];
-        // Shuffle for random placement
-        let iconOrder = icons.slice();
-        for (let i = iconOrder.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [iconOrder[i], iconOrder[j]] = [iconOrder[j], iconOrder[i]];
-        }
-
-        // Game state
-        let revealed = true;
-        let matched = Array(9).fill(false);
-        let guesses = [];
-        let currentQuery = 0;
-        let score = 0;
-
-        // Board
-        const board = document.createElement('div');
-        board.style.display = 'grid';
-        board.style.gridTemplateColumns = 'repeat(3, 78px)';
-        board.style.gridTemplateRows = 'repeat(3, 78px)';
-        board.style.gap = '1.2rem';
-        board.style.justifyContent = 'center';
-        board.style.margin = '2rem auto 1.2rem auto';
-        board.style.maxWidth = '300px';
-        tasksContainer.appendChild(board);
+        
 
         // Always show the complete button at the bottom (like other days)
         const completeBtn = document.createElement('button');
@@ -1701,7 +1625,7 @@ function showDay7PuzzleTask() {
     tasksContainer.appendChild(h2);
     // Subtitle styled like a title, but smaller
     const subtitle = document.createElement('div');
-    subtitle.textContent = 'Mind Unwind – Simple Puzzle Game';
+    subtitle.textContent = '5 4 3 2 1 – Grounding Technique';
     subtitle.style.fontSize = '1.35rem';
     subtitle.style.fontWeight = '700';
     subtitle.style.color = '#f07264';
@@ -1714,108 +1638,7 @@ function showDay7PuzzleTask() {
     desc.innerHTML = `<p>Challenge your mind gently with this relaxing puzzle. Rearrange the pieces to complete the picture or pattern.<br><br>Take your time—there’s no timer, no pressure. Just a quiet space to focus, think, and enjoy the satisfaction of solving.</p><ul style='margin:0 0 0.7rem 1.2rem;padding:0;font-size:1.08rem;'>`;
     tasksContainer.appendChild(desc);
 
-    // Puzzle game container
-    const gameDiv = document.createElement('div');
-    gameDiv.style.display = 'flex';
-    gameDiv.style.justifyContent = 'center';
-    gameDiv.style.alignItems = 'center';
-    gameDiv.style.margin = '2rem 0';
-    gameDiv.style.minHeight = '340px';
-    tasksContainer.appendChild(gameDiv);
-
-    // 3x3 sliding puzzle with image tiles
-    const size = 3;
-    let board = [];
-    let empty = {row: size-1, col: size-1};
-    // Use 8 images from static/images/puzzle/1.jpg ... 8.jpeg (or .jpg/.jpeg/.png)
-    const imagePaths = [
-        '/static/images/puzzle/1.jpg',
-        '/static/images/puzzle/2.jpg',
-        '/static/images/puzzle/3.png',
-        '/static/images/puzzle/4.jpg',
-        '/static/images/puzzle/5.jpeg',
-        '/static/images/puzzle/6.jpg',
-        '/static/images/puzzle/7.jpg',
-        '/static/images/puzzle/8.jpeg'
-    ];
-    // Fill board with tile indices 0-7 and one empty
-    let nums = Array.from({length: size*size-1}, (_,i)=>i);
-    // Shuffle
-    for (let i = nums.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [nums[i], nums[j]] = [nums[j], nums[i]];
-    }
-    nums.push(null);
-    for (let r=0; r<size; r++) {
-        board[r] = [];
-        for (let c=0; c<size; c++) {
-            board[r][c] = nums[r*size+c];
-        }
-    }
-
-    // Render puzzle
-    const puzzle = document.createElement('div');
-    puzzle.style.display = 'grid';
-    puzzle.style.gridTemplateColumns = `repeat(${size}, 96px)`;
-    puzzle.style.gridTemplateRows = `repeat(${size}, 96px)`;
-    puzzle.style.gap = '0.7rem';
-    puzzle.style.background = 'none';
-    puzzle.style.borderRadius = '18px';
-    puzzle.style.boxShadow = '0 2px 8px rgba(74,144,226,0.10)';
-    puzzle.style.padding = '0.5rem';
-    gameDiv.appendChild(puzzle);
-
-    function renderPuzzle() {
-        puzzle.innerHTML = '';
-        for (let r=0; r<size; r++) {
-            for (let c=0; c<size; c++) {
-                const val = board[r][c];
-                const tile = document.createElement('div');
-                tile.style.width = '96px';
-                tile.style.height = '96px';
-                tile.style.display = 'flex';
-                tile.style.alignItems = 'center';
-                tile.style.justifyContent = 'center';
-                tile.style.borderRadius = '14px';
-                tile.style.background = val !== null ? '#E2BDA7' : 'transparent';
-                tile.style.cursor = val !== null ? 'pointer' : 'default';
-                tile.style.transition = 'background 0.2s, color 0.2s';
-                tile.style.overflow = 'hidden';
-                tile.style.position = 'relative';
-                if (val !== null) {
-                    const img = document.createElement('img');
-                    img.src = imagePaths[val];
-                    img.style.width = '100%';
-                    img.style.height = '100%';
-                    img.style.objectFit = 'cover';
-                    img.style.borderRadius = '14px';
-                    tile.appendChild(img);
-                    tile.onclick = function() {
-                        // If adjacent to empty, move
-                        if ((Math.abs(r-empty.row)+Math.abs(c-empty.col))===1) {
-                            board[empty.row][empty.col] = val;
-                            board[r][c] = null;
-                            empty = {row: r, col: c};
-                            renderPuzzle();
-                            if (isSolved()) showCompleteBtn();
-                        }
-                    };
-                }
-                puzzle.appendChild(tile);
-            }
-        }
-    }
-
-    function isSolved() {
-        let n = 0;
-        for (let r=0; r<size; r++) {
-            for (let c=0; c<size; c++) {
-                if (r===size-1 && c===size-1) return board[r][c] === null;
-                if (board[r][c] !== n++) return false;
-            }
-        }
-        return true;
-    }
+    
 
     // Show complete button only when solved
     let completeBtn = null;
