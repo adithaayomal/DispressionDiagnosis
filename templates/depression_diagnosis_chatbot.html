@@ -48,6 +48,21 @@
     </div>
 
     <script>
+        // On load, check if we should repeat the assessment questions (from daily tasks)
+        document.addEventListener('DOMContentLoaded', function() {
+            if (localStorage.getItem('repeatQuestions') === '1') {
+                localStorage.removeItem('repeatQuestions');
+                // Start the assessment questions from the beginning
+                // Option 1: Clear chat and reload first question
+                fetch('/clear_chat', { method: 'POST' }).then(() => {
+                    // Optionally, reload chat history UI
+                    loadChatHistory();
+                    // Show initial greeting and first question
+                    addMessage("Hello! I'll ask you a few questions to assess your mental health.", false);
+                    addMessage("Do you feel sad or empty most of the day?", false);
+                });
+            }
+        });
         const chatMessages = document.getElementById('chat-messages');
         const userInput = document.getElementById('user-input');
 

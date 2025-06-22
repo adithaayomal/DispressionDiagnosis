@@ -388,7 +388,7 @@ function showDay7PuzzleTask() {
         }
         // Remove all children from tasksContainer
         while (tasksContainer.firstChild) tasksContainer.removeChild(tasksContainer.firstChild);
-        // Show congratulations message and Assistant button
+        // Show congratulations message, summary, and Assistant button
         const congratsDiv = document.createElement('div');
         congratsDiv.style.fontSize = '1.18rem';
         congratsDiv.style.color = '#4CAF50';
@@ -396,6 +396,25 @@ function showDay7PuzzleTask() {
         congratsDiv.style.margin = '2.5rem 0 1.5rem 0';
         congratsDiv.textContent = 'Congratulations! You have completed the week. Please feel free to go to Assistant and answer the questions given.';
         tasksContainer.appendChild(congratsDiv);
+
+        // Add the summary section
+        const summaryDiv = document.createElement('div');
+        summaryDiv.style.fontSize = '1.08rem';
+        summaryDiv.style.color = '#333';
+        summaryDiv.style.fontWeight = '500';
+        summaryDiv.style.margin = '1.2rem 0 2.2rem 0';
+        summaryDiv.style.textAlign = 'left';
+        summaryDiv.innerHTML = `
+            <div style="font-size:1.18rem;font-weight:700;color:#f07264;margin-bottom:0.7rem;">What This Week Gave You (For Stressed Minds)</div>
+            <ul style="margin:0 0 0.7rem 1.2rem;padding:0;font-size:1.08rem;">
+                <li><b>A calmer mind and better focus</b><br><span style='font-weight:400;'>Small, simple games helped you slow down and gently shift your attention away from stress.</span></li>
+                <li style='margin-top:0.7rem;'><b>Easier breathing and less tension</b><br><span style='font-weight:400;'>Breathing exercises and light movement helped relax your body and ease anxious thoughts.</span></li>
+                <li style='margin-top:0.7rem;'><b>A space to let thoughts out</b><br><span style='font-weight:400;'>Journaling and soft sounds gave you a quiet moment to express what’s on your mind without judgment.</span></li>
+                <li style='margin-top:0.7rem;'><b>Moments of lightness and relief</b><br><span style='font-weight:400;'>Gentle, playful games like popping bubbles gave your mind a break and a small dose of joy.</span></li>
+                <li style='margin-top:0.7rem;'><b>Clearer thinking through gentle challenges</b><br><span style='font-weight:400;'>Simple puzzles and memory games helped your mind stay active in a peaceful, pressure-free way.</span></li>
+            </ul>
+        `;
+        tasksContainer.appendChild(summaryDiv);
 
         const assistantBtn = document.createElement('a');
         assistantBtn.href = '/';
@@ -411,6 +430,11 @@ function showDay7PuzzleTask() {
         assistantBtn.style.marginTop = '1.2rem';
         assistantBtn.style.display = 'inline-block';
         assistantBtn.style.textDecoration = 'none';
+        assistantBtn.onclick = function(e) {
+            // Set flag to repeat questions in Assistant
+            localStorage.setItem('repeatQuestions', '1');
+            // Let the link proceed as normal
+        };
         tasksContainer.appendChild(assistantBtn);
     };
 
