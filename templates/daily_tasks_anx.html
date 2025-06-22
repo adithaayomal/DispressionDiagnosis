@@ -640,7 +640,9 @@ function showDay7PuzzleTask() {
                     mindfulDiv.innerHTML = `
                         <div class="mindful-title" style="font-size:1.35rem;font-weight:700;color:#f07264;margin-bottom:0.5rem;letter-spacing:0.5px;">Pop Spinner</div>
                         <div class="mindful-desc" style="font-size:1.08rem;color:#444;margin-bottom:1.2rem;text-align:center;">This is your time to fidget, focus, and relax.Grab the pop spinner on screen and give it a spin! <br> There’s no score, no rush — just a satisfying moment of motion and sound.</div>
-                        
+                        <div style="display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem;">
+                            <img src="/static/images/spinner.gif" alt="Pop Spinner" style="width:440px;border-radius:1rem;height:auto;user-select:none;pointer-events:none;filter:drop-shadow(0 2px 12px rgba(74,144,226,0.12));" draggable="false">
+                        </div>
                         <button id="complete-mindful-btn" class="next-btn fixed-complete-btn" style="background:#4CAF50; color:#fff;">I completed the task</button>
                     `;
                     // Insert after h2
