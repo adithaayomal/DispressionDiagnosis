@@ -193,11 +193,25 @@ def next_question():
             score, yes_responses = calculate_score(session['responses'])
             diagnosis = get_diagnosis((score, yes_responses), session['responses'])
             session['assessment_finished'] = True
-            bot_msg = f"Assessment complete!\n\n{diagnosis}\n\nYou can now chat with the bot and ask any question."
-            chat_msg = ChatMessage(user_id=current_user.id, sender='bot', message=bot_msg)
-            db.session.add(chat_msg)
+            # Send assessment complete message
+            msg1 = f"Assessment complete!\n\n{diagnosis}"
+            # Send daily tasks message with clickable link
+            msg2 = (
+                'You have daily tasks to complete.<br>'
+                '<a href="/daily_tasks" style="color:#2563eb;text-decoration:underline;font-weight:500;">Click here to view your daily tasks</a>.'
+            )
+            # Send chat open message
+            msg3 = "You can now chat with the bot and ask any question."
+            for m in [msg1, msg2, msg3]:
+                chat_msg = ChatMessage(user_id=current_user.id, sender='bot', message=m)
+                db.session.add(chat_msg)
             db.session.commit()
-            return jsonify({"response": bot_msg, "finished": True})
+            # Return all 3 messages as a list for separate rendering
+            return jsonify({
+                "responses": [msg1, msg2, msg3],
+                "response_type": "multiple",
+                "finished": True
+            })
     else:
         # After assessment, allow free chat
         user_message = user_answer
@@ -254,9 +268,16 @@ def daily_tasks():
         "Write down 3 things you're grateful for",
         "Go for a short walk outdoors",
         "Reach out to a friend or family member",
-        "Reflect on a positive moment from today"
+        "Reflect on a positive moment from today",
+        (
+            '<b>Breathe with the Circle</b><br>'
+            'Type: Interactive web animation.<br>'
+            'How it Works: A circle expands and contracts, prompting users to inhale/exhale with it.<br>'
+            'Where: <a href="https://www.calm.com/breathe" target="_blank" style="color:#2563eb;text-decoration:underline;">calm.com/breathe</a> or YouTube breathing loops.<br>'
+            'Goal: Slow down heart rate and focus the mind.'
+        )
     ]
-    return render_template('daily_tasks.html', tasks=tasks)
+    return render_template('daily_tasks_anx.html', tasks=tasks)
 
 @app.route('/chat_history')
 @login_required
@@ -284,6 +305,13 @@ def chat_history_api():
             {'sender': m.sender, 'message': m.message, 'timestamp': m.timestamp.strftime('%Y-%m-%d %H:%M')} for m in messages
         ]
     })
+
+@app.route('/clear_chat', methods=['POST'])
+@login_required
+def clear_chat():
+    ChatMessage.query.filter_by(user_id=current_user.id).delete()
+    db.session.commit()
+    return '', 204
 
 def calculate_score(responses):
     score = 0

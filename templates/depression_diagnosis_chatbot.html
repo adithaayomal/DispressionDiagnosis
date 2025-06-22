@@ -40,6 +40,7 @@
                        placeholder="Type yes/no or your message..." 
                        onkeypress="if(event.keyCode === 13) sendMessage()">
                 <button class="send-button" onclick="sendMessage()">Send</button>
+                <button class="send-button" id="clear-chat-btn" style="background:#f8d7da;color:#721c24;margin-left:10px;">Clear Data</button>
             </div>
 
             <div class="hint">Type 'yes' or 'no' to answer questions</div>
@@ -47,6 +48,21 @@
     </div>
 
     <script>
+        // On load, check if we should repeat the assessment questions (from daily tasks)
+        document.addEventListener('DOMContentLoaded', function() {
+            if (localStorage.getItem('repeatQuestions') === '1') {
+                localStorage.removeItem('repeatQuestions');
+                // Start the assessment questions from the beginning
+                // Option 1: Clear chat and reload first question
+                fetch('/clear_chat', { method: 'POST' }).then(() => {
+                    // Optionally, reload chat history UI
+                    loadChatHistory();
+                    // Show initial greeting and first question
+                    addMessage("Hello! I'll ask you a few questions to assess your mental health.", false);
+                    addMessage("Do you feel sad or empty most of the day?", false);
+                });
+            }
+        });
         const chatMessages = document.getElementById('chat-messages');
         const userInput = document.getElementById('user-input');
 
@@ -54,7 +70,11 @@
         function addMessage(message, isUser) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
-            messageDiv.textContent = message;
+            if (isUser) {
+                messageDiv.textContent = message;
+            } else {
+                messageDiv.innerHTML = message; // allow HTML for bot (for links)
+            }
             chatMessages.appendChild(messageDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
@@ -86,7 +106,9 @@
             .then(response => response.json())
             .then(data => {
                 hideTypingIndicator();
-                if (data.response) {
+                if (data.responses && Array.isArray(data.responses)) {
+                    data.responses.forEach(msg => addMessage(msg, false));
+                } else if (data.response) {
                     addMessage(data.response, false);
                 }
                 if (data.finished) {
@@ -109,6 +131,12 @@
             const typing = document.getElementById('typing-indicator');
             if (typing) typing.style.display = 'none';
         }
+
+        document.getElementById('clear-chat-btn').onclick = async function() {
+            if (!confirm('Are you sure you want to clear your chat history?')) return;
+            await fetch('/clear_chat', { method: 'POST' });
+            await loadChatHistory();
+        };
     </script>
 </body>
 </html>
