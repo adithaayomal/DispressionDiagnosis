@@ -152,6 +152,11 @@ def daily_tasks_anxiety():
 def daily_tasks_stress():
     return render_template('daily_tasks_stress.html')
 
+@app.route('/spinner')
+@login_required
+def spinner():
+    return render_template('spinner.html')
+
 @app.route('/')
 @login_required
 def index():
@@ -240,18 +245,31 @@ def next_question():
             # Send assessment complete message
             msg1 = f"Assessment complete!\n\n{diagnosis}"
             # Send daily tasks message with clickable link
-            msg2 = ""
-            if depression_score >= 3:
+
+            # Determine category using the same logic as get_category_override
+            answers = list(session['responses'].values())
+            def yes(i):
+                return i < len(answers) and answers[i].lower() in ['yes', 'y', 'yeah', 'true']
+            category = None
+            if yes(0) and yes(1) and yes(5):
+                category = 'depression'
+            elif yes(2) and yes(3):
+                category = 'stress'
+            elif (yes(2) and yes(4)) or (yes(4) and not yes(2)):
+                category = 'anxiety'
+
+            
+            if category == 'depression':
                 msg2 = (
                     'You have daily tasks to complete. depression<br>'
                     '<a href="/daily_tasks_dep" style="color:#2563eb;text-decoration:underline;font-weight:500;">Click here to view your daily tasks</a>'
                 )
-            if anxiety_score == 2:
+            elif category == 'anxiety':
                 msg2 = (
                     'You have daily tasks to complete. Anxeity<br>'
                     '<a href="/daily_tasks_anxiety" style="color:#2563eb;text-decoration:underline;font-weight:500;">Click here to view your daily tasks</a>'
                 )
-            if stress_score == 3:
+            elif category == 'stress':
                 msg2 = (
                     'You have daily tasks to complete. Stress<br>'
                     '<a href="/daily_tasks_stress" style="color:#2563eb;text-decoration:underline;font-weight:500;">Click here to view your daily tasks</a>'
