@@ -640,9 +640,7 @@ function showDay7PuzzleTask() {
                     mindfulDiv.innerHTML = `
                         <div class="mindful-title" style="font-size:1.35rem;font-weight:700;color:#f07264;margin-bottom:0.5rem;letter-spacing:0.5px;">Pop Spinner</div>
                         <div class="mindful-desc" style="font-size:1.08rem;color:#444;margin-bottom:1.2rem;text-align:center;">This is your time to fidget, focus, and relax.Grab the pop spinner on screen and give it a spin! <br> There’s no score, no rush — just a satisfying moment of motion and sound.</div>
-                        <div style="display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem;">
-                            <img src="/static/images/spinner.gif" alt="Pop Spinner" style="width:440px;border-radius:1rem;height:auto;user-select:none;pointer-events:none;filter:drop-shadow(0 2px 12px rgba(74,144,226,0.12));" draggable="false">
-                        </div>
+                        <a href="/spinner" style="display:flex;align-items:center;justify-content:center;width:220px;min-width:220px;max-width:220px;height:220px;min-height:220px;max-height:220px;aspect-ratio:1/1;border-radius:50%;background:linear-gradient(135deg,#7fb3d3,#800080);color:#fff;font-size:1.25rem;font-weight:700;text-decoration:none;box-shadow:0 4px 24px 0 rgba(74,144,226,0.13);margin-bottom:2.2rem;transition:background 0.2s,transform 0.1s;text-align:center;">Pop Spinner</a>
                         <button id="complete-mindful-btn" class="next-btn fixed-complete-btn" style="background:#4CAF50; color:#fff;">I completed the task</button>
                     `;
                     // Insert after h2
@@ -698,7 +696,9 @@ function showDay7PuzzleTask() {
                                     <div class="ambient-desc">Keep a small bottle of lavender essential oil on hand for the scent, for when you feel anxious thoughts brewing.</div>
                                     <div class="ambient-desc">If you practice mindfulness or meditation, try smelling lavender during your practice.</div>
                                     <div class="ambient-desc">Over time, you’ll associate the feeling of relaxation with that scent, making it even more effective.</div>
-                                    
+                                    <div style="display:flex;flex-direction:column;align-items:center;margin-top:1.5rem;">
+                                        <img src="/static/images/lavender.png" alt="Lavender" style="width:160px;height:auto;margin-bottom:1.2rem;">
+                                    </div>
                                         
                                         
                                     
