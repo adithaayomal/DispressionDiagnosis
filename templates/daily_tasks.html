@@ -805,8 +805,293 @@
             }
             yogaDiv.remove();
             h2.remove();
-        // Show Day 5 bubble game immediately after Day 4
-        showDay5BubbleTask();
+        // Show Day 5 Bubble Wrap Popping Game immediately after Day 4
+        showDay5BubbleWrapTask();
+// --- Day 5: Bubble Wrap Popping Game ---
+function showDay5BubbleWrapTask() {
+    const tasksContainer = document.querySelector('.tasks-container');
+    tasksContainer.innerHTML = '';
+    // Title
+    const h2 = document.createElement('h2');
+    h2.textContent = 'Your Daily Task';
+    tasksContainer.appendChild(h2);
+    // Subtitle styled like a title, but smaller
+    const subtitle = document.createElement('div');
+    subtitle.textContent = 'Bubble Wrap Popping Game';
+    subtitle.style.fontSize = '1.35rem';
+    subtitle.style.fontWeight = '700';
+    subtitle.style.color = '#f07264';
+    subtitle.style.marginBottom = '0.5rem';
+    subtitle.style.letterSpacing = '0.5px';
+    tasksContainer.appendChild(subtitle);
+    // Description
+    const desc = document.createElement('div');
+    desc.className = 'task-desc';
+    desc.innerHTML = `<p>Click on bubbles to pop them! Just like real bubble wrap!</p>`;
+    tasksContainer.appendChild(desc);
+
+    // Game container
+    const gameDiv = document.createElement('div');
+    gameDiv.style.position = 'relative';
+    gameDiv.style.width = '100%';
+    gameDiv.style.height = '480px';
+    gameDiv.style.margin = '2rem 0';
+    gameDiv.style.background = '#fff';
+    gameDiv.style.borderRadius = '22px';
+    gameDiv.style.boxShadow = '0 4px 24px 0 rgba(74,144,226,0.09)';
+    tasksContainer.appendChild(gameDiv);
+
+    // Remove duplicate instructions and UI overlays
+
+    // Custom cursor
+    const cursor = document.createElement('div');
+    cursor.id = 'bubble-cursor';
+    cursor.style.position = 'absolute';
+    cursor.style.width = '40px';
+    cursor.style.height = '40px';
+    cursor.style.borderRadius = '50%';
+    cursor.style.background = 'rgba(255,0,0,0.3)';
+    cursor.style.border = '2px solid #ff0000';
+    cursor.style.pointerEvents = 'none';
+    cursor.style.zIndex = '100';
+    cursor.style.transform = 'translate(-50%, -50%)';
+    gameDiv.appendChild(cursor);
+
+    // Canvas
+    const canvas = document.createElement('canvas');
+    canvas.width = gameDiv.offsetWidth || 800;
+    canvas.height = 400;
+    canvas.style.display = 'block';
+    canvas.style.margin = '0 auto';
+    canvas.style.background = '#fff';
+    canvas.style.borderRadius = '18px';
+    canvas.style.boxShadow = '0 2px 8px rgba(74,144,226,0.10)';
+    canvas.style.cursor = 'none';
+    gameDiv.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+
+    // Game variables
+    let bubbles = [];
+    let poppedCount = 0;
+    let totalBubbles = 0;
+    let gameActive = true;
+
+    // Bubble class
+    class BubbleWrapBubble {
+        constructor(x, y, size) {
+            this.x = x;
+            this.y = y;
+            this.size = size;
+            this.radius = size / 2;
+            this.popped = false;
+        }
+        draw() {
+            ctx.save();
+            if (this.popped) {
+                ctx.fillStyle = '#e8e8e8';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius * 0.9, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#d0d0d0';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius * 0.3, 0, Math.PI * 2);
+                ctx.fill();
+            } else {
+                ctx.fillStyle = 'rgba(0,0,0,0.1)';
+                ctx.beginPath();
+                ctx.ellipse(this.x + 2, this.y + this.radius * 0.8, this.radius * 0.8, this.radius * 0.3, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#f0f0f0';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fill();
+                const gradient = ctx.createRadialGradient(
+                    this.x - this.radius * 0.3, this.y - this.radius * 0.3, 0,
+                    this.x, this.y, this.radius
+                );
+                gradient.addColorStop(0, 'rgba(255,255,255,0.8)');
+                gradient.addColorStop(0.7, 'rgba(240,240,240,0.4)');
+                gradient.addColorStop(1, 'rgba(200,200,200,0.8)');
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = 'rgba(255,255,255,0.9)';
+                ctx.beginPath();
+                ctx.arc(this.x - this.radius * 0.3, this.y - this.radius * 0.3, this.radius * 0.25, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(180,180,180,0.6)';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+        isClicked(mouseX, mouseY) {
+            if (this.popped) return false;
+            const dx = mouseX - this.x;
+            const dy = mouseY - this.y;
+            return (dx * dx + dy * dy) <= (this.radius * this.radius);
+        }
+        pop() {
+            if (this.popped) return;
+            this.popped = true;
+            poppedCount++;
+            updateUI();
+        }
+    }
+
+    // Create bubble wrap grid
+    function createBubbleWrap() {
+        bubbles = [];
+        poppedCount = 0;
+        const bubbleSize = 40;
+        const spacing = bubbleSize + 5;
+        const startX = bubbleSize;
+        const startY = bubbleSize;
+        const cols = Math.floor((canvas.width - startX * 2) / spacing);
+        const rows = Math.floor((canvas.height - startY * 2) / spacing);
+        for (let row = 0; row < rows; row++) {
+            for (let col = 0; col < cols; col++) {
+                const x = startX + col * spacing + (row % 2) * (spacing / 2);
+                const y = startY + row * spacing;
+                if (x + bubbleSize/2 < canvas.width - startX) {
+                    bubbles.push(new BubbleWrapBubble(x, y, bubbleSize));
+                }
+            }
+        }
+        totalBubbles = bubbles.length;
+        updateUI();
+    }
+
+    // Update UI
+    let bubblesLeftDiv = document.createElement('div');
+    bubblesLeftDiv.style.position = 'absolute';
+    bubblesLeftDiv.style.left = '50%';
+    bubblesLeftDiv.style.bottom = '18px';
+    bubblesLeftDiv.style.transform = 'translateX(-50%)';
+    // Remove card background, shadow, and border radius (plain text, no round card)
+    bubblesLeftDiv.style.background = 'none';
+    bubblesLeftDiv.style.boxShadow = 'none';
+    bubblesLeftDiv.style.borderRadius = '0';
+    bubblesLeftDiv.style.padding = '0';
+    bubblesLeftDiv.style.color = '#4A90E2';
+    bubblesLeftDiv.style.fontSize = '1.18rem';
+    bubblesLeftDiv.style.fontWeight = '600';
+    bubblesLeftDiv.textContent = 'Bubbles Left: 0';
+    gameDiv.appendChild(bubblesLeftDiv);
+
+    function updateUI() {
+        const remaining = totalBubbles - poppedCount;
+        bubblesLeftDiv.textContent = `Bubbles Left: ${remaining}`;
+    }
+
+    // Complete button (always visible, fixed at bottom like other tasks)
+    const completeBtn = document.createElement('button');
+    completeBtn.textContent = 'I completed the task';
+    completeBtn.className = 'next-btn fixed-complete-btn';
+    // Only set color and background, let .fixed-complete-btn handle position/size
+    completeBtn.style.background = '#4CAF50';
+    completeBtn.style.color = '#fff';
+    completeBtn.style.fontSize = '';
+    completeBtn.style.fontWeight = '';
+    completeBtn.style.border = '';
+    completeBtn.style.borderRadius = '';
+    completeBtn.style.padding = '';
+    completeBtn.style.boxShadow = '';
+    completeBtn.style.display = 'block';
+    completeBtn.style.marginTop = '';
+    completeBtn.style.width = '';
+    completeBtn.style.maxWidth = '';
+    completeBtn.style.position = '';
+    completeBtn.style.left = '';
+    completeBtn.style.bottom = '';
+    completeBtn.style.transform = '';
+    completeBtn.style.zIndex = '';
+    completeBtn.onclick = function() {
+        // Mark Day 5 as green (completed)
+        const weekDays = document.querySelectorAll('.week-day-vertical .day-circle');
+        if (weekDays.length > 4) {
+            const day5 = weekDays[4];
+            day5.innerHTML = tickSVG;
+            day5.style.background = '#4CAF50';
+            day5.style.borderColor = '#388E3C';
+            day5.style.display = 'flex';
+            day5.style.alignItems = 'center';
+            day5.style.justifyContent = 'center';
+            day5.style.padding = '0';
+        }
+        const day5Label = document.querySelectorAll('.week-day-vertical .day-label')[4];
+        if (day5Label) {
+            day5Label.style.color = '#388E3C';
+            day5Label.style.fontWeight = '700';
+        }
+        // Remove all children from tasksContainer
+        while (tasksContainer.firstChild) tasksContainer.removeChild(tasksContainer.firstChild);
+        // Show Day 6 task
+        showDay6MemoryTask();
+    };
+    // Place the button at the end of gameDiv so .fixed-complete-btn positions it at the bottom
+    gameDiv.appendChild(completeBtn);
+
+    // Mouse tracking for custom cursor
+    gameDiv.addEventListener('mousemove', (e) => {
+        const rect = gameDiv.getBoundingClientRect();
+        cursor.style.left = (e.clientX - rect.left) + 'px';
+        cursor.style.top = (e.clientY - rect.top) + 'px';
+    });
+
+    // Click handler
+    canvas.addEventListener('click', (e) => {
+        if (!gameActive) return;
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        bubbles.forEach(bubble => {
+            if (bubble.isClicked(mouseX, mouseY)) {
+                bubble.pop();
+            }
+        });
+    });
+
+    // Touch support
+    canvas.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        if (!gameActive) return;
+        const rect = canvas.getBoundingClientRect();
+        const touch = e.touches[0];
+        const touchX = touch.clientX - rect.left;
+        const touchY = touch.clientY - rect.top;
+        bubbles.forEach(bubble => {
+            if (bubble.isClicked(touchX, touchY)) {
+                bubble.pop();
+            }
+        });
+    });
+
+    // Game loop
+    function gameLoop() {
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'rgba(240,240,240,0.3)';
+        for (let x = 0; x < canvas.width; x += 20) {
+            ctx.fillRect(x, 0, 1, canvas.height);
+        }
+        for (let y = 0; y < canvas.height; y += 20) {
+            ctx.fillRect(0, y, canvas.width, 1);
+        }
+        bubbles.forEach(bubble => {
+            bubble.draw();
+        });
+        requestAnimationFrame(gameLoop);
+    }
+
+    // Start the game
+    createBubbleWrap();
+    gameLoop();
+}
+// --- End Day 5 ---
         };
         // Insert into main content
         h2.insertAdjacentElement('afterend', yogaDiv);
@@ -1104,8 +1389,10 @@
         desc.innerHTML = `<p>Memorize the positions of the icons below. You have 1 minute to remember their locations. After that, the icons will be hidden and you will be asked to recall their positions!</p>`;
         tasksContainer.appendChild(desc);
 
-        // Icon choices (simple emoji icons for demo)
-        const icons = ['🍎','🚗','🐶','⚽','🌳','🎩'];
+        // 3x3 grid, scale icons up, use only 9 icons
+        const icons = [
+            '🍎','🚗','🐶','⚽','🌳','🎩','🍕','🎲','🎸'
+        ];
         // Shuffle for random placement
         let iconOrder = icons.slice();
         for (let i = iconOrder.length - 1; i > 0; i--) {
@@ -1115,7 +1402,7 @@
 
         // Game state
         let revealed = true;
-        let matched = Array(6).fill(false);
+        let matched = Array(9).fill(false);
         let guesses = [];
         let currentQuery = 0;
         let score = 0;
@@ -1123,26 +1410,59 @@
         // Board
         const board = document.createElement('div');
         board.style.display = 'grid';
-        board.style.gridTemplateColumns = 'repeat(3, 64px)';
-        board.style.gridTemplateRows = 'repeat(2, 64px)';
+        board.style.gridTemplateColumns = 'repeat(3, 96px)';
+        board.style.gridTemplateRows = 'repeat(3, 96px)';
         board.style.gap = '1.2rem';
         board.style.justifyContent = 'center';
         board.style.margin = '2rem auto 1.2rem auto';
-        board.style.maxWidth = '260px';
+        board.style.maxWidth = '420px';
         tasksContainer.appendChild(board);
+
+        // Always show the complete button at the bottom (like other days)
+        const completeBtn = document.createElement('button');
+        completeBtn.textContent = 'I completed the task';
+        completeBtn.className = 'next-btn fixed-complete-btn';
+        completeBtn.style.background = '#4CAF50';
+        completeBtn.style.color = '#fff';
+        completeBtn.onclick = function() {
+            // Mark Day 6 as green (completed)
+            const weekDays = document.querySelectorAll('.week-day-vertical .day-circle');
+            if (weekDays.length > 5) {
+                const day6 = weekDays[5];
+                day6.innerHTML = tickSVG;
+                day6.style.background = '#4CAF50';
+                day6.style.borderColor = '#388E3C';
+                day6.style.display = 'flex';
+                day6.style.alignItems = 'center';
+                day6.style.justifyContent = 'center';
+                day6.style.padding = '0';
+            }
+            const day6Label = document.querySelectorAll('.week-day-vertical .day-label')[5];
+            if (day6Label) {
+                day6Label.style.color = '#388E3C';
+                day6Label.style.fontWeight = '700';
+            }
+            // Remove all children from tasksContainer
+            while (tasksContainer.firstChild) tasksContainer.removeChild(tasksContainer.firstChild);
+            // Show Day 7 task IMMEDIATELY and ensure rendering
+            setTimeout(function() {
+                showDay7PuzzleTask();
+            }, 0);
+        };
+        tasksContainer.appendChild(completeBtn);
 
         // Create icon cards
         let cardEls = [];
-        for (let i = 0; i < 6; i++) {
+        for (let i = 0; i < 9; i++) {
             const card = document.createElement('div');
-            card.style.width = '64px';
-            card.style.height = '64px';
+            card.style.width = '96px';
+            card.style.height = '96px';
             card.style.background = '#f7e7e1';
-            card.style.borderRadius = '16px';
+            card.style.borderRadius = '24px';
             card.style.display = 'flex';
             card.style.alignItems = 'center';
             card.style.justifyContent = 'center';
-            card.style.fontSize = '2.2rem';
+            card.style.fontSize = '3.2rem';
             card.style.boxShadow = '0 2px 8px rgba(74,144,226,0.10)';
             card.style.cursor = 'pointer';
             card.style.transition = 'background 0.3s, color 0.3s';
@@ -1178,16 +1498,16 @@
 
         // Hide cards and timer until start
         board.style.opacity = '0.5';
-        for (let i = 0; i < 6; i++) cardEls[i].style.pointerEvents = 'none';
+        for (let i = 0; i < 9; i++) cardEls[i].style.pointerEvents = 'none';
 
-        let timeLeft = 30;
+        let timeLeft = 60;
         let timerId = null;
 
         startBtn.onclick = function() {
             startBtn.disabled = true;
             startBtn.style.opacity = '0.6';
             board.style.opacity = '1';
-            for (let i = 0; i < 6; i++) cardEls[i].style.pointerEvents = '';
+            for (let i = 0; i < 9; i++) cardEls[i].style.pointerEvents = '';
             timerDiv.textContent = `Time left: ${timeLeft}s`;
             timerId = setInterval(() => {
                 timeLeft--;
@@ -1199,16 +1519,16 @@
             }, 1000);
         };
 
-        // Hide cards after 30 seconds
+        // Hide cards after 60 seconds
         function hideCards() {
             revealed = false;
             timerDiv.textContent = '';
-            for (let i = 0; i < 6; i++) {
+            for (let i = 0; i < 9; i++) {
                 cardEls[i].textContent = (i+1).toString();
                 cardEls[i].style.background = '#E2BDA7';
                 cardEls[i].style.color = '#fff';
                 cardEls[i].style.fontWeight = '700';
-                cardEls[i].style.fontSize = '1.5rem';
+                cardEls[i].style.fontSize = '2rem';
                 cardEls[i].style.pointerEvents = '';
             }
             // Start recall phase after a short delay
@@ -1244,10 +1564,10 @@
                 queryDiv.style.fontSize = '1.15rem';
                 queryDiv.style.color = '#4A90E2';
                 queryDiv.style.margin = '1.2rem 0 0.7rem 0';
-                queryDiv.innerHTML = `Where was <span style="font-size:2rem;">${recallOrder[currentQuery]}</span>? Click the correct card.`;
+                queryDiv.innerHTML = `Where was <span style=\"font-size:2.8rem;\">${recallOrder[currentQuery]}</span>? Click the correct card.`;
                 tasksContainer.appendChild(queryDiv);
                 // Enable card clicks
-                for (let i = 0; i < 6; i++) {
+                for (let i = 0; i < 9; i++) {
                     cardEls[i].onclick = function() {
                         if (!revealed && !matched[i]) {
                             // Check answer
@@ -1262,7 +1582,7 @@
                                 cardEls[i].style.background = '#f07264';
                                 cardEls[i].style.color = '#fff';
                                 // Also highlight the correct card
-                                for (let j = 0; j < 6; j++) {
+                                for (let j = 0; j < 9; j++) {
                                     if (iconOrder[j] === recallOrder[currentQuery]) {
                                         cardEls[j].style.background = '#4CAF50';
                                         cardEls[j].style.color = '#fff';
@@ -1270,7 +1590,7 @@
                                 }
                             }
                             // Disable all cards for this round
-                            for (let k = 0; k < 6; k++) cardEls[k].onclick = null;
+                            for (let k = 0; k < 9; k++) cardEls[k].onclick = null;
                             setTimeout(() => {
                                 currentQuery++;
                                 askNext(recallOrder);
@@ -1285,40 +1605,14 @@
                 resultDiv.style.fontSize = '1.25rem';
                 resultDiv.style.color = '#4A90E2';
                 resultDiv.style.margin = '1.5rem 0 0.7rem 0';
-                resultDiv.innerHTML = `Game over!<br>Your score: <b>${score} / 6</b>`;
+                resultDiv.innerHTML = `Game over!<br>Your score: <b>${score} / 9</b>`;
                 tasksContainer.appendChild(resultDiv);
 
                 // Add "I completed the task" button for Day 6
-                const completeBtn = document.createElement('button');
-                completeBtn.id = 'complete-task-btn';
-                completeBtn.className = 'next-btn fixed-complete-btn';
-                completeBtn.style.background = '#4CAF50';
-                completeBtn.style.color = '#fff';
-                completeBtn.textContent = 'I completed the task';
-                tasksContainer.appendChild(completeBtn);
-                completeBtn.onclick = function() {
-                    // Mark Day 6 as green (completed)
-                    const weekDays = document.querySelectorAll('.week-day-vertical .day-circle');
-                    if (weekDays.length > 5) {
-                        const day6 = weekDays[5];
-                        day6.innerHTML = tickSVG;
-                        day6.style.background = '#4CAF50';
-                        day6.style.borderColor = '#388E3C';
-                        day6.style.display = 'flex';
-                        day6.style.alignItems = 'center';
-                        day6.style.justifyContent = 'center';
-                        day6.style.padding = '0';
-                    }
-                    const day6Label = document.querySelectorAll('.week-day-vertical .day-label')[5];
-                    if (day6Label) {
-                        day6Label.style.color = '#388E3C';
-                        day6Label.style.fontWeight = '700';
-                    }
-                    // Remove all children from tasksContainer (title, subtitle, desc, game, button, result)
-                    while (tasksContainer.firstChild) tasksContainer.removeChild(tasksContainer.firstChild);
-                    // Show Day 7 task
-                    showDay7PuzzleTask();
-                };
+                // Remove all children from tasksContainer (title, subtitle, desc, game, button, result)
+                while (tasksContainer.firstChild) tasksContainer.removeChild(tasksContainer.firstChild);
+                // Show Day 7 task immediately
+                showDay7PuzzleTask();
 
     // --- Day 7: Mind Unwind – Simple Puzzle Game ---
     function showDay7PuzzleTask() {
@@ -1337,10 +1631,10 @@
         subtitle.style.marginBottom = '0.5rem';
         subtitle.style.letterSpacing = '0.5px';
         tasksContainer.appendChild(subtitle);
-        // Description
+        // Description (with goal and mental break info)
         const desc = document.createElement('div');
         desc.className = 'task-desc';
-        desc.innerHTML = `<p>Challenge your mind gently with this relaxing puzzle. Rearrange the pieces to complete the picture or pattern.<br><br>Take your time—there’s no timer, no pressure. Just a quiet space to focus, think, and enjoy the satisfaction of solving.</p>`;
+        desc.innerHTML = `<p>Challenge your mind gently with this relaxing puzzle. Rearrange the pieces to complete the picture or pattern.<br><br>Take your time—there’s no timer, no pressure. Just a quiet space to focus, think, and enjoy the satisfaction of solving.</p><ul style='margin:0 0 0.7rem 1.2rem;padding:0;font-size:1.08rem;'><li>🎯 <b>Goal:</b> Solve the puzzle to reveal the full image and bring everything into place.</li><li>🧘 A perfect mental break to sharpen focus and ease stress.</li></ul>`;
         tasksContainer.appendChild(desc);
 
         // Puzzle game container
@@ -1349,20 +1643,32 @@
         gameDiv.style.justifyContent = 'center';
         gameDiv.style.alignItems = 'center';
         gameDiv.style.margin = '2rem 0';
+        gameDiv.style.minHeight = '340px';
         tasksContainer.appendChild(gameDiv);
 
-        // Simple 3x3 sliding puzzle (numbers for demo, can be replaced with images)
+        // 3x3 sliding puzzle with image tiles
         const size = 3;
         let board = [];
         let empty = {row: size-1, col: size-1};
-        // Fill board with numbers 1-8 and one empty
-        let nums = Array.from({length: size*size-1}, (_,i)=>i+1);
+        // Use 8 images from static/images/puzzle/1.jpg ... 8.jpeg (or .jpg/.jpeg/.png)
+        const imagePaths = [
+            '/static/images/puzzle/1.jpg',
+            '/static/images/puzzle/2.jpg',
+            '/static/images/puzzle/3.png',
+            '/static/images/puzzle/4.jpg',
+            '/static/images/puzzle/5.jpeg',
+            '/static/images/puzzle/6.jpg',
+            '/static/images/puzzle/7.jpg',
+            '/static/images/puzzle/8.jpeg'
+        ];
+        // Fill board with tile indices 0-7 and one empty
+        let nums = Array.from({length: size*size-1}, (_,i)=>i);
         // Shuffle
         for (let i = nums.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [nums[i], nums[j]] = [nums[j], nums[i]];
         }
-        nums.push('');
+        nums.push(null);
         for (let r=0; r<size; r++) {
             board[r] = [];
             for (let c=0; c<size; c++) {
@@ -1373,8 +1679,8 @@
         // Render puzzle
         const puzzle = document.createElement('div');
         puzzle.style.display = 'grid';
-        puzzle.style.gridTemplateColumns = `repeat(${size}, 64px)`;
-        puzzle.style.gridTemplateRows = `repeat(${size}, 64px)`;
+        puzzle.style.gridTemplateColumns = `repeat(${size}, 96px)`;
+        puzzle.style.gridTemplateRows = `repeat(${size}, 96px)`;
         puzzle.style.gap = '0.7rem';
         puzzle.style.background = 'none';
         puzzle.style.borderRadius = '18px';
@@ -1388,25 +1694,30 @@
                 for (let c=0; c<size; c++) {
                     const val = board[r][c];
                     const tile = document.createElement('div');
-                    tile.style.width = '64px';
-                    tile.style.height = '64px';
+                    tile.style.width = '96px';
+                    tile.style.height = '96px';
                     tile.style.display = 'flex';
                     tile.style.alignItems = 'center';
                     tile.style.justifyContent = 'center';
-                    tile.style.fontSize = '2rem';
-                    tile.style.fontWeight = '700';
                     tile.style.borderRadius = '14px';
-                    tile.style.background = val ? '#E2BDA7' : 'transparent';
-                    tile.style.color = val ? '#4A90E2' : 'transparent';
-                    tile.style.cursor = val ? 'pointer' : 'default';
+                    tile.style.background = val !== null ? '#E2BDA7' : 'transparent';
+                    tile.style.cursor = val !== null ? 'pointer' : 'default';
                     tile.style.transition = 'background 0.2s, color 0.2s';
-                    tile.textContent = val;
-                    if (val) {
+                    tile.style.overflow = 'hidden';
+                    tile.style.position = 'relative';
+                    if (val !== null) {
+                        const img = document.createElement('img');
+                        img.src = imagePaths[val];
+                        img.style.width = '100%';
+                        img.style.height = '100%';
+                        img.style.objectFit = 'cover';
+                        img.style.borderRadius = '14px';
+                        tile.appendChild(img);
                         tile.onclick = function() {
                             // If adjacent to empty, move
                             if ((Math.abs(r-empty.row)+Math.abs(c-empty.col))===1) {
                                 board[empty.row][empty.col] = val;
-                                board[r][c] = '';
+                                board[r][c] = null;
                                 empty = {row: r, col: c};
                                 renderPuzzle();
                                 if (isSolved()) showCompleteBtn();
@@ -1419,11 +1730,11 @@
         }
 
         function isSolved() {
-            let n = 1;
+            let n = 0;
             for (let r=0; r<size; r++) {
                 for (let c=0; c<size; c++) {
-                    if (r===size-1 && c===size-1) return board[r][c] === '';
-                    if (board[r][c] != n++) return false;
+                    if (r===size-1 && c===size-1) return board[r][c] === null;
+                    if (board[r][c] !== n++) return false;
                 }
             }
             return true;
