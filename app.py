@@ -1,5 +1,3 @@
-
-
 from flask import Flask, jsonify, request, render_template, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -580,6 +578,14 @@ def get_response(text):
     prediction = classifier.predict(text_vectorized)
     prob = classifier.predict_proba(text_vectorized)
     confidence = max(prob[0])
+    # Custom greeting override
+    greetings = [
+        'hi', 'hello', 'hey', 'good morning', 'good evening',
+        'hi!', 'hello!', 'hey!', 'good morning!', 'good evening!'
+    ]
+    user_greeting = text.strip().lower()
+    if user_greeting in greetings:
+        return f"{text.strip().capitalize()}! how can i assist you? Please feel free to ask anything. I can search for you."
     if confidence < 0.75:
         return "I'm not sure how to respond to that. Could you please rephrase?"
     tag = prediction[0]
@@ -605,4 +611,4 @@ class ChatMessage(db.Model):
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=5001)
