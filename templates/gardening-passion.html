@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Start Your Garden Journey</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 40px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            color: white;
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #FFE066, #FF6B6B);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .garden-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .garden-card {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .garden-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .garden-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .garden-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+
+        .garden-card p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            line-height: 1.4;
+        }
+
+        .benefits {
+            margin: 30px 0;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .benefit {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px 10px;
+            transition: all 0.3s ease;
+        }
+
+        .benefit:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+
+        .benefit-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .benefit h4 {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .benefit p {
+            font-size: 0.7rem;
+            opacity: 0.7;
+        }
+
+        .plant-game {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+
+        .plant-display {
+            font-size: 4rem;
+            margin: 15px 0;
+            transition: all 0.3s ease;
+        }
+
+        .game-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .game-btn {
+            background: linear-gradient(45deg, #4ECDC4, #44A08D);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .game-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .status {
+            margin-top: 15px;
+            font-size: 1rem;
+            min-height: 25px;
+        }
+
+        .start-button {
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { box-shadow: 0 0 20px rgba(255, 107, 107, 0.5); }
+            to { box-shadow: 0 0 30px rgba(78, 205, 196, 0.5); }
+        }
+
+        .start-button:hover {
+            transform: scale(1.1);
+            animation: none;
+        }
+
+        .back-button {
+            background: linear-gradient(45deg, #6c757d, #495057);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            opacity: 0.8;
+        }
+
+        .back-button:hover {
+            transform: scale(1.05);
+            opacity: 1;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #FFE066;
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 25px; }
+            h1 { font-size: 2rem; }
+            .garden-grid { grid-template-columns: 1fr; }
+            .benefits-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌱 Start Your Garden</h1>
+        <p class="subtitle">Transform any space into a green paradise</p>
+
+        <div class="section-title">Choose Your Style</div>
+        <div class="garden-grid">
+            <div class="garden-card" onclick="selectGarden('outdoor')">
+                <div class="garden-icon">🌳</div>
+                <h3>Outdoor</h3>
+                <p>Vegetables, flowers & herbs in your yard</p>
+            </div>
+            <div class="garden-card" onclick="selectGarden('indoor')">
+                <div class="garden-icon">🏠</div>
+                <h3>Indoor</h3>
+                <p>Houseplants for any living space</p>
+            </div>
+            <div class="garden-card" onclick="selectGarden('both')">
+                <div class="garden-icon">🌺</div>
+                <h3>Both</h3>
+                <p>Best of indoor & outdoor gardening</p>
+            </div>
+        </div>
+
+        <div class="section-title">Why Garden?</div>
+        <div class="benefits-grid">
+            <div class="benefit">
+                <div class="benefit-icon">💚</div>
+                <h4>Less Stress</h4>
+                <p>Natural relaxation</p>
+            </div>
+            <div class="benefit">
+                <div class="benefit-icon">🥬</div>
+                <h4>Fresh Food</h4>
+                <p>Grow your meals</p>
+            </div>
+            <div class="benefit">
+                <div class="benefit-icon">💰</div>
+                <h4>Save Money</h4>
+                <p>Lower grocery bills</p>
+            </div>
+            <div class="benefit">
+                <div class="benefit-icon">🌍</div>
+                <h4>Help Earth</h4>
+                <p>Eco-friendly hobby</p>
+            </div>
+            <div class="benefit">
+                <div class="benefit-icon">💪</div>
+                <h4>Stay Active</h4>
+                <p>Fun exercise</p>
+            </div>
+            <div class="benefit">
+                <div class="benefit-icon">🎨</div>
+                <h4>Be Creative</h4>
+                <p>Design your space</p>
+            </div>
+        </div>
+
+        <div class="plant-game">
+            <div class="section-title">Try Growing!</div>
+            <div class="plant-display" id="plant">🌱</div>
+            <div class="game-buttons">
+                <button class="game-btn" onclick="waterPlant()">💧 Water</button>
+                <button class="game-btn" onclick="giveSun()">☀️ Sun</button>
+            </div>
+            <div class="status" id="status">Care for your plant!</div>
+        </div>
+
+        <button class="start-button" onclick="startGardening()">🌱 Start Growing Today!</button>
+        
+        <button class="back-button" onclick="goBack()">← Go Back</button>
+    </div>
+
+    <script>
+        let plantStage = 0;
+        let care = 0;
+        const stages = ['🌱', '🌿', '🌾', '🌻', '🌳'];
+        const messages = [
+            "Your seed is planted! 🌱",
+            "First leaves appear! 🌿", 
+            "Growing strong! 🌾",
+            "Beautiful flower! 🌻",
+            "Mighty tree! 🌳"
+        ];
+
+        function selectGarden(type) {
+            const tips = {
+                outdoor: "Perfect! Start with tomatoes, herbs, or marigolds 🍅",
+                indoor: "Great choice! Try pothos, snake plants, or herbs 🌿",
+                both: "Best of both worlds! Start indoors, expand outside 🌱"
+            };
+            alert(tips[type]);
+        }
+
+        function waterPlant() {
+            care++;
+            updatePlant();
+            document.getElementById('status').textContent = "Splash! Your plant drinks happily 💧";
+        }
+
+        function giveSun() {
+            care++;
+            updatePlant();
+            document.getElementById('status').textContent = "Sunshine! Your plant glows with joy ☀️";
+        }
+
+        function updatePlant() {
+            const newStage = Math.min(Math.floor(care / 2), stages.length - 1);
+            if (newStage > plantStage) {
+                plantStage = newStage;
+                const plantEl = document.getElementById('plant');
+                plantEl.textContent = stages[plantStage];
+                plantEl.style.transform = 'scale(1.3)';
+                document.getElementById('status').textContent = messages[plantStage];
+                setTimeout(() => {
+                    plantEl.style.transform = 'scale(1)';
+                }, 300);
+            }
+        }
+
+        function startGardening() {
+            const tips = [
+                "🌱 Start small - pick 2-3 easy plants!",
+                "💧 Less water is often better than too much!",
+                "☀️ Check your light conditions first!",
+                "🌿 Join local gardening groups for tips!",
+                "📝 Keep notes on what works!"
+            ];
+            alert(tips[Math.floor(Math.random() * tips.length)] + "\n\nHappy gardening! 🌻");
+        }
+
+        function goBack() {
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                alert("Welcome back! 🌱\nThanks for exploring gardening with us!");
+            }
+        }
+    </script>
+</body>
+</html>

@@ -4,6 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Astronaut Fidget Spinner</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        /* Ensure navbar is at the top and spinner is centered below */
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f5f5f0, #e8e8e5);
+            min-height: 100vh;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            overflow: hidden;
+        }
+        .spinner-page-layout {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            width: 100vw;
+            background: linear-gradient(135deg, #f5f5f0, #e8e8e5, #e2bda7 90%);
+        }
+        .spinner-container {
+            margin-top: 0;
+        }
+        .navbar {
+            width: 100vw;
+            left: 0;
+            right: 0;
+            top: 0;
+            position: fixed;
+            z-index: 100;
+            box-sizing: border-box;
+            border-radius: 0 0 22px 22px;
+        }
+    </style>
     <style>
         body {
             margin: 0;
@@ -254,44 +288,59 @@
         }
     </style>
 </head>
+
 <body>
-    <div class="spinner-container" onclick="spinSpinner()">
-        <div class="spinner" id="spinner">
-            <!-- Three main sections -->
-            <div class="section section-top">
-                <div class="control-button teal-button"></div>
-            </div>
-            <div class="section section-left">
-                <div class="control-button purple-button"></div>
-            </div>
-            <div class="section section-right">
-                <div class="control-button dark-teal-button"></div>
-            </div>
-
-            <!-- Astronaut in center -->
-            <div class="astronaut">
-                <div class="helmet">
-                    <div class="visor"></div>
-                    <div class="face">
-                        <div class="eye"></div>
-                        <div class="eye"></div>
-                        <div class="mouth"></div>
-                    </div>
-                </div>
-                <div class="body">
-                    <div class="chest-panel">
-                        <div class="chest-light"></div>
-                    </div>
+    <div class="spinner-page-layout">
+        <nav class="navbar">
+            <span class="navbar-title">Mental Health Assistant</span>
+            <div class="navbar-left">
+                <div class="navbar-center">
+                    <a href="/" class="navbar-link">Assistant</a>
+                    <a href="/daily_tasks" class="navbar-link active">Daily Tasks</a>
                 </div>
             </div>
+            <div class="navbar-right">
+                <span class="navbar-user">Welcome, {{ current_user.username }}</span>
+                <a href="/logout" class="navbar-link">Logout</a>
+            </div>
+        </nav>
+        <div class="spinner-container" onclick="spinSpinner()">
+            <div class="spinner" id="spinner">
+                <!-- Three main sections -->
+                <div class="section section-top">
+                    <div class="control-button teal-button"></div>
+                </div>
+                <div class="section section-left">
+                    <div class="control-button purple-button"></div>
+                </div>
+                <div class="section section-right">
+                    <div class="control-button dark-teal-button"></div>
+                </div>
 
-            <!-- Center bearing -->
-            <div class="center-bearing"></div>
+                <!-- Astronaut in center -->
+                <div class="astronaut">
+                    <div class="helmet">
+                        <div class="visor"></div>
+                        <div class="face">
+                            <div class="eye"></div>
+                            <div class="eye"></div>
+                            <div class="mouth"></div>
+                        </div>
+                    </div>
+                    <div class="body">
+                        <div class="chest-panel">
+                            <div class="chest-light"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Center bearing -->
+                <div class="center-bearing"></div>
+            </div>
         </div>
-    </div>
-
-    <div class="instructions">
-        Click to spin! 🚀
+        <div class="instructions">
+            Pop Spinner. Click to spin! 🚀
+        </div>
     </div>
 
     <script>

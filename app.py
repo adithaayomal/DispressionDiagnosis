@@ -1,3 +1,5 @@
+
+
 from flask import Flask, jsonify, request, render_template, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -24,6 +26,7 @@ db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
+
 # User model
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -31,6 +34,17 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(120), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    last_assessment_category = db.Column(db.String(32), nullable=True)
+
+# DailyTaskProgress model (must be after db is defined)
+class DailyTaskProgress(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    category = db.Column(db.String(32), nullable=False)  # 'depression', 'anxiety', etc.
+    progress_json = db.Column(db.Text, nullable=False, default='{}')  # JSON string
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    user = db.relationship('User', backref=db.backref('daily_task_progress', lazy=True))
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -160,7 +174,22 @@ def spinner():
 @app.route('/grounding')
 @login_required
 def grounding():
-    return render_template('gratitude_practice.html')
+    return render_template('grounding_technique.html')
+
+@app.route('/gardeningpassion')
+@login_required
+def gardeningpassion():
+    return render_template('gardening-passion.html')
+
+@app.route('/social_interaction')
+@login_required
+def social_interaction():
+    return render_template('social_interaction.html')
+
+@app.route('/water_tracker')
+@login_required
+def water_tracker():
+    return render_template('water_tracker.html')
 
 @app.route('/')
 @login_required
@@ -206,6 +235,7 @@ def next_question():
 
     valid_answers = ['yes', 'y', 'yeah', 'true', 'no', 'n', 'nope', 'false']
     if current_question < len(QUESTIONS):
+        # Accept only valid answers, but allow progression for 'no' answers
         if user_answer.lower() not in valid_answers:
             # Save invalid user message
             chat_msg = ChatMessage(user_id=current_user.id, sender='user', message=user_answer)
@@ -235,7 +265,6 @@ def next_question():
             db.session.commit()
             return jsonify({"response": next_q, "finished": False})
         else:
-            
             # Assessment finished, calculate result
             score, yes_responses = calculate_score(session['responses'])
             diagnosis = get_diagnosis((score, yes_responses), session['responses'])
@@ -250,7 +279,6 @@ def next_question():
             # Send assessment complete message
             msg1 = f"Assessment complete!\n\n{diagnosis}"
             # Send daily tasks message with clickable link
-
             # Determine category using the same logic as get_category_override
             answers = list(session['responses'].values())
             def yes(i):
@@ -262,8 +290,9 @@ def next_question():
                 category = 'stress'
             elif (yes(2) and yes(4)) or (yes(4) and not yes(2)):
                 category = 'anxiety'
-
-            
+            current_user.last_assessment_category = category
+            db.session.commit()
+            msg2 = None
             if category == 'depression':
                 msg2 = (
                     'You have daily tasks to complete. depression<br>'
@@ -272,7 +301,7 @@ def next_question():
             elif category == 'anxiety':
                 msg2 = (
                     'You have daily tasks to complete. Anxeity<br>'
-                    '<a href="/daily_tasks_anxiety" style="color:#2563eb;text-decoration:underline;font-weight:500;">Click here to view your daily tasks</a>'
+                    '<a href="/daily_tasks_anxiety" style="color:#2563eb    ;text-decoration:underline;font-weight:500;">Click here to view your daily tasks</a>'
                 )
             elif category == 'stress':
                 msg2 = (
@@ -314,30 +343,37 @@ def next_question():
             db.session.commit()
             return jsonify({'response': bot_msg, 'finished': False}), 500
         if "I'm not sure how to respond" in bot_response:
-            # Use Wikipedia API as fallback
+            # Use SerpAPI for health-related search and summarization
             import requests
-            try:
-                search_url = f"https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch={requests.utils.quote(user_message)}&utf8=&format=json"
-                r = requests.get(search_url, timeout=5)
-                data = r.json()
-                if data.get('query', {}).get('search'):
-                    first_result = data['query']['search'][0]
-                    page_title = first_result['title']
-                    snippet = first_result['snippet']
-                    # Get the page summary
-                    summary_url = f"https://en.wikipedia.org/api/rest_v1/page/summary/{requests.utils.quote(page_title)}"
-                    summary_r = requests.get(summary_url, timeout=5)
-                    summary_data = summary_r.json()
-                    extract = summary_data.get('extract')
-                    if extract:
-                        bot_response = f"{extract}"
+            serp_api_key = os.environ.get('SERPAPI_KEY')
+            if not serp_api_key:
+                bot_response = "Sorry, search is temporarily unavailable (missing API key)."
+            else:
+                try:
+                    params = {
+                        'q': user_message,
+                        'api_key': serp_api_key,
+                        'engine': 'google',
+                        'hl': 'en',
+                        'num': 5
+                    }
+                    r = requests.get('https://serpapi.com/search', params=params, timeout=8)
+                    data = r.json()
+                    results = data.get('organic_results', [])
+                    if results:
+                        summary = []
+                        for res in results:
+                            title = res.get('title', '')
+                            snippet = res.get('snippet', '')
+                            link = res.get('link', '')
+                            if title and snippet:
+                                summary.append(f"{snippet} <a href='{link}' target='_blank'>(source)</a>")
+                        bot_response = "<b></b><br>" + '<br><br>'.join(summary)
                     else:
-                        bot_response = f"{snippet}"
-                else:
-                    bot_response = "Sorry, I couldn't find a mental health–related answer to your question."
-            except Exception as e:
-                print('Fallback error:', e)
-                bot_response = f"Sorry, I couldn't search at the moment. ({str(e)})"
+                        bot_response = "Sorry, I couldn't find a mental health–related answer to your question."
+                except Exception as e:
+                    print('SerpAPI error:', e)
+                    bot_response = f"Sorry, I couldn't search at the moment. ({str(e)})"
         # Save bot response
         chat_msg = ChatMessage(user_id=current_user.id, sender='bot', message=bot_response)
         db.session.add(chat_msg)
@@ -347,21 +383,21 @@ def next_question():
 @app.route('/daily_tasks')
 @login_required
 def daily_tasks():
-    tasks = [
-        "Take a 5-minute mindful breathing break",
-        "Write down 3 things you're grateful for",
-        "Go for a short walk outdoors",
-        "Reach out to a friend or family member",
-        "Reflect on a positive moment from today",
-        (
-            '<b>Breathe with the Circle</b><br>'
-            'Type: Interactive web animation.<br>'
-            'How it Works: A circle expands and contracts, prompting users to inhale/exhale with it.<br>'
-            'Where: <a href="https://www.calm.com/breathe" target="_blank" style="color:#2563eb;text-decoration:underline;">calm.com/breathe</a> or YouTube breathing loops.<br>'
-            'Goal: Slow down heart rate and focus the mind.'
-        )
-    ]
-    return render_template('daily_tasks_anx.html', tasks=tasks)
+    category = current_user.last_assessment_category
+    if category == 'depression':
+        return redirect(url_for('daily_tasks_dep'))
+    elif category == 'anxiety':
+        return redirect(url_for('daily_tasks_anxiety'))
+    elif category == 'stress':
+        return redirect(url_for('daily_tasks_stress'))
+    else:
+        
+        return redirect(url_for('index'))
+        
+    
+        
+
+        
 
 @app.route('/chat_history')
 @login_required

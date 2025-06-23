@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Water Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .progress-section {
+            padding: 30px;
+            text-align: center;
+            background: #f8f9ff;
+        }
+
+        .progress-circle {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 20px;
+            position: relative;
+        }
+
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring__circle {
+            stroke: #e6f3ff;
+            stroke-width: 8;
+            fill: transparent;
+        }
+
+        .progress-ring__progress {
+            stroke: #4facfe;
+            stroke-width: 8;
+            stroke-linecap: round;
+            fill: transparent;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .progress-percentage {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #4facfe;
+        }
+
+        .progress-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .water-schedule {
+            padding: 0 30px 30px;
+        }
+
+        .schedule-item {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            margin-bottom: 15px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border-left: 5px solid #4facfe;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .schedule-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .schedule-item.completed {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border-left-color: #fff;
+        }
+
+        .schedule-item.completed .time,
+        .schedule-item.completed .message,
+        .schedule-item.completed .amount {
+            color: white;
+        }
+
+        .time {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #4facfe;
+            min-width: 80px;
+        }
+
+        .details {
+            flex: 1;
+            margin-left: 20px;
+        }
+
+        .message {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .amount {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .checkbox {
+            width: 25px;
+            height: 25px;
+            border: 3px solid #4facfe;
+            border-radius: 50%;
+            margin-left: 20px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .schedule-item.completed .checkbox {
+            background: white;
+            border-color: white;
+        }
+
+        .checkbox::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #4facfe;
+            font-weight: bold;
+            font-size: 16px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .schedule-item.completed .checkbox::after {
+            opacity: 1;
+            color: #4facfe;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px 30px;
+            background: #f8f9ff;
+            border-top: 1px solid #e0e8ff;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #4facfe;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .reset-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .reset-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .celebration {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .celebration.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .celebration h2 {
+            color: #4facfe;
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .celebration p {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        .celebration button {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .celebration button:hover {
+            transform: scale(1.05);
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        .ripple-effect {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ripple-effect::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            animation: ripple 0.6s linear;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .schedule-item {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .details {
+                margin: 15px 0;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button class="reset-btn" onclick="resetProgress()">Reset Day</button>
+            <h1>💧 Daily Water Tracker</h1>
+            <p>Stay hydrated, stay healthy!</p>
+        </div>
+
+        <div class="progress-section">
+            <div class="progress-circle">
+                <svg class="progress-ring" width="150" height="150">
+                    <circle class="progress-ring__circle" stroke-dasharray="408.4" stroke-dashoffset="0" r="65" cx="75" cy="75"></circle>
+                    <circle class="progress-ring__progress" stroke-dasharray="408.4" stroke-dashoffset="408.4" r="65" cx="75" cy="75"></circle>
+                </svg>
+                <div class="progress-text">
+                    <div class="progress-percentage">0%</div>
+                    <div class="progress-label">Complete</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="water-schedule">
+            <div class="schedule-item" data-time="07:00" onclick="toggleDrink(this)">
+                <div class="time">7:00 AM</div>
+                <div class="details">
+                    <div class="message">Rise and shine</div>
+                    <div class="amount">250ml</div>
+                </div>
+                <div class="checkbox"></div>
+            </div>
+
+            <div class="schedule-item" data-time="09:00" onclick="toggleDrink(this)">
+                <div class="time">9:00 AM</div>
+                <div class="details">
+                    <div class="message">Let's get started</div>
+                    <div class="amount">250ml</div>
+                </div>
+                <div class="checkbox"></div>
+            </div>
+
+            <div class="schedule-item" data-time="11:00" onclick="toggleDrink(this)">
+                <div class="time">11:00 AM</div>
+                <div class="details">
+                    <div class="message">Remember your goal</div>
+                    <div class="amount">250ml</div>
+                </div>
+                <div class="checkbox"></div>
+            </div>
+
+            <div class="schedule-item" data-time="13:00" onclick="toggleDrink(this)">
+                <div class="time">1:00 PM</div>
+                <div class="details">
+                    <div class="message">Keep it up</div>
+                    <div class="amount">250ml</div>
+                </div>
+                <div class="checkbox"></div>
+            </div>
+
+            <div class="schedule-item" data-time="15:00" onclick="toggleDrink(this)">
+                <div class="time">3:00 PM</div>
+                <div class="details">
+                    <div class="message">Half way there</div>
+                    <div class="amount">250ml</div>
+                </div>
+                <div class="checkbox"></div>
+            </div>
+
+            <div class="schedule-item" data-time="17:00" onclick="toggleDrink(this)">
+                <div class="time">5:00 PM</div>
+                <div class="details">
+                    <div class="message">You can do this</div>
+                    <div class="amount">250ml</div>
+                </div>
+                <div class="checkbox"></div>
+            </div>
+
+            <div class="schedule-item" data-time="19:00" onclick="toggleDrink(this)">
+                <div class="time">7:00 PM</div>
+                <div class="details">
+                    <div class="message">Don't quit now</div>
+                    <div class="amount">250ml</div>
+                </div>
+                <div class="checkbox"></div>
+            </div>
+
+            <div class="schedule-item" data-time="21:00" onclick="toggleDrink(this)">
+                <div class="time">9:00 PM</div>
+                <div class="details">
+                    <div class="message">All in a day's work</div>
+                    <div class="amount">250ml</div>
+                </div>
+                <div class="checkbox"></div>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat">
+                <span class="stat-number" id="completed">0</span>
+                <div class="stat-label">Completed</div>
+            </div>
+            <div class="stat">
+                <span class="stat-number" id="remaining">8</span>
+                <div class="stat-label">Remaining</div>
+            </div>
+            <div class="stat">
+                <span class="stat-number" id="total-water">0L</span>
+                <div class="stat-label">Total Water</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="celebration" id="celebration">
+        <h2>🎉 Congratulations!</h2>
+        <p>You've completed your daily water goal!<br>Great job staying hydrated!</p>
+        <button onclick="hideCelebration()">Awesome!</button>
+    </div>
+
+    <script>
+        let completedDrinks = new Set();
+        const totalDrinks = 8;
+        const waterPerDrink = 250; // ml
+
+        function toggleDrink(element) {
+            const time = element.dataset.time;
+            
+            if (completedDrinks.has(time)) {
+                completedDrinks.delete(time);
+                element.classList.remove('completed');
+            } else {
+                completedDrinks.add(time);
+                element.classList.add('completed', 'ripple-effect');
+                
+                // Remove ripple effect after animation
+                setTimeout(() => {
+                    element.classList.remove('ripple-effect');
+                }, 600);
+            }
+            
+            updateProgress();
+            updateStats();
+            
+            // Check if all drinks are completed
+            if (completedDrinks.size === totalDrinks) {
+                setTimeout(() => {
+                    showCelebration();
+                }, 500);
+            }
+        }
+
+        function updateProgress() {
+            const percentage = (completedDrinks.size / totalDrinks) * 100;
+            const circumference = 2 * Math.PI * 65; // radius is 65
+            const offset = circumference - (percentage / 100) * circumference;
+            
+            document.querySelector('.progress-ring__progress').style.strokeDashoffset = offset;
+            document.querySelector('.progress-percentage').textContent = Math.round(percentage) + '%';
+        }
+
+        function updateStats() {
+            document.getElementById('completed').textContent = completedDrinks.size;
+            document.getElementById('remaining').textContent = totalDrinks - completedDrinks.size;
+            document.getElementById('total-water').textContent = (completedDrinks.size * waterPerDrink / 1000).toFixed(1) + 'L';
+        }
+
+        function showCelebration() {
+            document.getElementById('celebration').classList.add('show');
+        }
+
+        function hideCelebration() {
+            document.getElementById('celebration').classList.remove('show');
+        }
+
+        function resetProgress() {
+            if (confirm('Are you sure you want to reset your progress for today?')) {
+                completedDrinks.clear();
+                document.querySelectorAll('.schedule-item').forEach(item => {
+                    item.classList.remove('completed');
+                });
+                updateProgress();
+                updateStats();
+                hideCelebration();
+            }
+        }
+
+        // Auto-check drinks based on current time (optional feature)
+        function checkCurrentTime() {
+            const now = new Date();
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+            const currentTime = currentHour * 100 + currentMinute;
+
+            // Highlight current or next drink time
+            document.querySelectorAll('.schedule-item').forEach(item => {
+                const itemTime = item.dataset.time.split(':');
+                const itemHour = parseInt(itemTime[0]);
+                const drinkTime = itemHour * 100;
+                
+                // Remove previous highlights
+                item.style.borderLeftColor = '#4facfe';
+                
+                // Highlight if it's time or past time and not completed
+                if (currentTime >= drinkTime && !completedDrinks.has(item.dataset.time)) {
+                    item.style.borderLeftColor = '#ff6b6b';
+                }
+            });
+        }
+
+        // Check time every minute
+        setInterval(checkCurrentTime, 60000);
+        checkCurrentTime(); // Initial check
+
+        // Initialize
+        updateProgress();
+        updateStats();
+    </script>
+</body>
+</html>

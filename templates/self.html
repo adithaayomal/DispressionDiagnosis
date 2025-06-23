@@ -4,7 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Self-Love Journal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
+        /* Ensure navbar is at the top and spinner is centered below */
+        /* Remove spinner-page-layout and spinner-container styles, fix body and navbar */
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #a8d5ba 0%, #7fb3d3 100%);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+            margin: 0;
+        }
+        .navbar {
+            width: 100vw;
+            left: 0;
+            right: 0;
+            top: 0;
+            position: fixed;
+            z-index: 100;
+            box-sizing: border-box;
+            border-radius: 0 0 22px 22px;
+        }
+    
+    
         * {
             margin: 0;
             padding: 0;
@@ -44,7 +68,7 @@
 
         .container {
             max-width: 800px;
-            margin: 0 auto;
+            margin: 70px auto 0 auto;
             background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
             padding: 40px;
@@ -327,9 +351,21 @@
     </style>
 </head>
 <body>
+    <nav class="navbar">
+        <span class="navbar-title">Mental Health Assistant</span>
+        <div class="navbar-left">
+            <div class="navbar-center">
+                <a href="/" class="navbar-link">Assistant</a>
+                <a href="/daily_tasks" class="navbar-link active">Daily Tasks</a>
+            </div>
+        </div>
+        <div class="navbar-right">
+            <span class="navbar-user">Welcome, {{ current_user.username }}</span>
+            <a href="/logout" class="navbar-link">Logout</a>
+        </div>
+    </nav>
     <div class="decorative-elements"></div>
     <div class="leaves"></div>
-    
     <div class="container">
         <div class="header">
             <h1 class="title">SELF-LOVE JOURNAL</h1>
