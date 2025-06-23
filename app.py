@@ -586,6 +586,12 @@ def get_response(text):
     user_greeting = text.strip().lower()
     if user_greeting in greetings:
         return f"{text.strip().capitalize()}! how can i assist you? Please feel free to ask anything. I can search for you."
+    # Custom thanks override
+    thanks_patterns = [
+        'thanks', 'thank you', "that's helpful", 'thanks!', 'thank you!', "that's helpful!"
+    ]
+    if user_greeting in thanks_patterns:
+        return random.choice(["You're welcome!", "No problem!", "Glad I could help!"])
     if confidence < 0.75:
         return "I'm not sure how to respond to that. Could you please rephrase?"
     tag = prediction[0]

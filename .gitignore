@@ -67,6 +67,7 @@ env/
 *.sqlite3
 *.db
 *.db-journal
+users.db
 # Log files
 *.log
 # Temporary files
