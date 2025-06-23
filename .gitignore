@@ -68,6 +68,7 @@ env/
 *.db
 *.db-journal
 users.db
+/instance/users.db
 # Log files
 *.log
 # Temporary files
