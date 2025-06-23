@@ -63,7 +63,27 @@ venv/
 ENV/
 env/
 
-
+#database files
+*.sqlite3
+*.db
+*.db-journal
+# Log files
+*.log
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+# Backup files
+*.bak
+*.old
+*.orig
+# IDE specific files
+*.sublime-workspace
+*.sublime-project
+*.vscode
+*.code-workspace
+*.idea
 
 # CSV and data files
 Cleaned_DepressionDiagnosisWebApplication.csv
