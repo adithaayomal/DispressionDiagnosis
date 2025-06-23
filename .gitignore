@@ -63,9 +63,7 @@ venv/
 ENV/
 env/
 
-# Database files
-users.db
-instance/users.db
+
 
 # CSV and data files
 Cleaned_DepressionDiagnosisWebApplication.csv
