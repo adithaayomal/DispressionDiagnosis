@@ -1,3 +1,5 @@
+
+
 from flask import Flask, jsonify, request, render_template, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -24,6 +26,7 @@ db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
+
 # User model
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -32,6 +35,16 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String(120), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     last_assessment_category = db.Column(db.String(32), nullable=True)
+
+# DailyTaskProgress model (must be after db is defined)
+class DailyTaskProgress(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    category = db.Column(db.String(32), nullable=False)  # 'depression', 'anxiety', etc.
+    progress_json = db.Column(db.Text, nullable=False, default='{}')  # JSON string
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    user = db.relationship('User', backref=db.backref('daily_task_progress', lazy=True))
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -330,30 +343,37 @@ def next_question():
             db.session.commit()
             return jsonify({'response': bot_msg, 'finished': False}), 500
         if "I'm not sure how to respond" in bot_response:
-            # Use Wikipedia API as fallback
+            # Use SerpAPI for health-related search and summarization
             import requests
-            try:
-                search_url = f"https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch={requests.utils.quote(user_message)}&utf8=&format=json"
-                r = requests.get(search_url, timeout=5)
-                data = r.json()
-                if data.get('query', {}).get('search'):
-                    first_result = data['query']['search'][0]
-                    page_title = first_result['title']
-                    snippet = first_result['snippet']
-                    # Get the page summary
-                    summary_url = f"https://en.wikipedia.org/api/rest_v1/page/summary/{requests.utils.quote(page_title)}"
-                    summary_r = requests.get(summary_url, timeout=5)
-                    summary_data = summary_r.json()
-                    extract = summary_data.get('extract')
-                    if extract:
-                        bot_response = f"{extract}"
+            serp_api_key = os.environ.get('SERPAPI_KEY')
+            if not serp_api_key:
+                bot_response = "Sorry, search is temporarily unavailable (missing API key)."
+            else:
+                try:
+                    params = {
+                        'q': user_message,
+                        'api_key': serp_api_key,
+                        'engine': 'google',
+                        'hl': 'en',
+                        'num': 5
+                    }
+                    r = requests.get('https://serpapi.com/search', params=params, timeout=8)
+                    data = r.json()
+                    results = data.get('organic_results', [])
+                    if results:
+                        summary = []
+                        for res in results:
+                            title = res.get('title', '')
+                            snippet = res.get('snippet', '')
+                            link = res.get('link', '')
+                            if title and snippet:
+                                summary.append(f"{snippet} <a href='{link}' target='_blank'>(source)</a>")
+                        bot_response = "<b></b><br>" + '<br><br>'.join(summary)
                     else:
-                        bot_response = f"{snippet}"
-                else:
-                    bot_response = "Sorry, I couldn't find a mental health–related answer to your question."
-            except Exception as e:
-                print('Fallback error:', e)
-                bot_response = f"Sorry, I couldn't search at the moment. ({str(e)})"
+                        bot_response = "Sorry, I couldn't find a mental health–related answer to your question."
+                except Exception as e:
+                    print('SerpAPI error:', e)
+                    bot_response = f"Sorry, I couldn't search at the moment. ({str(e)})"
         # Save bot response
         chat_msg = ChatMessage(user_id=current_user.id, sender='bot', message=bot_response)
         db.session.add(chat_msg)
