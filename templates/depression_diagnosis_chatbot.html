@@ -135,7 +135,8 @@
         document.getElementById('clear-chat-btn').onclick = async function() {
             if (!confirm('Are you sure you want to clear your chat history?')) return;
             await fetch('/clear_chat', { method: 'POST' });
-            await loadChatHistory();
+            // Refresh the page after clearing chat
+            window.location.reload();
         };
     </script>
 </body>

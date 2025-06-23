@@ -222,6 +222,7 @@ def next_question():
 
     valid_answers = ['yes', 'y', 'yeah', 'true', 'no', 'n', 'nope', 'false']
     if current_question < len(QUESTIONS):
+        # Accept only valid answers, but allow progression for 'no' answers
         if user_answer.lower() not in valid_answers:
             # Save invalid user message
             chat_msg = ChatMessage(user_id=current_user.id, sender='user', message=user_answer)
@@ -251,7 +252,6 @@ def next_question():
             db.session.commit()
             return jsonify({"response": next_q, "finished": False})
         else:
-            
             # Assessment finished, calculate result
             score, yes_responses = calculate_score(session['responses'])
             diagnosis = get_diagnosis((score, yes_responses), session['responses'])
@@ -266,7 +266,6 @@ def next_question():
             # Send assessment complete message
             msg1 = f"Assessment complete!\n\n{diagnosis}"
             # Send daily tasks message with clickable link
-
             # Determine category using the same logic as get_category_override
             answers = list(session['responses'].values())
             def yes(i):
@@ -278,11 +277,10 @@ def next_question():
                 category = 'stress'
             elif (yes(2) and yes(4)) or (yes(4) and not yes(2)):
                 category = 'anxiety'
-
             current_user.last_assessment_category = category
             db.session.commit()
+            msg2 = None
             if category == 'depression':
-                
                 msg2 = (
                     'You have daily tasks to complete. depression<br>'
                     '<a href="/daily_tasks_dep" style="color:#2563eb;text-decoration:underline;font-weight:500;">Click here to view your daily tasks</a>'
