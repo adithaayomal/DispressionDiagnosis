@@ -31,6 +31,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(120), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    last_assessment_category = db.Column(db.String(32), nullable=True)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -160,7 +161,22 @@ def spinner():
 @app.route('/grounding')
 @login_required
 def grounding():
-    return render_template('gratitude_practice.html')
+    return render_template('grounding_technique.html')
+
+@app.route('/gardeningpassion')
+@login_required
+def gardeningpassion():
+    return render_template('gardening-passion.html')
+
+@app.route('/social_interaction')
+@login_required
+def social_interaction():
+    return render_template('social_interaction.html')
+
+@app.route('/water_tracker')
+@login_required
+def water_tracker():
+    return render_template('water_tracker.html')
 
 @app.route('/')
 @login_required
@@ -263,8 +279,10 @@ def next_question():
             elif (yes(2) and yes(4)) or (yes(4) and not yes(2)):
                 category = 'anxiety'
 
-            
+            current_user.last_assessment_category = category
+            db.session.commit()
             if category == 'depression':
+                
                 msg2 = (
                     'You have daily tasks to complete. depression<br>'
                     '<a href="/daily_tasks_dep" style="color:#2563eb;text-decoration:underline;font-weight:500;">Click here to view your daily tasks</a>'
@@ -272,7 +290,7 @@ def next_question():
             elif category == 'anxiety':
                 msg2 = (
                     'You have daily tasks to complete. Anxeity<br>'
-                    '<a href="/daily_tasks_anxiety" style="color:#2563eb;text-decoration:underline;font-weight:500;">Click here to view your daily tasks</a>'
+                    '<a href="/daily_tasks_anxiety" style="color:#2563eb    ;text-decoration:underline;font-weight:500;">Click here to view your daily tasks</a>'
                 )
             elif category == 'stress':
                 msg2 = (
@@ -347,21 +365,21 @@ def next_question():
 @app.route('/daily_tasks')
 @login_required
 def daily_tasks():
-    tasks = [
-        "Take a 5-minute mindful breathing break",
-        "Write down 3 things you're grateful for",
-        "Go for a short walk outdoors",
-        "Reach out to a friend or family member",
-        "Reflect on a positive moment from today",
-        (
-            '<b>Breathe with the Circle</b><br>'
-            'Type: Interactive web animation.<br>'
-            'How it Works: A circle expands and contracts, prompting users to inhale/exhale with it.<br>'
-            'Where: <a href="https://www.calm.com/breathe" target="_blank" style="color:#2563eb;text-decoration:underline;">calm.com/breathe</a> or YouTube breathing loops.<br>'
-            'Goal: Slow down heart rate and focus the mind.'
-        )
-    ]
-    return render_template('daily_tasks_anx.html', tasks=tasks)
+    category = current_user.last_assessment_category
+    if category == 'depression':
+        return redirect(url_for('daily_tasks_dep'))
+    elif category == 'anxiety':
+        return redirect(url_for('daily_tasks_anxiety'))
+    elif category == 'stress':
+        return redirect(url_for('daily_tasks_stress'))
+    else:
+        
+        return redirect(url_for('index'))
+        
+    
+        
+
+        
 
 @app.route('/chat_history')
 @login_required
