@@ -197,6 +197,11 @@ def water_tracker():
 def anxiety():
     return render_template('anxiety.html')
 
+@app.route('/stress')
+@login_required
+def stress():
+    return render_template('stress.html')
+
 @app.route('/')
 @login_required
 def index():
@@ -444,9 +449,12 @@ def clear_chat():
 def save_last_anxiety_tab():
     data = request.get_json()
     tab = data.get('tab')
-    if not tab:
-        return jsonify({'error': 'Missing tab'}), 400
-    current_user.last_anxiety_tab = tab
+    # Accept both None and empty string as clearing
+    if tab is None or tab == '' or tab == 'null':
+        current_user.last_anxiety_tab = None
+        current_user.last_assessment_category = None  # Also clear assessment category
+    else:
+        current_user.last_anxiety_tab = tab
     db.session.commit()
     return jsonify({'success': True})
 

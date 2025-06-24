@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/anxiety.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/stress.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-<script src="{{ url_for('static', filename='js/anxiety.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/stress.js') }}" defer></script>
 </head>
 <body>
     
@@ -14,7 +14,7 @@
         <div class="navbar-center">
             <a href="/" class="navbar-link">Assistant</a>
             <a href="/daily_tasks" class="navbar-link">Daily Tasks</a>
-            <a href="/anxiety" class="navbar-link active">Anxiety</a>
+            
         </div>
     </div>
     <div class="navbar-right">
@@ -22,7 +22,7 @@
         <a href="/logout" class="navbar-link">Logout</a>
     </div>
 </nav>
-<p style="color: red; margin-left: 30px;">[Developer Mode - Tasks : Anxiety]</p>
+<p style="color: red; margin-left: 30px;">[Developer Mode - Tasks : Stress]</p>
 <div class="main-anxiety-layout" style="align-items:flex-start; margin-top:5.5rem;">
   <div class="tab" style="margin-left:0; margin-top:2.5rem; align-self:flex-start;">
     <button class="tablinks" onclick="openCity(event, 'Day1')" id="defaultOpen">Day 1</button>
