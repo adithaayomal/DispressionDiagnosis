@@ -275,6 +275,7 @@ body {
   flex-direction: column;
   align-items: center;
   width: 100%;
+  margin-top: 1.5rem;
 }
 .mindful-title {
   font-size: 1.35rem;
@@ -296,6 +297,17 @@ body {
   margin: 0 auto;
   background: rgba(74,144,226,0.08);
   border-radius: 24px;
+}
+.fixed-complete-btn {
+  position: absolute;
+  left: 50%;
+  bottom: 40px;
+  transform: translateX(-50%);
+  z-index: 10;
+  width: 320px;
+  max-width: 90vw;
+  box-shadow: 0 2px 8px rgba(76,175,80,0.13);
+  border-radius: 18px;
 }
 .ambient-section {
   display: flex;
@@ -423,10 +435,10 @@ body {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: rgba(255,0,0,0.3);
-  border: 2px solid #ff0000;
+  background: rgba(74,144,226,0.13);
+  border: 2px solid #4A90E2;
   pointer-events: none;
-  z-index: 100;
+  z-index: 10;
   transform: translate(-50%, -50%);
   display: none;
 }

@@ -23,6 +23,13 @@ function openCity(evt, cityName) {
   evt.currentTarget.className += " active";
   // Save last selected tab to backend
   saveLastAnxietyTab(cityName);
+  // --- ADDED: re-initialize games on tab switch ---
+  if (cityName === 'Day2' && document.getElementById('mindful-click-game')) {
+    startMindfulClickGame();
+  }
+  if (cityName === 'Day5' && document.getElementById('bubble-wrap-canvas')) {
+    startBubbleWrapGame();
+  }
 }
 
 // Add completed-tab style if not already present
@@ -193,82 +200,81 @@ function startBreathingAnimation() {
 }
 // --- Mindful Click Game ---
 function startMindfulClickGame() {
-  const game = document.getElementById('mindful-click-game');
-  if (!game) return;
-  game.innerHTML = '';
-  let dot = document.createElement('div');
-  dot.className = 'mindful-dot';
-  game.appendChild(dot);
-  let x = 100, y = 100, vx = 1.2, vy = 1.1;
-  function moveDot() {
-    x += vx; y += vy;
-    if (x < 20 || x > 220) vx *= -1;
-    if (y < 20 || y > 220) vy *= -1;
-    dot.style.left = x + 'px';
-    dot.style.top = y + 'px';
-    requestAnimationFrame(moveDot);
+  const gameArea = document.getElementById('mindful-click-game');
+  if (!gameArea) return;
+  gameArea.innerHTML = '';
+  // Create the floating shape (circle)
+  const shape = document.createElement('div');
+  shape.style.width = '54px';
+  shape.style.height = '54px';
+  shape.style.borderRadius = '50%';
+  shape.style.background = 'linear-gradient(135deg,#AEE1F9 60%,#E2BDA7 100%)';
+  shape.style.position = 'absolute';
+  shape.style.boxShadow = '0 2px 12px 0 #AEE1F9';
+  shape.style.cursor = 'pointer';
+  shape.style.transition = 'box-shadow 0.2s, opacity 0.3s, transform 0.3s';
+  // Animation state
+  let animId = null;
+  let pos = randomPosition();
+  let dx = (Math.random() - 0.5) * 0.5; // slow motion
+  let dy = (Math.random() - 0.5) * 0.5;
+  function float() {
+    pos.x += dx;
+    pos.y += dy;
+    // Bounce off walls
+    if (pos.x < 0) { pos.x = 0; dx *= -1; }
+    if (pos.x > 206) { pos.x = 206; dx *= -1; }
+    if (pos.y < 0) { pos.y = 0; dy *= -1; }
+    if (pos.y > 206) { pos.y = 206; dy *= -1; }
+    shape.style.left = pos.x + 'px';
+    shape.style.top = pos.y + 'px';
+    animId = requestAnimationFrame(float);
   }
-  dot.style.position = 'absolute';
-  dot.style.width = '40px';
-  dot.style.height = '40px';
-  dot.style.borderRadius = '50%';
-  dot.style.background = 'linear-gradient(135deg,#AEE1F9,#f07264)';
-  dot.style.boxShadow = '0 2px 12px rgba(31,38,135,0.10)';
-  dot.style.cursor = 'pointer';
-  dot.style.left = x + 'px';
-  dot.style.top = y + 'px';
-  dot.addEventListener('click', function(e) {
-    let ripple = document.createElement('div');
-    ripple.className = 'mindful-ripple';
-    ripple.style.left = (e.offsetX - 20) + 'px';
-    ripple.style.top = (e.offsetY - 20) + 'px';
-    game.appendChild(ripple);
-    setTimeout(() => ripple.remove(), 600);
-  });
-  moveDot();
-}
-// --- Ambient Sound Experience ---
-function setupAmbientSound() {
-  const audio = document.getElementById('ambient-audio');
-  const btns = document.querySelectorAll('.ambient-btn');
-  const sounds = {
-    rain: '/static/music/rain.wav',
-    ocean: '/static/music/ocean.wav',
-    forest: '/static/music/forest.wav',
-    wind: '/static/music/wind.wav'
+  float();
+  // Click handler
+  shape.onclick = function() {
+    cancelAnimationFrame(animId);
+    // Calming animation: fade + scale + soft glow
+    shape.style.boxShadow = '0 0 32px 12px #AEE1F9, 0 0 0 0 #fff';
+    shape.style.opacity = '0';
+    shape.style.transform = 'scale(1.3)';
+    // Optional: play soft chime
+    // setTimeout(() => { /* play sound here if desired */ }, 100);
+    setTimeout(() => {
+      // Remove and spawn new shape
+      shape.remove();
+      startMindfulClickGame();
+    }, 600);
   };
-  btns.forEach(btn => {
-    btn.onclick = function() {
-      const env = btn.getAttribute('data-env');
-      if (audio) {
-        audio.src = sounds[env];
-        audio.play();
-      }
-      btns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+  gameArea.appendChild(shape);
+  function randomPosition() {
+    // Keep shape within bounds (game area 260x260, shape 54x54)
+    const max = 206; // 260-54
+    return {
+      x: Math.floor(Math.random() * max),
+      y: Math.floor(Math.random() * max)
     };
-  });
-  // Animated particles
-  const particles = document.getElementById('ambient-particles');
-  if (particles) {
-    particles.innerHTML = '';
-    for (let i = 0; i < 18; i++) {
-      let p = document.createElement('div');
-      p.className = 'ambient-particle';
-      p.style.left = Math.random()*90 + '%';
-      p.style.top = Math.random()*90 + '%';
-      p.style.animationDuration = (2.5 + Math.random()*2) + 's';
-      particles.appendChild(p);
-    }
   }
 }
-// --- Gentle Movement for Calm (Yoga) ---
-// No extra JS needed for video
+// --- End Mindful Click Game ---
+
 // --- Bubble Wrap Popping Game (Day 5) ---
 function startBubbleWrapGame() {
   const canvas = document.getElementById('bubble-wrap-canvas');
   const cursor = document.getElementById('bubble-cursor');
   if (!canvas || !cursor) return;
+  // --- Add cursor styling ---
+  cursor.style.position = 'absolute';
+  cursor.style.width = '40px';
+  cursor.style.height = '40px';
+  cursor.style.borderRadius = '50%';
+  cursor.style.background = 'rgba(74,144,226,0.13)';
+  cursor.style.border = '2px solid #4A90E2';
+  cursor.style.pointerEvents = 'none';
+  cursor.style.zIndex = '10';
+  cursor.style.transform = 'translate(-50%, -50%)';
+  cursor.style.display = 'block';
+
   const ctx = canvas.getContext('2d');
   let bubbles = [];
   let poppedCount = 0;
@@ -337,8 +343,10 @@ function startBubbleWrapGame() {
       if (this.popped) return;
       this.popped = true;
       poppedCount++;
+      updateUI();
     }
   }
+
   function createBubbleWrap() {
     bubbles = [];
     poppedCount = 0;
@@ -358,48 +366,69 @@ function startBubbleWrapGame() {
       }
     }
     totalBubbles = bubbles.length;
+    updateUI();
   }
 
-  // Utility: get mouse/touch coordinates relative to canvas, accounting for scaling
-  function getCanvasRelativeCoords(clientX, clientY) {
-    const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
-    return {
-      x: (clientX - rect.left) * scaleX,
-      y: (clientY - rect.top) * scaleY
-    };
+  // UI for bubbles left
+  let bubblesLeftDiv = document.querySelector('.bubble-wrap-section .bubbles-left-text');
+  if (!bubblesLeftDiv) {
+    bubblesLeftDiv = document.createElement('div');
+    bubblesLeftDiv.className = 'bubbles-left-text';
+    bubblesLeftDiv.style.margin = '1.2rem auto 0 auto';
+    bubblesLeftDiv.style.color = '#4A90E2';
+    bubblesLeftDiv.style.fontSize = '1.18rem';
+    bubblesLeftDiv.style.fontWeight = '600';
+    bubblesLeftDiv.style.textAlign = 'center';
+    const parent = document.querySelector('.bubble-wrap-section');
+    if (parent) parent.appendChild(bubblesLeftDiv);
+  }
+
+  function updateUI() {
+    const remaining = totalBubbles - poppedCount;
+    if (bubblesLeftDiv) {
+      bubblesLeftDiv.textContent = `Bubbles Left: ${remaining}`;
+    }
   }
 
   // Mouse tracking for custom cursor
-  canvas.addEventListener('mousemove', (e) => {
+  document.getElementById('bubble-wrap-game').addEventListener('mousemove', (e) => {
     const rect = canvas.getBoundingClientRect();
-    cursor.style.display = 'block';
     cursor.style.left = (e.clientX - rect.left) + 'px';
     cursor.style.top = (e.clientY - rect.top) + 'px';
+    cursor.style.display = 'block';
   });
-  canvas.addEventListener('mouseleave', () => {
+  // Hide cursor on mouse leave
+  document.getElementById('bubble-wrap-game').addEventListener('mouseleave', () => {
+    cursor.style.display = 'none';
+  });
+  // Hide cursor on touch devices
+  document.getElementById('bubble-wrap-game').addEventListener('touchstart', () => {
     cursor.style.display = 'none';
   });
 
-  // Click handler (fix: use scaling)
+  // Click handler
   canvas.addEventListener('click', (e) => {
     if (!gameActive) return;
-    const { x, y } = getCanvasRelativeCoords(e.clientX, e.clientY);
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
     bubbles.forEach(bubble => {
-      if (bubble.isClicked(x, y)) {
+      if (bubble.isClicked(mouseX, mouseY)) {
         bubble.pop();
       }
     });
   });
-  // Touch support (fix: use scaling)
+
+  // Touch support
   canvas.addEventListener('touchstart', (e) => {
     e.preventDefault();
     if (!gameActive) return;
+    const rect = canvas.getBoundingClientRect();
     const touch = e.touches[0];
-    const { x, y } = getCanvasRelativeCoords(touch.clientX, touch.clientY);
+    const touchX = touch.clientX - rect.left;
+    const touchY = touch.clientY - rect.top;
     bubbles.forEach(bubble => {
-      if (bubble.isClicked(x, y)) {
+      if (bubble.isClicked(touchX, touchY)) {
         bubble.pop();
       }
     });
@@ -421,14 +450,42 @@ function startBubbleWrapGame() {
     });
     requestAnimationFrame(gameLoop);
   }
-  // Start the game
+
   createBubbleWrap();
   gameLoop();
 }
-// --- Init ---
+// --- End Bubble Wrap Popping Game ---
+
 document.addEventListener('DOMContentLoaded', function() {
   if (document.getElementById('breathing-circle')) startBreathingAnimation();
   if (document.getElementById('mindful-click-game')) startMindfulClickGame();
   if (document.getElementById('ambient-audio')) setupAmbientSound();
   if (document.getElementById('bubble-wrap-canvas')) startBubbleWrapGame();
+  const completeBtn = document.getElementById('complete-mindful-btn');
+  if (completeBtn) {
+    completeBtn.onclick = function() {
+      // Mark Day 2 as green (completed)
+      const weekDays = document.querySelectorAll('.week-day-vertical .day-circle');
+      if (weekDays.length > 1) {
+        const day2 = weekDays[1];
+        day2.innerHTML = '<svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="11" cy="11" r="11" fill="#4CAF50"/><path d="M6 12.5L10 16L16 8" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+        day2.style.background = '#4CAF50';
+        day2.style.borderColor = '#388E3C';
+        day2.style.display = 'flex';
+        day2.style.alignItems = 'center';
+        day2.style.justifyContent = 'center';
+        day2.style.padding = '0';
+      }
+      const day2Label = document.querySelectorAll('.week-day-vertical .day-label')[1];
+      if (day2Label) {
+        day2Label.style.color = '#388E3C';
+        day2Label.style.fontWeight = '700';
+      }
+      // Optionally hide the section or show a message
+      const mindfulDiv = document.querySelector('.mindful-click-section');
+      if (mindfulDiv) mindfulDiv.remove();
+      const h2 = document.querySelector('#Day2 h2');
+      if (h2) h2.remove();
+    };
+  }
 });
