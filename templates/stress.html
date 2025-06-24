@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/stress.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<script src="{{ url_for('static', filename='js/stress.js') }}" defer></script>
+</head>
+<body>
+    
+<nav class="navbar">
+    <span class="navbar-title">Mental Health Assistant</span>
+    <div class="navbar-left">
+        <div class="navbar-center">
+            <a href="/" class="navbar-link">Assistant</a>
+            <a href="/daily_tasks" class="navbar-link">Daily Tasks</a>
+            
+        </div>
+    </div>
+    <div class="navbar-right">
+        <span class="navbar-user">Welcome, {{ current_user.username }}</span>
+        <a href="/logout" class="navbar-link">Logout</a>
+    </div>
+</nav>
+<p class="dev-mode-label">[Developer Mode - Tasks : Stress]</p>
+<div class="main-anxiety-layout">
+  <div class="tab" style="margin-left:0; margin-top:2.5rem; align-self:flex-start;">
+    <button class="tablinks" onclick="openCity(event, 'Day1')" id="defaultOpen">Day 1</button>
+    <button class="tablinks" onclick="openCity(event, 'Day2')">Day 2</button>
+    <button class="tablinks" onclick="openCity(event, 'Day3')">Day 3</button>
+    <button class="tablinks" onclick="openCity(event, 'Day4')">Day 4</button>
+    <button class="tablinks" onclick="openCity(event, 'Day5')">Day 5</button>
+    <button class="tablinks" onclick="openCity(event, 'Day6')">Day 6</button>
+    <button class="tablinks" onclick="openCity(event, 'Day7')">Day 7</button>
+    <button class="tablinks" onclick="openCity(event, 'OutComes')">Outcomes</button>
+  </div>
+  <div class="main-tabcontent-wrapper">
+    <div id="Day1" class="tabcontent">
+      <h2 class="main-tab-title">Your Daily Task</h2>
+      <hr class="tab-divider">
+      <h3>Breathe with the Circle</h3>
+      <p>Follow the animation below. Inhale as the circle expands, hold, exhale as it contracts, hold. Try to sync your breath for a few cycles to relax and focus.</p>
+      <div class="breathing-section">
+        <div id="breathing-game" class="breathing-game">
+          <canvas id="breathing-circle" width="300" height="300"></canvas>
+          <div id="breathing-instruction" class="breathing-instruction">Inhale</div>
+        </div>
+      </div>
+    </div>
+    <div id="Day2" class="tabcontent">
+      <h2 class="main-tab-title">Your Daily Task</h2>
+      <hr class="tab-divider">
+      <div class="mindful-click-section">
+        <div class="mindful-title">Mindful Click</div>
+        <div class="mindful-desc">A floating shape will move gently across the screen. Click it slowly and gently—no rushing. Each click will bring a calming animation. Try to stay present and relaxed.</div>
+        <div id="mindful-click-game" style="width:260px;height:260px;position:relative;margin:0 auto;background:rgba(74,144,226,0.08);border-radius:24px;"></div>
+
+      </div>
+    </div>
+    <div id="Day3" class="tabcontent">
+      <h2 class="main-tab-title">Your Daily Task</h2>
+      <hr class="tab-divider">
+      <div class="ambient-section">
+        <div class="ambient-title">Ambient Sound Experience</div>
+        <div class="ambient-desc">Choose an environment. The background and sound will change. Relax and enjoy the ambiance for a few minutes.</div>
+        <div class="ambient-btns">
+          <button class="ambient-btn" data-env="rain"><span class="ambient-emoji">🌧️</span><span class="ambient-label">Rain</span></button>
+          <button class="ambient-btn" data-env="ocean"><span class="ambient-emoji">🌊</span><span class="ambient-label">Ocean</span></button>
+          <button class="ambient-btn" data-env="forest"><span class="ambient-emoji">🌲</span><span class="ambient-label">Forest</span></button>
+          <button class="ambient-btn" data-env="wind"><span class="ambient-emoji">💨</span><span class="ambient-label">Wind</span></button>
+        </div>
+        <div id="ambient-particles"></div>
+        <audio id="ambient-audio" loop></audio>
+      </div>
+    </div>
+    <div id="Day4" class="tabcontent">
+      <h2 class="main-tab-title">Your Daily Task</h2>
+      <hr class="tab-divider">
+      <div class="yoga-section">
+        <div class="yoga-title">Gentle Movement for Calm</div>
+        <div class="yoga-desc">Follow along with this short, gentle yoga video. Move slowly, breathe deeply, and let your body and mind unwind.</div>
+        <video src="/static/video/yoga.mp4" controls class="yoga-video"></video>
+      </div>
+    </div>
+    <div id="Day5" class="tabcontent">
+      <h2 class="main-tab-title">Your Daily Task</h2>
+      <hr class="tab-divider">
+      <div class="bubble-wrap-section">
+        <div class="bubble-wrap-title">Bubble Wrap Popping Game</div>
+        <div class="bubble-wrap-desc">Pop as many bubbles as you like! Click or tap on the bubbles to pop them. Enjoy the satisfying sound and visual feedback. Take your time and have fun!</div>
+        <div id="bubble-wrap-game">
+          <canvas id="bubble-wrap-canvas" width="600" height="400"></canvas>
+          <div id="bubble-cursor"></div>
+        </div>
+      </div>
+    </div>
+    <div id="Day6" class="tabcontent">
+      <h2 class="main-tab-title">Your Daily Task</h2>
+      <hr class="tab-divider">
+      <div class="memory-section">
+        <div class="bubble-wrap-title">Memory Challenge</div>
+        <div class="memory-desc">Memorize the positions of the icons below. You have <b>15 seconds</b> to remember their locations. After that, the icons will be hidden and you will be asked to recall their positions!</div>
+        <div id="memory-game"></div>
+      </div>
+      <script>
+      // --- Day 6: Memory Game ---
+      function showDay6MemoryTask() {
+        const container = document.getElementById('memory-game');
+        if (!container) return;
+        container.innerHTML = '';
+        // 3x3 grid, scale icons up, use only 9 icons
+        const icons = ['🍎','🚗','🐶','⚽','🌳','🎩','🍕','🎲','🎸'];
+        // Shuffle for random placement
+        let iconOrder = icons.slice();
+        for (let i = iconOrder.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [iconOrder[i], iconOrder[j]] = [iconOrder[j], iconOrder[i]];
+        }
+        let revealed = true;
+        let matched = Array(9).fill(false);
+        let guesses = [];
+        let currentQuery = 0;
+        let score = 0;
+        // Board
+        const board = document.createElement('div');
+        board.style.display = 'grid';
+        board.style.gridTemplateColumns = 'repeat(3, 78px)';
+        board.style.gridTemplateRows = 'repeat(3, 78px)';
+        board.style.gap = '1.2rem';
+        board.style.justifyContent = 'center';
+        board.style.margin = '2rem auto 1.2rem auto';
+        board.style.maxWidth = '300px';
+        container.appendChild(board);
+        // Create icon cards (hidden before start)
+        let cardEls = [];
+        for (let i = 0; i < 9; i++) {
+          const card = document.createElement('div');
+          card.style.width = '78px';
+          card.style.height = '78px';
+          card.style.background = '#f7e7e1';
+          card.style.borderRadius = '18px';
+          card.style.display = 'flex';
+          card.style.alignItems = 'center';
+          card.style.justifyContent = 'center';
+          card.style.fontSize = '2.2rem';
+          card.style.boxShadow = '0 2px 8px rgba(74,144,226,0.10)';
+          card.style.cursor = 'pointer';
+          card.style.transition = 'background 0.3s, color 0.3s';
+          card.dataset.idx = i;
+          card.textContent = '';
+          board.appendChild(card);
+          cardEls.push(card);
+        }
+        // Timer
+        const timerDiv = document.createElement('div');
+        timerDiv.style.fontSize = '1.1rem';
+        timerDiv.style.color = '#4A90E2';
+        timerDiv.style.marginBottom = '1.2rem';
+        timerDiv.textContent = '';
+        container.appendChild(timerDiv);
+        // Start button
+        const startBtn = document.createElement('button');
+        startBtn.textContent = 'Start';
+        startBtn.style.background = '#4A90E2';
+        startBtn.style.color = '#fff';
+        startBtn.style.fontSize = '1rem';
+        startBtn.style.fontWeight = '600';
+        startBtn.style.border = 'none';
+        startBtn.style.borderRadius = '12px';
+        startBtn.style.padding = '0.4rem 1.2rem';
+        startBtn.style.marginBottom = '1.2rem';
+        startBtn.style.cursor = 'pointer';
+        startBtn.style.transition = 'background 0.2s';
+        startBtn.style.boxShadow = '0 2px 8px rgba(74,144,226,0.10)';
+        container.appendChild(startBtn);
+        // Hide cards and timer until start
+        board.style.opacity = '1';
+        for (let i = 0; i < 9; i++) {
+          cardEls[i].style.pointerEvents = 'none';
+          cardEls[i].textContent = '';
+        }
+        let timeLeft = 15;
+        let timerId = null;
+        startBtn.onclick = function() {
+          startBtn.disabled = true;
+          startBtn.style.opacity = '0.6';
+          board.style.opacity = '1';
+          // Reveal icons
+          for (let i = 0; i < 9; i++) {
+            cardEls[i].textContent = iconOrder[i];
+            cardEls[i].style.pointerEvents = '';
+          }
+          timerDiv.textContent = `Time left: ${timeLeft}s`;
+          timerId = setInterval(() => {
+            timeLeft--;
+            timerDiv.textContent = `Time left: ${timeLeft}s`;
+            if (timeLeft <= 0) {
+              clearInterval(timerId);
+              hideCards();
+            }
+          }, 1000);
+        };
+        function hideCards() {
+          revealed = false;
+          timerDiv.textContent = '';
+          for (let i = 0; i < 9; i++) {
+            cardEls[i].textContent = (i+1).toString();
+            cardEls[i].style.background = '#E2BDA7';
+            cardEls[i].style.color = '#fff';
+            cardEls[i].style.fontWeight = '700';
+            cardEls[i].style.fontSize = '1.3rem';
+            cardEls[i].style.pointerEvents = '';
+          }
+          setTimeout(startRecall, 800);
+        }
+        function startRecall() {
+          let recallOrder = icons.slice();
+          for (let i = recallOrder.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [recallOrder[i], recallOrder[j]] = [recallOrder[j], recallOrder[i]];
+          }
+          currentQuery = 0;
+          guesses = [];
+          score = 0;
+          askNext(recallOrder);
+        }
+        function askNext(recallOrder) {
+          let oldQuery = document.getElementById('memory-query');
+          if (oldQuery) oldQuery.remove();
+          let oldResult = document.getElementById('memory-result');
+          if (oldResult) oldResult.remove();
+          if (currentQuery < recallOrder.length) {
+            const queryDiv = document.createElement('div');
+            queryDiv.id = 'memory-query';
+            queryDiv.style.fontSize = '1.15rem';
+            queryDiv.style.color = '#4A90E2';
+            queryDiv.style.margin = '1.2rem 0 0.7rem 0';
+            queryDiv.innerHTML = `Where was <span style="font-size:2.8rem;">${recallOrder[currentQuery]}</span>? Click the correct card.`;
+            container.appendChild(queryDiv);
+            for (let i = 0; i < 9; i++) {
+              cardEls[i].onclick = function() {
+                if (!revealed && !matched[i]) {
+                  let correct = (iconOrder[i] === recallOrder[currentQuery]);
+                  guesses.push({guess: i, correct: correct});
+                  matched[i] = true;
+                  if (correct) {
+                    cardEls[i].style.background = '#4CAF50';
+                    cardEls[i].style.color = '#fff';
+                    score++;
+                  } else {
+                    cardEls[i].style.background = '#f07264';
+                    cardEls[i].style.color = '#fff';
+                    for (let j = 0; j < 9; j++) {
+                      if (iconOrder[j] === recallOrder[currentQuery]) {
+                        cardEls[j].style.background = '#4CAF50';
+                        cardEls[j].style.color = '#fff';
+                      }
+                    }
+                  }
+                  for (let k = 0; k < 9; k++) cardEls[k].onclick = null;
+                  setTimeout(() => {
+                    currentQuery++;
+                    askNext(recallOrder);
+                  }, 900);
+                }
+              };
+            }
+          } else {
+            if (startBtn) {
+              startBtn.style.display = 'none';
+            }
+            let oldRetry = container.querySelector('.memory-retry-btn');
+            if (oldRetry) oldRetry.remove();
+            let oldScore = container.querySelector('.memory-score-div');
+            if (oldScore) oldScore.remove();
+            const memoryRetryBtn = document.createElement('button');
+            memoryRetryBtn.textContent = 'Retry';
+            memoryRetryBtn.className = 'memory-retry-btn';
+            memoryRetryBtn.style.background = '#f07264';
+            memoryRetryBtn.style.color = '#fff';
+            memoryRetryBtn.style.fontSize = '1rem';
+            memoryRetryBtn.style.fontWeight = '600';
+            memoryRetryBtn.style.border = 'none';
+            memoryRetryBtn.style.borderRadius = '12px';
+            memoryRetryBtn.style.padding = '0.4rem 1.2rem';
+            memoryRetryBtn.style.marginBottom = '0.7rem';
+            memoryRetryBtn.style.cursor = 'pointer';
+            memoryRetryBtn.style.transition = 'background 0.2s';
+            memoryRetryBtn.style.boxShadow = '0 2px 8px rgba(240,114,100,0.10)';
+            if (startBtn && startBtn.parentNode) {
+              startBtn.parentNode.insertBefore(memoryRetryBtn, startBtn.nextSibling);
+            } else {
+              container.appendChild(memoryRetryBtn);
+            }
+            memoryRetryBtn.onclick = function() {
+              showDay6MemoryTask();
+            };
+            const scoreDiv = document.createElement('div');
+            scoreDiv.className = 'memory-score-div';
+            scoreDiv.style.fontSize = '1.35rem';
+            scoreDiv.style.fontWeight = '700';
+            scoreDiv.style.color = '#4A90E2';
+            scoreDiv.style.margin = '0.7rem 0 1.2rem 0';
+            scoreDiv.textContent = `Your score: ${score} / 9`;
+            memoryRetryBtn.insertAdjacentElement('afterend', scoreDiv);
+          }
+        }
+      }
+      // Auto-run on tab open
+      document.addEventListener('DOMContentLoaded', function() {
+        if (document.getElementById('memory-game')) showDay6MemoryTask();
+      });
+      </script>
+    </div>
+    <div id="Day7" class="tabcontent">
+      <h2 class="main-tab-title">Your Daily Task</h2>
+      <hr class="tab-divider">
+      <div class="puzzle-section">
+        <div class="bubble-wrap-title">Mind Unwind – Simple Puzzle Game</div>
+        <div class="puzzle-desc">Challenge your mind gently with this relaxing puzzle. Rearrange the pieces to complete the picture or pattern.<br><br>Take your time—there’s no timer, no pressure. Just a quiet space to focus, think, and enjoy the satisfaction of solving.</div>
+        <div id="puzzle-game"></div>
+      </div>
+      <script>
+      // --- Day 7: Mind Unwind – Simple Puzzle Game ---
+      function showDay7PuzzleTask() {
+        const container = document.getElementById('puzzle-game');
+        if (!container) return;
+        container.innerHTML = '';
+        // Puzzle game container
+        const gameDiv = document.createElement('div');
+        gameDiv.style.display = 'flex';
+        gameDiv.style.justifyContent = 'center';
+        gameDiv.style.alignItems = 'center';
+        gameDiv.style.margin = '2rem 0';
+        gameDiv.style.minHeight = '340px';
+        container.appendChild(gameDiv);
+        // 3x3 sliding puzzle with image tiles
+        const size = 3;
+        let board = [];
+        let empty = {row: size-1, col: size-1};
+        const imagePaths = [
+          '/static/images/puzzle/1.jpg',
+          '/static/images/puzzle/2.jpg',
+          '/static/images/puzzle/3.jpg',
+          '/static/images/puzzle/4.jpg',
+          '/static/images/puzzle/5.jpg',
+          '/static/images/puzzle/6.jpg',
+          '/static/images/puzzle/7.jpg',
+          '/static/images/puzzle/8.jpg'
+        ];
+        let nums = Array.from({length: size*size-1}, (_,i)=>i);
+        for (let i = nums.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [nums[i], nums[j]] = [nums[j], nums[i]];
+        }
+        nums.push(null);
+        for (let r=0; r<size; r++) {
+          board[r] = [];
+          for (let c=0; c<size; c++) {
+            board[r][c] = nums[r*size+c];
+          }
+        }
+        const puzzle = document.createElement('div');
+        puzzle.style.display = 'grid';
+        puzzle.style.gridTemplateColumns = `repeat(${size}, 96px)`;
+        puzzle.style.gridTemplateRows = `repeat(${size}, 96px)`;
+        puzzle.style.gap = '0.7rem';
+        puzzle.style.background = 'none';
+        puzzle.style.borderRadius = '18px';
+        puzzle.style.boxShadow = '0 2px 8px rgba(74,144,226,0.10)';
+        puzzle.style.padding = '0.5rem';
+        gameDiv.appendChild(puzzle);
+        function renderPuzzle() {
+          puzzle.innerHTML = '';
+          for (let r=0; r<size; r++) {
+            for (let c=0; c<size; c++) {
+              const val = board[r][c];
+              const tile = document.createElement('div');
+              tile.style.width = '96px';
+              tile.style.height = '96px';
+              tile.style.display = 'flex';
+              tile.style.alignItems = 'center';
+              tile.style.justifyContent = 'center';
+              tile.style.borderRadius = '14px';
+              tile.style.background = val !== null ? '#E2BDA7' : 'transparent';
+              tile.style.cursor = val !== null ? 'pointer' : 'default';
+              tile.style.transition = 'background 0.2s, color 0.2s';
+              tile.style.overflow = 'hidden';
+              tile.style.position = 'relative';
+              if (val !== null) {
+                const img = document.createElement('img');
+                img.src = imagePaths[val];
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.objectFit = 'cover';
+                img.style.borderRadius = '14px';
+                tile.appendChild(img);
+                tile.onclick = function() {
+                  if ((Math.abs(r-empty.row)+Math.abs(c-empty.col))===1) {
+                    board[empty.row][empty.col] = val;
+                    board[r][c] = null;
+                    empty = {row: r, col: c};
+                    renderPuzzle();
+                  }
+                };
+              }
+              puzzle.appendChild(tile);
+            }
+          }
+        }
+        renderPuzzle();
+      }
+      document.addEventListener('DOMContentLoaded', function() {
+        if (document.getElementById('puzzle-game')) showDay7PuzzleTask();
+      });
+      </script>
+    </div>
+    <div id="OutComes" class="tabcontent">
+      <h2 class="main-tab-title">Outcomes</h2>
+      <hr class="tab-divider">
+  
+      
+      <div class="outcomes-title">What This Week Gave You (For Stressed Minds)</div>
+      <ul class="outcomes-list">
+        <li><b>A calmer mind and better focus</b><br><span>Small, simple games helped you slow down and gently shift your attention away from stress.</span></li>
+        <li><b>Easier breathing and less tension</b><br><span>Breathing exercises and light movement helped relax your body and ease anxious thoughts.</span></li>
+        <li><b>A space to let thoughts out</b><br><span>Journaling and soft sounds gave you a quiet moment to express what’s on your mind without judgment.</span></li>
+        <li><b>Moments of lightness and relief</b><br><span>Gentle, playful games like popping bubbles gave your mind a break and a small dose of joy.</span></li>
+        <li><b>Clearer thinking through gentle challenges</b><br><span>Simple puzzles and memory games helped your mind stay active in a peaceful, pressure-free way.</span></li>
+      </ul>
+      <button id="go-to-assistant-btn" class="next-btn">Go to Assistant</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/anxiety.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<script src="{{ url_for('static', filename='js/anxiety.js') }}" defer></script>
+</head>
+<body>
+    
+<nav class="navbar">
+    <span class="navbar-title">Mental Health Assistant</span>
+    <div class="navbar-left">
+        <div class="navbar-center">
+            <a href="/" class="navbar-link">Assistant</a>
+            <a href="/daily_tasks" class="navbar-link">Daily Tasks</a>
+            <a href="/anxiety" class="navbar-link active">Anxiety</a>
+        </div>
+    </div>
+    <div class="navbar-right">
+        <span class="navbar-user">Welcome, {{ current_user.username }}</span>
+        <a href="/logout" class="navbar-link">Logout</a>
+    </div>
+</nav>
+<p style="color: red; margin-left: 30px;">[Developer Mode - Tasks : Anxiety]</p>
+<div class="main-anxiety-layout" style="align-items:flex-start; margin-top:5.5rem;">
+  <div class="tab" style="margin-left:0; margin-top:2.5rem; align-self:flex-start;">
+    <button class="tablinks" onclick="openCity(event, 'Day1')" id="defaultOpen">Day 1</button>
+    <button class="tablinks" onclick="openCity(event, 'Day2')">Day 2</button>
+    <button class="tablinks" onclick="openCity(event, 'Day3')">Day 3</button>
+    <button class="tablinks" onclick="openCity(event, 'Day4')">Day 4</button>
+    <button class="tablinks" onclick="openCity(event, 'Day5')">Day 5</button>
+    <button class="tablinks" onclick="openCity(event, 'Day6')">Day 6</button>
+    <button class="tablinks" onclick="openCity(event, 'Day7')">Day 7</button>
+    <button class="tablinks" onclick="openCity(event, 'OutComes')">Outcomes</button>
+  </div>
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;">
+    <div id="Day1" class="tabcontent" style="display:none; flex-direction:column; align-items:center; justify-content:center; min-height:420px;">
+      <h2 class="main-tab-title" style="color:#E2BDA7;font-size:2rem;font-weight:700;margin-bottom:1.1rem;letter-spacing:1px;">Your Daily Task</h2>
+      <hr style="width:80%;border:0;border-top:2px solid #e2bda7;margin:0 auto 1.3rem auto;">
+      <h3>Bubbler Timer</h3>
+      <p>This gentle animation mimics a liquid motion bubbler — where colorful droplets slowly fall, bounce, and swirl their way down through a clear path. There’s no task, no goal… just movement and calm.</p>
+      <video autoplay loop muted playsinline style="width:200px;height:auto;border-radius:14px;box-shadow:0 2px 12px rgba(31,38,135,0.10);background:#000;pointer-events:none;display:block;margin:0 auto 24px auto;" tabindex="-1">
+        <source src="/static/video/Bubble.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+    <div id="Day2" class="tabcontent" style="display:none; flex-direction:column; align-items:center; justify-content:center; min-height:420px;">
+      <h2 class="main-tab-title" style="color:#E2BDA7;font-size:2rem;font-weight:700;margin-bottom:1.1rem;letter-spacing:1px;">Your Daily Task</h2>
+      <hr style="width:80%;border:0;border-top:2px solid #e2bda7;margin:0 auto 1.3rem auto;">
+      <h3>Pop Spinner</h3>
+      <p>This is your time to fidget, focus, and relax. Grab the pop spinner on screen and give it a spin!<br>There’s no score, no rush — just a satisfying moment of motion and sound.</p>
+      <div style="display:flex;flex-direction:column;align-items:center;width:100%;">
+        <a href="/spinner" style="display:flex;align-items:center;justify-content:center;width:220px;min-width:220px;max-width:220px;height:220px;min-height:220px;max-height:220px;aspect-ratio:1/1;border-radius:50%;background:linear-gradient(135deg,#7fb3d3,#800080);color:#fff;font-size:1.25rem;font-weight:700;text-decoration:none;box-shadow:0 4px 24px 0 rgba(74,144,226,0.13);margin-bottom:2.2rem;transition:background 0.2s,transform 0.1s;text-align:center;">Pop Spinner</a>
+      </div>
+    </div>
+    <div id="Day3" class="tabcontent" style="display:none; flex-direction:column; align-items:center; justify-content:center; min-height:420px;">
+      <h2 class="main-tab-title" style="color:#E2BDA7;font-size:2rem;font-weight:700;margin-bottom:1.1rem;letter-spacing:1px;">Your Daily Task</h2>
+      <hr style="width:80%;border:0;border-top:2px solid #e2bda7;margin:0 auto 1.3rem auto;">
+      <h3>Use Scent</h3>
+      <p>Sniff lavender flowers or lavender essential oil for at least 3 minutes.<br>Lavender is well-known for its calming properties.<br>Keep a small bottle of lavender essential oil on hand for the scent, for when you feel anxious thoughts brewing.<br>If you practice mindfulness or meditation, try smelling lavender during your practice.<br>Over time, you’ll associate the feeling of relaxation with that scent, making it even more effective.</p>
+      <img src="/static/images/lavender.png" alt="Lavender" style="width:160px;height:auto;margin-bottom:1.2rem;display:block;margin-left:auto;margin-right:auto;" />
+    </div>
+    <div id="Day4" class="tabcontent" style="display:none; flex-direction:column; align-items:center; justify-content:center; min-height:420px;">
+      <h2 class="main-tab-title" style="color:#E2BDA7;font-size:2rem;font-weight:700;margin-bottom:1.1rem;letter-spacing:1px;">Your Daily Task</h2>
+      <hr style="width:80%;border:0;border-top:2px solid #e2bda7;margin:0 auto 1.3rem auto;">
+      <h3>Drink Water</h3>
+      <p>Keep your body and mind refreshed by drinking water throughout the day.</p>
+      <div style="display:flex;flex-direction:column;align-items:center;width:100%;">
+        <a href="/water_tracker" style="display:flex;align-items:center;justify-content:center;width:220px;min-width:220px;max-width:220px;height:220px;min-height:220px;max-height:220px;aspect-ratio:1/1;border-radius:50%;background:linear-gradient(135deg,#2193b0,#6dd5ed);color:#fff;font-size:1.25rem;font-weight:700;text-decoration:none;box-shadow:0 4px 24px 0 rgba(33,147,176,0.13);margin-bottom:2.2rem;transition:background 0.2s,transform 0.1s;text-align:center;">Drink Water</a>
+      </div>
+    </div>
+    <div id="Day5" class="tabcontent">
+      <h2 class="main-tab-title" style="color:#E2BDA7;font-size:2rem;font-weight:700;margin-bottom:1.1rem;letter-spacing:1px;">Your Daily Task</h2>
+      <hr style="width:80%;border:0;border-top:2px solid #e2bda7;margin:0 auto 1.3rem auto;">
+      <h3>Day 5: Self-Love Journal</h3>
+      <p>Take a quiet moment to reflect on who you are, not what you’ve done. Write freely — no right or wrong answers.</p>
+      <a href="/self" style="display:flex;align-items:center;justify-content:center;width:220px;min-width:220px;max-width:220px;height:220px;min-height:220px;max-height:220px;aspect-ratio:1/1;border-radius:50%;background:linear-gradient(135deg,#90EE90,#ADD8E6);color:#fff;font-size:1.25rem;font-weight:700;text-decoration:none;box-shadow:0 4px 24px 0 rgba(240,114,100,0.13);margin:0 auto 2.2rem auto;transition:background 0.2s,transform 0.1s;text-align:center;">Self-Love Journal</a>
+    </div>
+    <div id="Day6" class="tabcontent">
+      <h2 class="main-tab-title" style="color:#E2BDA7;font-size:2rem;font-weight:700;margin-bottom:1.1rem;letter-spacing:1px;">Your Daily Task</h2>
+      <hr style="width:80%;border:0;border-top:2px solid #e2bda7;margin:0 auto 1.3rem auto;">
+      <h3>Mantra Practice for Panic Attacks</h3>
+      <ul style="text-align:left;line-height:1.6;margin-top:1rem;">
+        <li>🗣️ <b>Repeat a calming mantra:</b> “This too will pass.” It helps ground you and shift your focus away from fear.</li>
+        <li>⏱️ <b>Panic attacks peak in about 10 minutes:</b> Remind yourself the intensity won’t last forever.</li>
+        <li>📉 <b>Symptoms will gradually ease:</b> After the peak, most symptoms begin to fade on their own.</li>
+        <li>🧠 <b>Mantras calm the nervous system:</b> Repetition can reduce racing thoughts and bring emotional control.</li>
+        <li>🌬️ <b>Combine with slow breathing:</b> Inhale deeply, repeat the mantra silently or out loud, and exhale slowly.</li>
+        <li>🙌 <b>Be kind to yourself:</b> Acknowledge your feelings, but remind yourself: <em>You are safe. It will pass.</em></li>
+      </ul>
+    </div>
+    <div id="Day7" class="tabcontent">
+      <h2 class="main-tab-title" style="color:#E2BDA7;font-size:2rem;font-weight:700;margin-bottom:1.1rem;letter-spacing:1px;">Your Daily Task</h2>
+      <hr style="width:80%;border:0;border-top:2px solid #e2bda7;margin:0 auto 1.3rem auto;">
+      <h3>5-4-3-2-1 Grounding Technique</h3>
+      <p>This is a gentle mindfulness exercise that helps you calm your mind and reconnect with the present moment using your five senses.</p>
+      <ul style="text-align:left;line-height:1.6;margin-top:1rem;">
+        <li><b>5 – Look around and name 5 things you can see</b></li>
+        <li><b>4 – Listen and name 4 things you can hear</b></li>
+        <li><b>3 – Touch 3 things around you</b></li>
+        <li><b>2 – Notice 2 things you can smell</b></li>
+        <li><b>1 – Name 1 thing you can taste</b></li>
+      </ul>
+      <a href="/grounding" style="display:flex;align-items:center;justify-content:center;width:220px;min-width:220px;max-width:220px;height:220px;min-height:220px;max-height:220px;aspect-ratio:1/1;border-radius:50%;background:linear-gradient(135deg,#FF6666,#ADD8E6);color:#fff;font-size:1.25rem;font-weight:700;text-decoration:none;box-shadow:0 4px 24px 0 rgba(240,114,100,0.13);margin:0 auto 2.2rem auto;transition:background 0.2s,transform 0.1s;text-align:center;">Grounding Technique</a>
+    </div>
+    <div id="OutComes" class="tabcontent" style="display:none; flex-direction:column; align-items:center; justify-content:center; min-height:420px;">
+      <h2 class="main-tab-title" style="color:#E2BDA7;font-size:2rem;font-weight:700;margin-bottom:1.1rem;letter-spacing:1px;">Outcomes</h2>
+      <hr style="width:80%;border:0;border-top:2px solid #e2bda7;margin:0 auto 1.3rem auto;">
+      <div style="font-size:1.18rem;font-weight:700;color:#f07264;margin-bottom:0.7rem;">What This Week Gave You</div>
+      <ul style="margin:0 0 0.7rem 1.2rem;padding:0;font-size:1.08rem;">
+        <li><b>A stronger sense of self-worth</b><br><span style='font-weight:400;'>Reflecting through journaling helped you reconnect with your strengths and treat yourself with more kindness.</span></li>
+        <li style='margin-top:0.7rem;'><b>More appreciation for the little things</b><br><span style='font-weight:400;'>Practicing gratitude gently shifted your focus toward the good around you — even in small, everyday moments.</span></li>
+        <li style='margin-top:0.7rem;'><b>A comforting emotional outlet</b><br><span style='font-weight:400;'>Listening to music gave you a way to express, feel, or soothe your emotions in a safe and private space.</span></li>
+        <li style='margin-top:0.7rem;'><b>Renewed energy and body connection</b><br><span style='font-weight:400;'>Light movement and exercise helped release physical tension and boost your overall sense of well-being.</span></li>
+        <li style='margin-top:0.7rem;'><b>A creative path to calm</b><br><span style='font-weight:400;'>Drawing mandala art offered a peaceful way to focus, slow down, and enjoy the present moment.</span></li>
+      </ul>
+      <button id="go-to-assistant-btn" class="next-btn" style="margin-top:2.2rem;background:#4A90E2;color:#fff;font-size:1.13rem;font-weight:600;border-radius:18px;padding:0.7rem 2.2rem;box-shadow:0 2px 8px rgba(74,144,226,0.10);">Go to Assistant</button>
+    </div>
+  </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var btn = document.getElementById('go-to-assistant-btn');
+  if (btn) {
+    btn.onclick = async function() {
+      // Clear chat data for current user in the backend
+      await fetch('/clear_chat', { method: 'POST' });
+      // Clear last anxiety tab for current user in the backend
+      await fetch('/api/save_last_anxiety_tab', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tab: null })
+      });
+      // Set a flag in localStorage to trigger clear data on Assistant page (optional, for UI)
+      localStorage.setItem('clearAssistantData', '1');
+      window.location.href = '/';
+    };
+  }
+});
+</script>
+</body>
+</html>

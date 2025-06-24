@@ -33,6 +33,8 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String(120), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     last_assessment_category = db.Column(db.String(32), nullable=True)
+    last_daily_tasks = db.Column(db.Text, nullable=True)  # already present
+    last_anxiety_tab = db.Column(db.String(64), nullable=True)  # new column for last tab
 
 # DailyTaskProgress model (must be after db is defined)
 class DailyTaskProgress(db.Model):
@@ -146,23 +148,7 @@ def mandala_coloring():
 def gratitude_practice():
     return render_template('gratitude_practice.html')
 
-# Route for task d page
-@app.route('/daily_tasks_dep')
-@login_required
-def daily_tasks_dep():
-    return render_template('daily_tasks_dep.html')
 
-# Route for task d page
-@app.route('/daily_tasks_anxiety')
-@login_required
-def daily_tasks_anxiety():
-    return render_template('daily_tasks_anx.html')
-
-# Route for task d page
-@app.route('/daily_tasks_stress')
-@login_required
-def daily_tasks_stress():
-    return render_template('daily_tasks_stress.html')
 
 @app.route('/spinner')
 @login_required
@@ -188,6 +174,9 @@ def social_interaction():
 @login_required
 def water_tracker():
     return render_template('water_tracker.html')
+
+
+
 
 @app.route('/')
 @login_required
@@ -293,18 +282,18 @@ def next_question():
             msg2 = None
             if category == 'depression':
                 msg2 = (
-                    'You have daily tasks to complete. depression<br>'
-                    '<a href="/daily_tasks_dep" style="color:#2563eb;text-decoration:underline;font-weight:500;">Click here to view your daily tasks</a>'
+                    'You have daily tasks to complete.<br>'
+                    '<a href="/daily_tasks" style="color:#2563eb;text-decoration:underline;font-weight:500;">Click here to view your daily tasks</a>'
                 )
             elif category == 'anxiety':
                 msg2 = (
-                    'You have daily tasks to complete. Anxeity<br>'
-                    '<a href="/daily_tasks_anxiety" style="color:#2563eb    ;text-decoration:underline;font-weight:500;">Click here to view your daily tasks</a>'
+                    'You have daily tasks to complete. <br>'
+                    '<a href="/daily_tasks" style="color:#2563eb;text-decoration:underline;font-weight:500;">Click here to view your daily tasks</a>'
                 )
             elif category == 'stress':
                 msg2 = (
-                    'You have daily tasks to complete. Stress<br>'
-                    '<a href="/daily_tasks_stress" style="color:#2563eb;text-decoration:underline;font-weight:500;">Click here to view your daily tasks</a>'
+                    'You have daily tasks to complete. <br>'
+                    '<a href="/daily_tasks" style="color:#2563eb;text-decoration:underline;font-weight:500;">Click here to view your daily tasks</a>'
                 )
             # Send chat open message
             msg3 = "You can now chat with the bot and ask any question."
@@ -383,11 +372,11 @@ def next_question():
 def daily_tasks():
     category = current_user.last_assessment_category
     if category == 'depression':
-        return redirect(url_for('daily_tasks_dep'))
+        return render_template('depression.html')
     elif category == 'anxiety':
-        return redirect(url_for('daily_tasks_anxiety'))
+        return render_template('anxiety.html')
     elif category == 'stress':
-        return redirect(url_for('daily_tasks_stress'))
+        return render_template('stress.html')
     else:
         
         return redirect(url_for('index'))
@@ -430,6 +419,25 @@ def clear_chat():
     ChatMessage.query.filter_by(user_id=current_user.id).delete()
     db.session.commit()
     return '', 204
+
+@app.route('/api/save_last_anxiety_tab', methods=['POST'])
+@login_required
+def save_last_anxiety_tab():
+    data = request.get_json()
+    tab = data.get('tab')
+    # Accept both None and empty string as clearing
+    if tab is None or tab == '' or tab == 'null':
+        current_user.last_anxiety_tab = None
+        current_user.last_assessment_category = None  # Also clear assessment category
+    else:
+        current_user.last_anxiety_tab = tab
+    db.session.commit()
+    return jsonify({'success': True})
+
+@app.route('/api/get_last_anxiety_tab')
+@login_required
+def get_last_anxiety_tab():
+    return jsonify({'tab': current_user.last_anxiety_tab})
 
 def calculate_score(responses):
     score = 0
