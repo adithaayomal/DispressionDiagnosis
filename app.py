@@ -148,23 +148,7 @@ def mandala_coloring():
 def gratitude_practice():
     return render_template('gratitude_practice.html')
 
-# Route for task d page
-@app.route('/daily_tasks_dep')
-@login_required
-def daily_tasks_dep():
-    return render_template('daily_tasks_dep.html')
 
-# Route for task d page
-@app.route('/daily_tasks_anxiety')
-@login_required
-def daily_tasks_anxiety():
-    return render_template('daily_tasks_anx.html')
-
-# Route for task d page
-@app.route('/daily_tasks_stress')
-@login_required
-def daily_tasks_stress():
-    return render_template('daily_tasks_stress.html')
 
 @app.route('/spinner')
 @login_required
@@ -192,20 +176,7 @@ def water_tracker():
     return render_template('water_tracker.html')
 
 
-@app.route('/anxiety')
-@login_required
-def anxiety():
-    return render_template('anxiety.html')
 
-@app.route('/stress')
-@login_required
-def stress():
-    return render_template('stress.html')
-
-@app.route('/depression')
-@login_required
-def depression():
-    return render_template('depression.html')
 
 @app.route('/')
 @login_required
@@ -311,17 +282,17 @@ def next_question():
             msg2 = None
             if category == 'depression':
                 msg2 = (
-                    'You have daily tasks to complete. depression<br>'
+                    'You have daily tasks to complete.<br>'
                     '<a href="/daily_tasks" style="color:#2563eb;text-decoration:underline;font-weight:500;">Click here to view your daily tasks</a>'
                 )
             elif category == 'anxiety':
                 msg2 = (
-                    'You have daily tasks to complete. Anxeity<br>'
-                    '<a href="/daily_tasks" style="color:#2563eb    ;text-decoration:underline;font-weight:500;">Click here to view your daily tasks</a>'
+                    'You have daily tasks to complete. <br>'
+                    '<a href="/daily_tasks" style="color:#2563eb;text-decoration:underline;font-weight:500;">Click here to view your daily tasks</a>'
                 )
             elif category == 'stress':
                 msg2 = (
-                    'You have daily tasks to complete. Stress<br>'
+                    'You have daily tasks to complete. <br>'
                     '<a href="/daily_tasks" style="color:#2563eb;text-decoration:underline;font-weight:500;">Click here to view your daily tasks</a>'
                 )
             # Send chat open message

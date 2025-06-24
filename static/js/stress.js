@@ -456,6 +456,80 @@ function startBubbleWrapGame() {
 }
 // --- End Bubble Wrap Popping Game ---
 
+function setupAmbientSound() {
+  const audio = document.getElementById('ambient-audio');
+  const ambientBtns = document.querySelectorAll('.ambient-btn');
+  const ambientSection = document.querySelector('.ambient-section');
+  const particlesDiv = document.getElementById('ambient-particles');
+  if (!audio || !ambientBtns.length || !ambientSection) return;
+  const envs = {
+    rain: {
+      audio: '/static/music/rain.wav',
+      icon: '🌧️',
+      particle: 'raindrop'
+    },
+    ocean: {
+      audio: '/static/music/ocean.wav',
+      icon: '🌊',
+      particle: 'bubble'
+    },
+    forest: {
+      audio: '/static/music/forest.wav',
+      icon: '🌲',
+      particle: 'leaf'
+    },
+    wind: {
+      audio: '/static/music/wind.wav',
+      icon: '💨',
+      particle: 'wind'
+    }
+  };
+  let particleInterval;
+  ambientBtns.forEach(btn => {
+    btn.onclick = function() {
+      const env = btn.getAttribute('data-env');
+      if (!envs[env]) return;
+      // Play audio
+      audio.src = envs[env].audio;
+      audio.currentTime = 0;
+      audio.play();
+      // Do NOT change background
+      // Remove old particles
+      if (particlesDiv) {
+        particlesDiv.innerHTML = '';
+        clearInterval(particleInterval);
+        // Add floating particles
+        particleInterval = setInterval(() => {
+          const p = document.createElement('span');
+          p.style.position = 'absolute';
+          p.style.left = Math.random()*90+5+'%';
+          p.style.top = '-30px';
+          p.style.fontSize = (Math.random()*1.2+1.2)+'rem';
+          p.style.opacity = 0.7;
+          p.textContent = envs[env].icon;
+          particlesDiv.appendChild(p);
+          // Animate
+          const duration = Math.random()*2+2.5;
+          p.animate([
+            { transform: 'translateY(0)', opacity: 0.7 },
+            { transform: 'translateY(120px)', opacity: 0.1 }
+          ], { duration: duration*1000, easing: 'linear' });
+          setTimeout(()=>p.remove(), duration*1000);
+        }, 500);
+      }
+    };
+  });
+  // Pause audio when leaving tab
+  document.querySelectorAll('.tablinks').forEach(tab => {
+    tab.addEventListener('click', function() {
+      audio.pause();
+      audio.currentTime = 0;
+      if (particlesDiv) particlesDiv.innerHTML = '';
+      // Do NOT change background
+    });
+  });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   if (document.getElementById('breathing-circle')) startBreathingAnimation();
   if (document.getElementById('mindful-click-game')) startMindfulClickGame();
