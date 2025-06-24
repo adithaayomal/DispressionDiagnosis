@@ -33,6 +33,8 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String(120), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     last_assessment_category = db.Column(db.String(32), nullable=True)
+    last_daily_tasks = db.Column(db.Text, nullable=True)  # already present
+    last_anxiety_tab = db.Column(db.String(64), nullable=True)  # new column for last tab
 
 # DailyTaskProgress model (must be after db is defined)
 class DailyTaskProgress(db.Model):
@@ -188,6 +190,12 @@ def social_interaction():
 @login_required
 def water_tracker():
     return render_template('water_tracker.html')
+
+
+@app.route('/anxiety')
+@login_required
+def anxiety():
+    return render_template('anxiety.html')
 
 @app.route('/')
 @login_required
@@ -430,6 +438,22 @@ def clear_chat():
     ChatMessage.query.filter_by(user_id=current_user.id).delete()
     db.session.commit()
     return '', 204
+
+@app.route('/api/save_last_anxiety_tab', methods=['POST'])
+@login_required
+def save_last_anxiety_tab():
+    data = request.get_json()
+    tab = data.get('tab')
+    if not tab:
+        return jsonify({'error': 'Missing tab'}), 400
+    current_user.last_anxiety_tab = tab
+    db.session.commit()
+    return jsonify({'success': True})
+
+@app.route('/api/get_last_anxiety_tab')
+@login_required
+def get_last_anxiety_tab():
+    return jsonify({'tab': current_user.last_anxiety_tab})
 
 def calculate_score(responses):
     score = 0
