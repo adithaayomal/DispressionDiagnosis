@@ -202,6 +202,11 @@ def anxiety():
 def stress():
     return render_template('stress.html')
 
+@app.route('/depression')
+@login_required
+def depression():
+    return render_template('depression.html')
+
 @app.route('/')
 @login_required
 def index():
@@ -307,17 +312,17 @@ def next_question():
             if category == 'depression':
                 msg2 = (
                     'You have daily tasks to complete. depression<br>'
-                    '<a href="/daily_tasks_dep" style="color:#2563eb;text-decoration:underline;font-weight:500;">Click here to view your daily tasks</a>'
+                    '<a href="/daily_tasks" style="color:#2563eb;text-decoration:underline;font-weight:500;">Click here to view your daily tasks</a>'
                 )
             elif category == 'anxiety':
                 msg2 = (
                     'You have daily tasks to complete. Anxeity<br>'
-                    '<a href="/daily_tasks_anxiety" style="color:#2563eb    ;text-decoration:underline;font-weight:500;">Click here to view your daily tasks</a>'
+                    '<a href="/daily_tasks" style="color:#2563eb    ;text-decoration:underline;font-weight:500;">Click here to view your daily tasks</a>'
                 )
             elif category == 'stress':
                 msg2 = (
                     'You have daily tasks to complete. Stress<br>'
-                    '<a href="/daily_tasks_stress" style="color:#2563eb;text-decoration:underline;font-weight:500;">Click here to view your daily tasks</a>'
+                    '<a href="/daily_tasks" style="color:#2563eb;text-decoration:underline;font-weight:500;">Click here to view your daily tasks</a>'
                 )
             # Send chat open message
             msg3 = "You can now chat with the bot and ask any question."
@@ -396,11 +401,11 @@ def next_question():
 def daily_tasks():
     category = current_user.last_assessment_category
     if category == 'depression':
-        return redirect(url_for('daily_tasks_dep'))
+        return render_template('depression.html')
     elif category == 'anxiety':
-        return redirect(url_for('daily_tasks_anxiety'))
+        return render_template('anxiety.html')
     elif category == 'stress':
-        return redirect(url_for('daily_tasks_stress'))
+        return render_template('stress.html')
     else:
         
         return redirect(url_for('index'))

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/depression.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<script src="{{ url_for('static', filename='js/depression.js') }}" defer></script>
+</head>
+<body>
+    
+<nav class="navbar">
+    <span class="navbar-title">Mental Health Assistant</span>
+    <div class="navbar-left">
+        <div class="navbar-center">
+            <a href="/" class="navbar-link">Assistant</a>
+            <a href="/daily_tasks" class="navbar-link">Daily Tasks</a>
+            
+        </div>
+    </div>
+    <div class="navbar-right">
+        <span class="navbar-user">Welcome, {{ current_user.username }}</span>
+        <a href="/logout" class="navbar-link">Logout</a>
+    </div>
+</nav>
+<p style="color: red; margin-left: 30px;">[Developer Mode - Tasks : Depression]</p>
+<div class="main-anxiety-layout" style="align-items:flex-start; margin-top:5.5rem;">
+  <div class="tab" style="margin-left:0; margin-top:2.5rem; align-self:flex-start;">
+    <button class="tablinks" onclick="openCity(event, 'Day1')" id="defaultOpen">Day 1</button>
+    <button class="tablinks" onclick="openCity(event, 'Day2')">Day 2</button>
+    <button class="tablinks" onclick="openCity(event, 'Day3')">Day 3</button>
+    <button class="tablinks" onclick="openCity(event, 'Day4')">Day 4</button>
+    <button class="tablinks" onclick="openCity(event, 'Day5')">Day 5</button>
+    <button class="tablinks" onclick="openCity(event, 'Day6')">Day 6</button>
+    <button class="tablinks" onclick="openCity(event, 'Day7')">Day 7</button>
+    <button class="tablinks" onclick="openCity(event, 'OutComes')">Outcomes</button>
+  </div>
+  <div class="main-tabcontent-wrapper">
+    <div id="Day1" class="tabcontent">
+      <h2 class="main-tab-title">Your Daily Task</h2>
+      <hr class="tab-divider">
+      <h3>Self-Love Journal</h3>
+      <p>Take a quiet moment to reflect on who you are, not what you’ve done. Write freely — no right or wrong answers.</p>
+      <div style="display: flex; justify-content: center; align-items: center; width: 100%; margin-bottom: 2.2rem;">
+        <a href="/self" style="display:flex;align-items:center;justify-content:center;width:220px;min-width:220px;max-width:220px;height:220px;min-height:220px;max-height:220px;aspect-ratio:1/1;border-radius:50%;background:linear-gradient(135deg,#7fb3d3,#a8d5ba);color:#fff;font-size:1.25rem;font-weight:700;text-decoration:none;box-shadow:0 4px 24px 0 rgba(74,144,226,0.13);transition:background 0.2s,transform 0.1s;text-align:center;">Your Journal</a>
+      </div>
+    </div>
+    <div id="Day2" class="tabcontent">
+      <h2 class="main-tab-title">Your Daily Task</h2>
+      <hr class="tab-divider">
+      <h3>Gratitude Practice</h3>
+      <p>Write down three things you are grateful for today. They can be big or small. Practicing gratitude can help shift your focus to the positive aspects of your life.</p>
+      <div style="display: flex; justify-content: center; align-items: center; width: 100%; margin-bottom: 2.2rem;">
+        <a href="/gratitude_practice" style="display:flex;align-items:center;justify-content:center;width:220px;min-width:220px;max-width:220px;height:220px;min-height:220px;max-height:220px;aspect-ratio:1/1;border-radius:50%;background:linear-gradient(135deg,#f7971e,#ffd200);color:#fff;font-size:1.25rem;font-weight:700;text-decoration:none;box-shadow:0 4px 24px 0 rgba(247,151,30,0.13);transition:background 0.2s,transform 0.1s;text-align:center;">Gratitude Journal</a>
+      </div>
+    </div>
+    <div id="Day3" class="tabcontent">
+      <h2 class="main-tab-title">Your Daily Task</h2>
+      <hr class="tab-divider">
+      <h3>Listen to Music</h3>
+      <p>Relax and enjoy the music for a few minutes. Click any button below to play or pause a track.</p>
+      <div id="music-btns" style="display: flex; justify-content: center; gap: 1.2rem; margin-bottom: 2.2rem;">
+        <button class="music-btn" data-src="/static/music/music1.mpeg" aria-label="Play music 1" style="display:flex;align-items:center;justify-content:center;width:100px;min-width:100px;max-width:100px;height:100px;min-height:100px;max-height:100px;aspect-ratio:1/1;border-radius:50%;background:linear-gradient(135deg,#7fb3d3,#a8d5ba);color:#fff;font-size:1.13rem;font-weight:700;text-decoration:none;box-shadow:0 4px 24px 0 rgba(74,144,226,0.13);transition:background 0.2s,transform 0.1s;text-align:center;outline:none;border:none;cursor:pointer;">Listen</button>
+        <button class="music-btn" data-src="/static/music/music2.mpeg" aria-label="Play music 2" style="display:flex;align-items:center;justify-content:center;width:100px;min-width:100px;max-width:100px;height:100px;min-height:100px;max-height:100px;aspect-ratio:1/1;border-radius:50%;background:linear-gradient(135deg,#f7971e,#ffd200);color:#fff;font-size:1.13rem;font-weight:700;text-decoration:none;box-shadow:0 4px 24px 0 rgba(247,151,30,0.13);transition:background 0.2s,transform 0.1s;text-align:center;outline:none;border:none;cursor:pointer;">Listen</button>
+        <button class="music-btn" data-src="/static/music/music3.mpeg" aria-label="Play music 3" style="display:flex;align-items:center;justify-content:center;width:100px;min-width:100px;max-width:100px;height:100px;min-height:100px;max-height:100px;aspect-ratio:1/1;border-radius:50%;background:linear-gradient(135deg,#a770ef,#f6d365);color:#fff;font-size:1.13rem;font-weight:700;text-decoration:none;box-shadow:0 4px 24px 0 rgba(167,112,239,0.13);transition:background 0.2s,transform 0.1s;text-align:center;outline:none;border:none;cursor:pointer;">Listen</button>
+        <button class="music-btn" data-src="/static/music/music4.mpeg" aria-label="Play music 4" style="display:flex;align-items:center;justify-content:center;width:100px;min-width:100px;max-width:100px;height:100px;min-height:100px;max-height:100px;aspect-ratio:1/1;border-radius:50%;background:linear-gradient(135deg,#43cea2,#185a9d);color:#fff;font-size:1.13rem;font-weight:700;text-decoration:none;box-shadow:0 4px 24px 0 rgba(67,206,162,0.13);transition:background 0.2s,transform 0.1s;text-align:center;outline:none;border:none;cursor:pointer;">Listen</button>
+      </div>
+      <audio id="music-audio" style="display:none;"></audio>
+    </div>
+    <div id="Day4" class="tabcontent">
+      <h2 class="main-tab-title">Your Daily Task</h2>
+      <hr class="tab-divider">
+      <h3>Gentle Movement for Calm</h3>
+      <p>Follow along with this short, gentle yoga video. Move slowly, breathe deeply, and let your body and mind unwind.</p>
+      <div style="display: flex; justify-content: center; align-items: center; width: 100%; margin-bottom: 2.2rem;">
+        <video src="/static/video/yoga.mp4" controls class="yoga-video" style="border-radius: 18px; max-width: 100%;"></video>
+      </div>
+    </div>
+    <div id="Day5" class="tabcontent">
+      <h2 class="main-tab-title">Your Daily Task</h2>
+      <hr class="tab-divider">
+      <h3>Mandala Art Drawing</h3>
+      <p>No artistic skill needed — just follow the patterns, shapes, or your imagination. Try coloring or drawing a mandala for relaxation.</p>
+      <div style="display: flex; justify-content: center; align-items: center; width: 100%; margin-bottom: 2.2rem;">
+        <a href="/mandala_coloring_therapy" style="display:flex;align-items:center;justify-content:center;width:220px;min-width:220px;max-width:220px;height:220px;min-height:220px;max-height:220px;aspect-ratio:1/1;border-radius:50%;background:linear-gradient(135deg,#a770ef,#f6d365);color:#fff;font-size:1.25rem;font-weight:700;text-decoration:none;box-shadow:0 4px 24px 0 rgba(167,112,239,0.13);transition:background 0.2s,transform 0.1s;text-align:center;">Mandala Art</a>
+      </div>
+    </div>
+    <div id="Day6" class="tabcontent">
+      <h2 class="main-tab-title">Your Daily Task</h2>
+      <hr class="tab-divider">
+      <h3>Gardening Passion</h3>
+      <p>Spend a few minutes connecting with nature. You can water a plant, tend to your garden, or simply observe the greenery around you. Gardening, even in small ways, can be calming and uplifting.</p>
+      <div style="display: flex; justify-content: center; align-items: center; width: 100%; margin-bottom: 2.2rem;">
+        <a href="/gardening-passion" style="display:flex;align-items:center;justify-content:center;width:220px;min-width:220px;max-width:220px;height:220px;min-height:220px;max-height:220px;aspect-ratio:1/1;border-radius:50%;background:linear-gradient(135deg,#56ab2f,#a8e063);color:#fff;font-size:1.25rem;font-weight:700;text-decoration:none;box-shadow:0 4px 24px 0 rgba(86,171,47,0.13);transition:background 0.2s,transform 0.1s;text-align:center;">Gardening Passion</a>
+      </div>
+    </div>
+    <div id="Day7" class="tabcontent">
+      <h2 class="main-tab-title">Your Daily Task</h2>
+      <hr class="tab-divider">
+      <h3>Social Interaction</h3>
+      <p>Read each point and think about how small, positive interactions—like a chat with a friend or helping someone—can make a big difference in your life.</p>
+      <div style="display: flex; justify-content: center; align-items: center; width: 100%; margin-bottom: 2.2rem;">
+        <a href="/social_interaction" style="display:flex;align-items:center;justify-content:center;width:220px;min-width:220px;max-width:220px;height:220px;min-height:220px;max-height:220px;aspect-ratio:1/1;border-radius:50%;background:linear-gradient(135deg,#43cea2,#185a9d);color:#fff;font-size:1.25rem;font-weight:700;text-decoration:none;box-shadow:0 4px 24px 0 rgba(67,206,162,0.13);transition:background 0.2s,transform 0.1s;text-align:center;">Connect Socially</a>
+      </div>
+    </div>
+    <div id="OutComes" class="tabcontent" style="display:none; flex-direction:column; align-items:center; justify-content:center; min-height:420px;">
+      <h2 class="main-tab-title">Outcomes</h2>
+      <hr class="tab-divider">
+      <div style="font-size:1.18rem;font-weight:700;color:#f07264;margin-bottom:0.7rem;">What This Week Gave You</div>
+      <ul style="margin:0 0 0.7rem 1.2rem;padding:0;font-size:1.08rem;">
+        <li><b>A stronger sense of self-worth</b><br><span style='font-weight:400;'>Reflecting through journaling helped you reconnect with your strengths and treat yourself with more kindness.</span></li>
+        <li style='margin-top:0.7rem;'><b>More appreciation for the little things</b><br><span style='font-weight:400;'>Practicing gratitude gently shifted your focus toward the good around you — even in small, everyday moments.</span></li>
+        <li style='margin-top:0.7rem;'><b>A comforting emotional outlet</b><br><span style='font-weight:400;'>Listening to music gave you a way to express, feel, or soothe your emotions in a safe and private space.</span></li>
+        <li style='margin-top:0.7rem;'><b>Renewed energy and body connection</b><br><span style='font-weight:400;'>Light movement and exercise helped release physical tension and boost your overall sense of well-being.</span></li>
+        <li style='margin-top:0.7rem;'><b>A creative path to calm</b><br><span style='font-weight:400;'>Drawing mandala art offered a peaceful way to focus, slow down, and enjoy the present moment.</span></li>
+      </ul>
+      <button id="go-to-assistant-btn" class="next-btn" style="margin-top:2.2rem;background:#4A90E2;color:#fff;font-size:1.13rem;font-weight:600;border-radius:18px;padding:0.7rem 2.2rem;box-shadow:0 2px 8px rgba(74,144,226,0.10);">Go to Assistant</button>
+    </div>
+  </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var btn = document.getElementById('go-to-assistant-btn');
+  if (btn) {
+    btn.onclick = async function() {
+      // Clear chat data for current user in the backend
+      await fetch('/clear_chat', { method: 'POST' });
+      // Clear last anxiety tab for current user in the backend
+      await fetch('/api/save_last_anxiety_tab', {
+        body: JSON.stringify({ tab: null })
+      });
+      // Set a flag in localStorage to trigger clear data on Assistant page (optional, for UI)
+      localStorage.setItem('clearAssistantData', '1');
+      window.location.href = '/';
+    };
+  }
+});
+// Music play/pause toggle for Day 3
+document.addEventListener('DOMContentLoaded', function() {
+  var musicBtns = document.querySelectorAll('#Day3 .music-btn');
+  var audio = document.getElementById('music-audio');
+  var currentBtn = null;
+  musicBtns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var src = btn.getAttribute('data-src');
+      if (audio.src !== window.location.origin + src && audio.src !== location.protocol + '//' + location.host + src) {
+        audio.src = src;
+        audio.play();
+        if (currentBtn) currentBtn.innerText = currentBtn.innerText.replace('Pause', 'Listen');
+        btn.innerText = btn.innerText.replace('Listen', 'Pause');
+        currentBtn = btn;
+      } else if (audio.paused) {
+        audio.play();
+        btn.innerText = btn.innerText.replace('Listen', 'Pause');
+        currentBtn = btn;
+      } else {
+        audio.pause();
+        btn.innerText = btn.innerText.replace('Pause', 'Listen');
+      }
+    });
+  });
+  audio.addEventListener('ended', function() {
+    if (currentBtn) currentBtn.innerText = currentBtn.innerText.replace('Pause', 'Listen');
+  });
+});
+</script>
+</body>
+</html>
