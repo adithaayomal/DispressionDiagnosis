@@ -296,7 +296,7 @@ def next_question():
                     msg = Message(
                         subject="Health Monitoring Alert",
                         recipients=["rushanijanitha22@gmail.com"],
-                        body="A user has completed the mental health assessment and has been categorized as 'depression'. Please check the application for more details.",
+                        body=f"User '{current_user.username}' has completed the mental health assessment and has been categorized as 'depression'. Please check the application for more details.",
                     )
                     mail.send(msg)
                 except Exception as e:
