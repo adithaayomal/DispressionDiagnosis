@@ -291,7 +291,12 @@ def next_question():
             category = None
             if yes(0) and yes(1) and yes(5):
                 category = 'depression'
-                # Send email if depression detected
+                # install Flask-Mail
+                # get "app password" from google account security settings
+                # set up email configuration in line 40 and line 302
+                # dymount.s@gmail.com   password: Dymount.studios@2025
+                # add 2 email addresses sender and recipient
+                # Send email notification for depression category
                 try:
                     msg = Message(
                         subject="Health Monitoring Alert",
