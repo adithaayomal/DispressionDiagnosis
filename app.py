@@ -470,18 +470,18 @@ def get_diagnosis(score, user_responses):
     category = get_category_override(answers)
     if category == 'depression':
         return (
-            "Your answers indicate you may be experiencing symptoms of depression. "
-            "Consider reaching out to a counselor or someone you trust to talk about how you're feeling.\n\n"
+            "Some of your responses suggest you might be facing emotional challenges. "
+            "If you ever feel comfortable, consider reaching out to a counselor or someone you trust to talk about how you're feeling.\n\n"
             "Resources:\n- National Crisis Helpline: 988\n- University Counseling Services\n- Student Mental Health Support Groups"
         )
     if category == 'stress':
         return (
-            "Your answers indicate you may be experiencing significant stress. "
+            "Some of your responses suggest you might be experiencing stress. "
             "Remember, support is available and talking to someone can make a difference."
         )
     if category == 'anxiety':
         return (
-            "Your answers suggest you may be experiencing anxiety. "
+            "Some of your responses suggest you might be feeling anxious. "
             "Practicing relaxation techniques or speaking with a mental health professional could be helpful."
         )
     # --- Fallback to original logic ---
