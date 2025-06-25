@@ -4,3 +4,4 @@ Flask-Login
 Werkzeug
 scikit-learn
 nltk
+Flask-Mail

@@ -1,3 +1,19 @@
+import subprocess
+import sys
+
+# Auto-install requirements.txt if missing packages
+try:
+    import pkg_resources
+    with open('requirements.txt') as f:
+        required = [line.strip() for line in f if line.strip() and not line.startswith('#')]
+    installed = {pkg.key for pkg in pkg_resources.working_set}
+    missing = [pkg for pkg in required if pkg.split('==')[0].lower() not in installed]
+    if missing:
+        print(f"Installing missing packages: {missing}")
+        subprocess.check_call([sys.executable, '-m', 'pip', 'install', *missing])
+except Exception as e:
+    print(f"[WARNING] Could not auto-install requirements: {e}")
+
 from flask import Flask, jsonify, request, render_template, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -13,12 +29,22 @@ from nltk.stem import WordNetLemmatizer
 import random
 import json
 import os
+from flask_mail import Mail, Message
 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '026e523d0d581335786094c9c6df43a4dbfa11781f9906482e2c2c8946fcb185'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Flask-Mail configuration
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'dymount.s@gmail.com'  # CHANGE THIS
+app.config['MAIL_PASSWORD'] = 'ngszachqrdenrniv'  # CHANGE THIS
+app.config['MAIL_DEFAULT_SENDER'] = 'dymount.s@gmail.com'  # CHANGE THIS
+mail = Mail(app)
 
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
@@ -255,14 +281,6 @@ def next_question():
             # Assessment finished, calculate result
             score, yes_responses = calculate_score(session['responses'])
             diagnosis = get_diagnosis((score, yes_responses), session['responses'])
-            session['assessment_finished'] = True
-            # Calculate depression_score for this session
-            answers = list(session['responses'].values())
-            depression_qs = [0, 1, 5]
-            depression_score = sum([answers[i].lower() in ['yes', 'y', 'yeah', 'true'] for i in depression_qs if i < len(answers)])
-            anxiety_score = sum([answers[i].lower() in ['yes', 'y', 'yeah', 'true'] for i in [2, 4] if i < len(answers)])
-            stress_qs = [2, 3, 4]
-            stress_score = sum([answers[i].lower() in ['yes', 'y', 'yeah', 'true'] for i in stress_qs if i < len(answers)])
             # Send assessment complete message
             msg1 = f"Assessment complete!\n\n{diagnosis}"
             # Send daily tasks message with clickable link
@@ -273,6 +291,16 @@ def next_question():
             category = None
             if yes(0) and yes(1) and yes(5):
                 category = 'depression'
+                # Send email if depression detected
+                try:
+                    msg = Message(
+                        subject="Health Monitoring Alert",
+                        recipients=["rushanijanitha22@gmail.com"],
+                        body="A user has completed the mental health assessment and has been categorized as 'depression'. Please check the application for more details.",
+                    )
+                    mail.send(msg)
+                except Exception as e:
+                    print("Failed to send email:", e)
             elif yes(2) and yes(3):
                 category = 'stress'
             elif (yes(2) and yes(4)) or (yes(4) and not yes(2)):
